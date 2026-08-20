@@ -1,0 +1,157 @@
+//
+// Created by jinxing on 2026/2/11.
+//
+
+#include "ipcMsgQue4UiRcvRes.h"
+#include "handleRcvRes.h"
+
+
+ROE_S32 ParseResMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
+{
+    ROE_U8 * msgData = rawData->data;
+    switch((RoeIpcMsgQue4UiType_e)msgType) {
+    case MSG_4_REQ_RES_LOG_IN_OUT:
+        return handleParseRegisterMsg(msgData);
+    case MSG_4_REQ_RES_SHUTDOWN:
+        return handleParseShutdownMsg(msgData);
+    case MSG_4_REQ_RES_GET_VERSION_INFO:
+        return handleParseGetAppVersionMsg(msgData);
+    case MSG_4_REQ_RES_SET_SYSTEM_TIME:
+        return handleParseSetSystemTimeMsg(msgData);
+    case MSG_4_REQ_RES_FORMAT_DISK_PARTITION:
+        return handleParseFormatDiskPartitionMsg(msgData);
+    case MSG_4_REQ_RES_RESTORE_FACTORY_SETTING:
+        return handleParseRestoreFactorySettingMsg(msgData);
+    case MSG_4_REQ_RES_SAVE_LANGUAGE_CONFIG:
+        return handleParseSaveLanguageConfigMsg(msgData);
+    case MSG_4_REQ_RES_GET_USER_COMMON_CONFIG:
+        return handleParseGetUserCommonConfigMsg(msgData);
+    case MSG_4_REQ_RES_SET_USER_COMMON_CONFIG:
+        return handleParseSetUserCommonConfigMsg(msgData);
+    case MSG_4_REQ_RES_GET_USER_MEDIA_CONFIG:
+        return handleParseGetUserMediaConfigMsg(msgData);
+    case MSG_4_REQ_RES_SET_USER_MEDIA_CONFIG:
+        return handleParseSetUserMediaConfigMsg(msgData);
+    case MSG_4_REQ_RES_EXIT_MENU_MODE:
+        return handleParseExitMenuMsg(msgData);
+    case MSG_4_REQ_RES_EXIT_DIALOG_BOX:
+        return handleParseExitDialogBoxMsg(msgData);
+    case MSG_4_REQ_RES_SET_RETICLE_COMMON_CONFIG:
+        return handleParseSetReticleCommonConfigMsg(msgData);
+    case MSG_4_REQ_RES_WEAPON_SET_RETICLE_STYLE:
+        return handleParseWeaponSetReticleStyleMsg(msgData);
+    case MSG_4_REQ_RES_WEAPON_SET_RETICLE_COLOR:
+        return handleParseWeaponSetReticleColorMsg(msgData);
+    case MSG_4_REQ_RES_WEAPON_SAVE_CONFIG:
+        return handleParseWeaponSaveConfigMsg(msgData);
+    case MSG_4_REQ_RES_WEAPON_OPERATE_MARK_CONFIG:
+        return handleParseWeaponMarkConfigOperateMsg(msgData);
+    case MSG_4_REQ_RES_WEAPON_SET_DEFAULT_SHOOT_DISTANCE:
+        return handleParseWeaponSetDefaultShootDistanceMsg(msgData);
+    case MSG_4_REQ_RES_WEAPON_OPERATE_SHOOT_DISTANCE:
+        return handleParseWeaponOperateShootDistanceMsg(msgData);
+    case MSG_4_REQ_RES_WEAPON_SET_SHOOT_POSITION:
+        return handleParseWeaponSetShootPositionMsg(msgData);
+    case MSG_4_REQ_RES_WEAPON_SET_SHOOT_ZERO:
+        return handleParseWeaponSetShootZeroMsg(msgData);
+    case MSG_4_REQ_RES_MAIN_DISPLAY_BRIGHTNESS_ADJUST:
+        return handleParseAdjustOledBrightnessMsg(msgData);
+    case MSG_4_REQ_RES_MAIN_DISPLAY_CONTRAST_ADJUST:
+        return handleParseAdjustOledContrastMsg(msgData);
+    case MSG_4_REQ_RES_EXTEND_DISPLAY_SWITCH:
+        return handleParseAdjustExtendDisplaySwitchStatusMsg(msgData);
+    case MSG_4_REQ_RES_PIP_SWITCH:
+        return handleParseAdjustPipSwitchStatusMsg(msgData);
+    case MSG_4_REQ_RES_VIDEO_ZOOM:
+        return handleParseAdjustVideoZoomMsg(msgData);
+    case MSG_4_REQ_RES_VIDEO_OUTPUT_FREEZE:
+        return handleParseFreezeVideoInputMsg(msgData);
+    case MSG_4_REQ_RES_OBJECT_RECOGNITION_SWITCH:
+        return handleParseAdjustRecognitionSwitchStatusMsg(msgData);
+    case MSG_4_REQ_RES_OBSERVE_MODE_SWITCHING:
+        return handleParseAdjustObserveModeMsg(msgData);
+    case MSG_4_REQ_RES_CAMERA_DAYNIGHT_MODE_SWITCHING:
+        return handleParseAdjustDaynightSwitchStatusMsg(msgData);
+    case MSG_4_REQ_RES_CAMERA_BRIGHTNESS_ADJUST:
+        return handleParseAdjustCameraBrightnessMsg(msgData);
+    case MSG_4_REQ_RES_CAMERA_CONTRAST_ADJUST:
+        return handleParseAdjustCameraContrastMsg(msgData);
+    case MSG_4_REQ_RES_CAMERA_SATURATION_ADJUST:
+        return handleParseAdjustCameraSaturationMsg(msgData);
+    case MSG_4_REQ_RES_CAMERA_HUE_ADJUST:
+        return handleParseAdjustCameraHueMsg(msgData);
+    case MSG_4_REQ_RES_CAMERA_DEHAZE_SWITCH:
+        return handleParseAdjustFogSwitchStatusMsg(msgData);
+    case MSG_4_REQ_RES_CAMERA_DEHAZE_STRENGTH_ADJUST:
+        return handleParseAdjustFogIntensityMsg(msgData);
+    case MSG_4_REQ_RES_INFRARED_PSEUDOCOLOR_MODE_SWITCHING:
+        return handleParseAdjustInfraredPseudocolorModeMsg(msgData);
+    case MSG_4_REQ_RES_INFRARED_BRIGHTNESS_ADJUST:
+        return handleParseAdjustInfraredBrightnessMsg(msgData);
+    case MSG_4_REQ_RES_INFRARED_CONTRAST_ADJUST:
+        return handleParseAdjustInfraredContrastMsg(msgData);
+    case MSG_4_REQ_RES_INFRARED_IMAGE_ENHANCE_ADJUST:
+        return handleParseInfraredEnhanceImageMsg(msgData);
+    case MSG_4_REQ_RES_INFRARED_SCENARIO_MODE_SWITCHING:
+        return handleParseInfraredAdjustScenarioModeMsg(msgData);
+    case MSG_4_REQ_RES_INFRARED_HOTSPOT_TRACKING_SWITCH:
+        return handleParseInfraredSwitchHotspotTrackingMsg(msgData);
+    case MSG_4_REQ_RES_CAPTURE_MEDIA_FILE:
+        return ROE_SUCCESS;
+    case MSG_4_REQ_RES_RECORD_MEDIA_FILE:
+        return ROE_SUCCESS;
+    case MSG_4_REQ_RES_GET_MEDIA_FILE_LIST:
+        return handleParseGetMediaFileListMsg(msgData);
+    case MSG_4_REQ_RES_EXIT_PLAYBACK_MEDIA_LIST:
+        return handleParseExitPlaybackMediaListMsg(msgData);
+    case MSG_4_REQ_RES_DEL_MEDIA_FILE:
+        return handleParseDelMediaFileMsg(msgData);
+    case MSG_4_REQ_RES_PLAY_MEDIA_FILE:
+        return handleParsePlayMediaFileMsg(msgData);
+    case MSG_4_REQ_RES_PLAY_ADJACENT_MEDIA_FILE:
+        return handleParsePlayPriorOrNextMediaFileMsg(msgData);
+    case MSG_4_REQ_RES_STOP_MEDIA_FILE_PLAY:
+        return handleParseExitMediaPlayStatusMsg(msgData);
+    case MSG_4_REQ_RES_WIFI_SWITCH:
+        return handleParseAdjustWifiSwitchMsg(msgData);
+    case MSG_4_REQ_RES_GET_WIFI_INFO:
+        return handleParseGetWifiInfoMsg(msgData);
+    case MSG_4_REQ_RES_INFRARED_MANUAL_REMOVE_BAD_PIXEL:
+        return ROE_SUCCESS;
+    case MSG_4_REQ_RES_INFRARED_SET_BAD_PIXEL_THRESHOLD:
+        return handleParseInfraredSetBadPixelThresholdMsg(msgData);
+    case MSG_4_REQ_RES_INFRARED_BAD_PIXEL_OPERATE:
+        return handleParseInfraredBadPixelOperateMsg(msgData);
+    case MSG_4_REQ_RES_INFRARED_HOT_PIXEL_REPAIR_OPERATE:
+        return handleParseInfraredHotPixelRepairOperateMsg(msgData);
+    case MSG_4_REQ_RES_COMPASS_SWITCH:
+        return handleParseAdjustCompassSwitchStatusMsg(msgData);
+    case MSG_4_REQ_RES_COMPASS_SET_MAGNETIC_DECLINATION:
+        return handleParseSetCompassMagneticDeclinationMsg(msgData);
+    case MSG_4_REQ_RES_COMPASS_SAVE_CONFIG:
+        return handleParseSaveCompassConfigMsg(msgData);
+    case MSG_4_REQ_RES_COMPASS_START_CALIBRATION:
+        return handleParseStartCompassCalibrationMsg(msgData);
+    case MSG_4_REQ_RES_COMPASS_STOP_CALIBRATION:
+        return handleParseStopCompassCalibrationMsg(msgData);
+    case MSG_4_REQ_RES_GNSS_SWITCH:
+        return handleParseAdjustGnssSwitchStatusMsg(msgData);
+    case MSG_4_REQ_RES_GNSS_POSITION_SYSTEM_SWITCHING:
+        return handleParseAdjustGnssPositionSystemMsg(msgData);
+    case MSG_4_REQ_RES_GNSS_COORDINATE_SYSTEM_SWITCHING:
+        return handleParseAdjustCoordinateSystemMsg(msgData);
+    case MSG_4_REQ_RES_RANGE_FINDER_OPERATE:
+        return handleParseAdjustRangeFinderSwitchStatusMsg(msgData);
+    case MSG_4_REQ_RES_RANGE_FREQUENCY_ADJUST:
+        return handleParseAdjustRangeFrequencyMsg(msgData);
+    case MSG_4_REQ_RES_RANGE_TIME_DURATION_ADJUST:
+        return handleParseAdjustRangeTimeDurationMsg(msgData);
+    case MSG_4_REQ_RES_PANTILT_MOVING_CONTROL:
+        return handleParsePanTiltMovingControlMsg(msgData);
+    case MSG_4_REQ_RES_PANTILT_MOVING_SPEED_ADJUST:
+        handleParsePanTiltMovingSpeedControlMsg(msgData);
+    default:
+        break;
+    }
+    return ROE_FAILURE;
+}

@@ -1,0 +1,72 @@
+# LVGL-like style (v9.x)
+# Notes:
+# - Function opening brace on a new line
+# - Control statement braces stay on the same line: if(...) { ... }
+# - No space before parentheses: if(...)
+# - 4-space indentation, no tabs
+# - Pointer style: "type * name"
+
+BasedOnStyle: LLVM
+Language: Cpp
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+
+# Line length (LVGL generally keeps lines reasonably short; adjust if your repo differs)
+ColumnLimit: 120
+
+# Braces: functions on new line; statements inline
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: false
+  AfterEnum: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterExternBlock: false
+  BeforeElse: false
+  BeforeCatch: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+# Spaces: match LVGL example "if(label == NULL)" (no space after if)
+SpaceBeforeParens: Never
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceInEmptyParentheses: false
+SpaceAfterCStyleCast: false
+
+# Pointer alignment: "lv_obj_t * label"
+DerivePointerAlignment: false
+PointerAlignment: Middle
+
+# Keep short one-line if/loops allowed (LVGL example shows: if(...) return;)
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+
+# Function parameters / arguments wrapping
+BinPackParameters: false
+BinPackArguments: false
+AlignAfterOpenBracket: Align
+
+# Switch/case
+IndentCaseLabels: false
+
+# Comments: avoid reflowing carefully formatted Doxygen blocks
+ReflowComments: false
+SpacesBeforeTrailingComments: 1
+
+# Includes: don't fight your existing ordering unless you want it
+SortIncludes: false
+IncludeBlocks: Preserve
+
+# Misc
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
