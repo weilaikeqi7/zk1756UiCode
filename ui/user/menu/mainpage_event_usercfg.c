@@ -60,6 +60,7 @@ void send_user_common_config_partial(ROE_S8 showDateTime,
     req.standbyTimeout = standbyTimeout;
     req.shutdownTimeout = shutdownTimeout;
     req.distanceUnit = distanceUnit;
+    req.batteryLevel = -1;
 
     SendMsg4UiSetUserCommonConfigReq(global_parameters.sendMsgQueId, &req);
 }

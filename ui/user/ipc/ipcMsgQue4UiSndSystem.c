@@ -24,9 +24,19 @@ ROE_S32 SendMsg4UiObserveModeReq(ROE_S32 msgQueId, ReqAdjustObserveMode_st * set
 {
     return SendMsg4UiReq(
         msgQueId,
-        MSG_4_REQ_RES_OBSERVE_MODE_SWITCHING,
+        MSG_4_REQ_RES_MAIN_OBSERVE_MODE_SWITCHING,
         setObserveMode,
         sizeof(ReqAdjustObserveMode_st),
+        ROE_NULL);
+}
+
+ROE_S32 SendMsg4UiPipObserveModeReq(ROE_S32 msgQueId, ReqAdjustPipObserveMode_st * setObserveMode)
+{
+    return SendMsg4UiReq(
+        msgQueId,
+        MSG_4_REQ_RES_PIP_OBSERVE_MODE_SWITCHING,
+        setObserveMode,
+        sizeof(ReqAdjustPipObserveMode_st),
         ROE_NULL);
 }
 

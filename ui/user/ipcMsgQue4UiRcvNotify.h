@@ -20,7 +20,8 @@ typedef struct {
 /* 2. 观察模式信息 */
 typedef struct {
     MsgQueHeader4Ui_st head;
-    ROE_U8 mode; // 0:白光 1:红外 2:融合
+    ROE_U8 mainScreenMode; // 0:白光 1:红外 2:融合
+    ROE_U8 pipMode; // 0:白光 1:红外 2:融合
 } NotifyObserveMode_st;
 
 /* 3. 设备自检结果信息 */
@@ -203,9 +204,29 @@ typedef struct {
 /* 23. 设备能力 */
 typedef struct {
     MsgQueHeader4Ui_st head;
-    ROE_U8 hasFusion;
-    ROE_U8 hasGps;
-    ROE_U8 hasGimbal;
+
+    ROE_U8 cameraViNum;
+    ROE_U8 lowLigthViNum;
+    ROE_U8 infraredViNum;
+    ROE_U8 remoteViNum;
+    ROE_U8 mcfViNum;
+
+    ROE_U8 mainDisplayNum;
+    ROE_U8 extendDisplayNum;
+    ROE_U8 remoteDisplayNum;
+
+    ROE_U8 audioInputNum;
+    ROE_U8 audioOutputNum;
+
+    ROE_U8 usbNum;
+    ROE_U8 wifiNum;
+    ROE_U8 bleNum;
+    ROE_U8 sleNum;
+
+    ROE_U8 compassNum;
+    ROE_U8 gnssNum;
+    ROE_U8 rangeFinderNum;
+    ROE_U8 panTiltNum;
 } NotifyDeviceCapability_st;
 
 /* 24. 红外坏点阈值 */

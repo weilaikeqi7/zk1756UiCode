@@ -31,6 +31,12 @@ ROE_S32 handleParseAdjustObserveModeMsg(ROE_U8 * msgData)
     return ROE_SUCCESS;
 }
 
+ROE_S32 handleParseAdjustPipObserveModeMsg(ROE_U8 * msgData)
+{
+    RspAdjustObserveMode_st * result = (RspAdjustObserveMode_st *)msgData;
+    return ROE_SUCCESS;
+}
+
 ROE_S32 handleParseAdjustDaynightSwitchStatusMsg(ROE_U8 * msgData)
 {
     RspAdjustDayNight_st * result = (RspAdjustDayNight_st *)msgData;

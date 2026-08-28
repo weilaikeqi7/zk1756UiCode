@@ -17,6 +17,8 @@ ROE_S32 handleParseSetSystemTimeMsg(ROE_U8 * msgData);
 
 ROE_S32 handleParseAdjustObserveModeMsg(ROE_U8 * msgData);
 
+ROE_S32 handleParseAdjustPipObserveModeMsg(ROE_U8 * msgData);
+
 ROE_S32 handleParseAdjustDaynightSwitchStatusMsg(ROE_U8 * msgData);
 
 ROE_S32 handleParseAdjustRecognitionSwitchStatusMsg(ROE_U8 * msgData);

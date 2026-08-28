@@ -46,10 +46,15 @@ typedef struct {
     ROE_S8 second;
 } ReqSetSystemTime_st;
 
-/* 3.4 观察模式调整 */
+/* 3.4 主画面观察模式调整 */
 typedef struct {
     ROE_U8 mode; // 0:白光 1:红外 2:融合
 } ReqAdjustObserveMode_st;
+
+/* 3.4 画中画观察模式调整 */
+typedef struct {
+    ROE_U8 mode; // 0:白光 1:红外 2:融合
+} ReqAdjustPipObserveMode_st;
 
 /* 3.5 日夜模式切换 */
 typedef struct {
@@ -159,21 +164,21 @@ typedef struct {
 
 /* 3.27 获取媒体文件列表 */
 typedef struct {
-    ROE_S16 year;       // 2025-2199
-    ROE_S8 month;       // 0-12
-    ROE_S8 day;         // 0-31
-    ROE_S8 hour;        // -1-23
-    ROE_S8 minute;      // -1-59
-    ROE_S8 second;      // -1-59
+    ROE_S16 year; // 2025-2199
+    ROE_S8 month; // 0-12
+    ROE_S8 day; // 0-31
+    ROE_S8 hour; // -1-23
+    ROE_S8 minute; // -1-59
+    ROE_S8 second; // -1-59
     ROE_U32 startIndex; // 请求起始序号，固定为0
-    ROE_U8 reqCount;    // 请求文件数量
+    ROE_U8 reqCount; // 请求文件数量
     ROE_S8 reqFileType; //-1:全部 0:照片 1:视频 2:音频
 } ReqGetMediaFileList_st;
 
 /* 3.28 媒体文件列表翻页 */
 typedef struct {
     ROE_U32 startIndex; // 请求起始序号
-    ROE_U8 reqCount;    // 请求文件数量
+    ROE_U8 reqCount; // 请求文件数量
     ROE_S8 reqFileType; //-1:全部 0:照片 1:视频 2:音频
 } ReqGetMediaFileListPage_st;
 
@@ -245,13 +250,13 @@ typedef struct {
 /* 3.44 云台运动状态控制 */
 typedef struct {
     ROE_U8 direction; // 0:水平 1:垂直
-    ROE_U8 ctrlType;  // 水平:0停止 1右 2左; 垂直:0停止 1上 2下
+    ROE_U8 ctrlType; // 水平:0停止 1右 2左; 垂直:0停止 1上 2下
 } ReqPanTiltMoveControl_st;
 
 /* 3.45 云台运动速率控制 */
 typedef struct {
     ROE_U8 direction; // 0:水平 1:垂直
-    ROE_U8 ctrlType;  // 速率值 (0-100)
+    ROE_U8 ctrlType; // 速率值 (0-100)
 } ReqPanTiltSpeedControl_st;
 
 /* 3.46 红外坏点校正阈值调整 */
@@ -310,11 +315,12 @@ typedef struct {
 
 /* 3.58 用户通用配置修改 */
 typedef struct {
-    ROE_U8 saveFlag;         // 0不保存 1保存
-    ROE_S8 showDateTime;     // -1不修改 0隐藏 1显示
-    ROE_S16 standbyTimeout;  // -1不修改 0永不待机 单位秒
+    ROE_U8 saveFlag; // 0不保存 1保存
+    ROE_S8 showDateTime; // -1不修改 0隐藏 1显示
+    ROE_S16 standbyTimeout; // -1不修改 0永不待机 单位秒
     ROE_S16 shutdownTimeout; // -1不修改 0永不关机 单位秒
-    ROE_S8 distanceUnit;     // -1不修改 0米 1码
+    ROE_S8 distanceUnit; // -1不修改 0米 1码
+    ROE_S8 batteryLevel;
 } ReqSetUserCommonConfig_st;
 
 /* 3.59 用户媒体配置获取 */
@@ -323,18 +329,18 @@ typedef struct {
 
 /* 3.60 用户媒体配置修改 */
 typedef struct {
-    ROE_U8 saveFlag;                 // 0不保存 1保存
-    ROE_S8 burstCount;               // -1不修改 0单拍 单位张
-    ROE_S16 maxRecordDuration;       // -1不修改 0无限制 单位秒
-    ROE_S8 recoilPreRecordSwitch;    // -1不修改 0关 1开
+    ROE_U8 saveFlag; // 0不保存 1保存
+    ROE_S8 burstCount; // -1不修改 0单拍 单位张
+    ROE_S16 maxRecordDuration; // -1不修改 0无限制 单位秒
+    ROE_S8 recoilPreRecordSwitch; // -1不修改 0关 1开
     ROE_S16 recoilPreRecordDuration; // -1不修改 0不录制 单位秒
-    ROE_S8 micSwitch;                // -1不修改 0关 1开
+    ROE_S8 micSwitch; // -1不修改 0关 1开
 } ReqSetUserMediaConfig_st;
 
 /* 3.61 分划板通用配置修改 */
 typedef struct {
-    ROE_U8 saveFlag;      // 0不保存 1保存
-    ROE_S8 showReticle;   // -1不修改 0关 1开
+    ROE_U8 saveFlag; // 0不保存 1保存
+    ROE_S8 showReticle; // -1不修改 0关 1开
     ROE_S8 rotateReticle; // -1不修改 0关 1开
     ROE_S8 brightnessBall;
     ROE_S8 ballisticSolve; // -1不修改 0关 1开
@@ -343,8 +349,8 @@ typedef struct {
 /* 3.62 武器型号配置操作 */
 typedef struct {
     ROE_U8 videoChannel; // 0主画面 1画中画
-    ROE_U8 weaponIndex;  // 武器型号索引 1-最大索引
-    ROE_U8 opType;       // 0查询 1设置当前武器型号 2重置武器配置
+    ROE_U8 weaponIndex; // 武器型号索引 1-最大索引
+    ROE_U8 opType; // 0查询 1设置当前武器型号 2重置武器配置
 } ReqWeaponMarkConfigOperate_st;
 
 /* 3.63 武器分划板类型设置 */
@@ -372,9 +378,9 @@ typedef struct {
 typedef struct {
     ROE_U8 videoChannel;
     ROE_U8 weaponIndex;
-    ROE_U8 distIndex;       // 射击距离索引，新增时忽略
-    ROE_U16 distValue;      // 对应射击距离，查询/删除时忽略
-    ROE_U8 opType;          // 0查询 1新增 2删除 3修改
+    ROE_U8 distIndex; // 射击距离索引，新增时忽略
+    ROE_U16 distValue; // 对应射击距离，查询/删除时忽略
+    ROE_U8 opType; // 0查询 1新增 2删除 3修改
     ROE_U8 syncMoveReticle; // 0不移动 1移动
 } ReqWeaponOperateShootDist_st;
 
@@ -383,7 +389,7 @@ typedef struct {
     ROE_U8 videoChannel;
     ROE_U8 weaponIndex;
     ROE_U8 distIndex; // 射击距离索引
-    ROE_S8 moveDir;   // 0上 1下 2左 3右
+    ROE_S8 moveDir; // 0上 1下 2左 3右
 } ReqWeaponSetShootPosition_st;
 
 /* 3.68 武器射击零位设置 */
@@ -391,7 +397,7 @@ typedef struct {
     ROE_U8 videoChannel;
     ROE_U8 weaponIndex;
     ROE_U8 distIndex; // 射击距离索引
-    ROE_U8 zeroType;  // 0相对 1绝对
+    ROE_U8 zeroType; // 0相对 1绝对
 } ReqWeaponSetShootZero_st;
 
 /* 3.69 武器配置保存 */
@@ -407,6 +413,8 @@ ROE_S32 SendMsg4UiExitMenuReq(ROE_S32 msgQueId);
 ROE_S32 SendMsg4UiTimeReq(ROE_S32 msgQueId, ReqSetSystemTime_st * setTime);
 
 ROE_S32 SendMsg4UiObserveModeReq(ROE_S32 msgQueId, ReqAdjustObserveMode_st * setObserveMode);
+
+ROE_S32 SendMsg4UiPipObserveModeReq(ROE_S32 msgQueId, ReqAdjustPipObserveMode_st * setObserveMode);
 
 ROE_S32 SendMsg4UiDayNightReq(ROE_S32 msgQueId, ReqAdjustDayNight_st * setDayNight);
 

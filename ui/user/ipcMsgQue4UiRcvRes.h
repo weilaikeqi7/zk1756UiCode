@@ -159,7 +159,7 @@ typedef struct {
 typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 result;
-    ROE_U8 verLen;    // 版本字符串长度
+    ROE_U8 verLen; // 版本字符串长度
     ROE_U8 version[]; // 版本字符序列
 } RspGetAppVersion_st;
 
@@ -174,7 +174,7 @@ typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 result;
     ROE_U32 totalCount; // 符合条件的总文件数量
-    ROE_U8 fileCount;   // 本次返回文件实际数量 (0-15)
+    ROE_U8 fileCount; // 本次返回文件实际数量 (0-15)
     /* 后面紧跟 fileCount 个媒体文件信息，每个信息为变长结构 MediaFileInfo_st */
     ROE_U8 fileData[];
 } RspGetMediaFileList_st;
@@ -295,8 +295,8 @@ typedef struct {
 typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 direction; // 0:水平 1:垂直
-    ROE_U8 ctrlType;  // 同请求
-    ROE_U8 result;    // 0成功 非0失败
+    ROE_U8 ctrlType; // 同请求
+    ROE_U8 result; // 0成功 非0失败
 } RspPanTiltMoveControl_st;
 
 /* 3.45 云台运动速率控制 */
@@ -379,10 +379,11 @@ typedef struct {
 typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 result;
-    ROE_U8 showDateTime;     // 0隐藏 1显示
-    ROE_U16 standbyTimeout;  // 待机时长，0永不待机，单位秒
+    ROE_U8 showDateTime; // 0隐藏 1显示
+    ROE_U16 standbyTimeout; // 待机时长，0永不待机，单位秒
     ROE_U16 shutdownTimeout; // 关机时长，0永不关机，单位秒
-    ROE_U8 distanceUnit;     // 0米 1码
+    ROE_U8 distanceUnit; // 0米 1码
+    ROE_U8 batteryLevel; //0 图标 1百分比
 } RspGetUserCommonConfig_st;
 
 /* 3.58 用户通用配置修改 */
@@ -393,17 +394,18 @@ typedef struct {
     ROE_U16 standbyTimeout;
     ROE_U16 shutdownTimeout;
     ROE_U8 distanceUnit;
+    ROE_U8 batteryLevel;
 } RspSetUserCommonConfig_st;
 
 /* 3.59 用户媒体配置获取 */
 typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 result;
-    ROE_U8 burstCount;               // 连拍数量，0单拍
-    ROE_U16 maxRecordDuration;       // 单个文件最大录制时长，0无限制
-    ROE_U8 recoilPreRecordSwitch;    // 后坐力激活视频预录开关，0关 1开
+    ROE_U8 burstCount; // 连拍数量，0单拍
+    ROE_U16 maxRecordDuration; // 单个文件最大录制时长，0无限制
+    ROE_U8 recoilPreRecordSwitch; // 后坐力激活视频预录开关，0关 1开
     ROE_U16 recoilPreRecordDuration; // 后坐力激活视频预录时长，0不录制
-    ROE_U8 micSwitch;                // 麦克风开关，0关 1开
+    ROE_U8 micSwitch; // 麦克风开关，0关 1开
 } RspGetUserMediaConfig_st;
 
 /* 3.60 用户媒体配置修改 */
@@ -432,12 +434,12 @@ typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 result;
     ROE_U8 videoChannel;
-    ROE_U8 defaultWeaponIndex;  // 默认武器型号
-    ROE_U8 weaponIndex;         // 当前武器型号
-    ROE_U8 reticleTypeIndex;    // 分划板类型索引
-    ROE_U8 reticleColorIndex;   // 分划板颜色索引
-    ROE_U8 shootDistanceCount;  // 射击距离数量 1-20
-    ROE_U8 defaultDistIndex;    // 默认射击距离索引
+    ROE_U8 defaultWeaponIndex; // 默认武器型号
+    ROE_U8 weaponIndex; // 当前武器型号
+    ROE_U8 reticleTypeIndex; // 分划板类型索引
+    ROE_U8 reticleColorIndex; // 分划板颜色索引
+    ROE_U8 shootDistanceCount; // 射击距离数量 1-20
+    ROE_U8 defaultDistIndex; // 默认射击距离索引
     ROE_U16 shootDistances[20]; // 射击距离值，有效数量为 shootDistanceCount
 } RspWeaponMarkConfigOperate_st;
 
@@ -485,8 +487,8 @@ typedef struct {
     ROE_S16 absY;
     ROE_S16 relX;
     ROE_S16 relY;
-    ROE_U8 shootDistanceCount;  // 当前射击距离数量
-    ROE_U8 defaultDistIndex;    // 当前默认射击距离索引
+    ROE_U8 shootDistanceCount; // 当前射击距离数量
+    ROE_U8 defaultDistIndex; // 当前默认射击距离索引
     ROE_U16 shootDistances[20]; // 所有射击距离值
 } RspWeaponOperateShootDist_st;
 

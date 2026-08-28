@@ -92,7 +92,7 @@ ROE_S32 handleDialogBoxNotify(ROE_U8 * msgData)
         } else if(dialog->option == 1) {
             popup_stack_pop_all(&g_popup_stack);
         }
-    } else if(dialog->dialogType == 1) {
+    } else if(dialog->dialogType == 2) {
         popup_stack_push(&g_popup_stack, &g_popup_poweroff);
     }
     return ROE_SUCCESS;
@@ -101,7 +101,7 @@ ROE_S32 handleDialogBoxNotify(ROE_U8 * msgData)
 ROE_S32 handleMenuNotify(ROE_U8 * msgData)
 {
     NotifyMenuMode_st * menu = (NotifyMenuMode_st *)msgData;
-    LV_LOG_USER("menu->action:%d, menu->option:%d", menu->action, menu->option);
+    // LV_LOG_USER("menu->action:%d, menu->option:%d", menu->action, menu->option);
     if(menu->action == 0) {
         if(menu->option == 0) {
             g_my_keypad_btn_points[3] = 1;
@@ -118,7 +118,7 @@ ROE_S32 handleKeyEventNotify(ROE_U8 * msgData)
 {
     NotifyMenuKey_st * menuKey = (NotifyMenuKey_st *)msgData;
     if(menuKey->inMenu == 1) {
-        LV_LOG_USER("menuKey->keyCode:%d, menuKey->keyEvent:%d", menuKey->keyCode, menuKey->keyEvent);
+        // LV_LOG_USER("menuKey->keyCode:%d, menuKey->keyEvent:%d", menuKey->keyCode, menuKey->keyEvent);
         switch(menuKey->keyCode) {
         case 0:
             g_my_keypad_btn_points[2] = 1;

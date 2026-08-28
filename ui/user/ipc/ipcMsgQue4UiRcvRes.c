@@ -69,8 +69,10 @@ ROE_S32 ParseResMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
         return handleParseFreezeVideoInputMsg(msgData);
     case MSG_4_REQ_RES_OBJECT_RECOGNITION_SWITCH:
         return handleParseAdjustRecognitionSwitchStatusMsg(msgData);
-    case MSG_4_REQ_RES_OBSERVE_MODE_SWITCHING:
+    case MSG_4_REQ_RES_MAIN_OBSERVE_MODE_SWITCHING:
         return handleParseAdjustObserveModeMsg(msgData);
+    case MSG_4_REQ_RES_PIP_OBSERVE_MODE_SWITCHING:
+        return handleParseAdjustPipObserveModeMsg(msgData);
     case MSG_4_REQ_RES_CAMERA_DAYNIGHT_MODE_SWITCHING:
         return handleParseAdjustDaynightSwitchStatusMsg(msgData);
     case MSG_4_REQ_RES_CAMERA_BRIGHTNESS_ADJUST:
