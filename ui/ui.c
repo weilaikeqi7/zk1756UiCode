@@ -57,4 +57,5 @@ void ui_destroy(void)
     ui_MainPage_screen_destroy();
     ui_ScrFileMgr_screen_destroy();
     ui_PlayBar_screen_destroy();
+    ui_Temp_screen_destroy();
 }

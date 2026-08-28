@@ -24,7 +24,7 @@ void * message_recv_thread(void * arg)
 {
     GlobalParameters * msg_args = arg;
     RoeIpcMsgQueBuff_st msgBuf;
-    key_t sendKey = msg_args->sendKey, recvKey = msg_args->recvKey;
+    key_t sendKey = app_args.sendKey, recvKey = app_args.recvKey;
 
     msg_args->sendMsgQueId = msgget(sendKey, 0666);
     if(-1 == msg_args->sendMsgQueId) {
@@ -45,7 +45,7 @@ void * message_recv_thread(void * arg)
     SendMsg4UiGetUserCommonConfigReq(msg_args->sendMsgQueId);
     SendMsg4UiGetUserMediaConfigReq(msg_args->sendMsgQueId);
 
-    while(1) {
+    while(!msg_args->g_quit) {
         if(msgrcv(msg_args->recvMsgQueId, &msgBuf, sizeof(msgBuf.msgData), -MSG_4_REQ_RES_BUTT, 0) == -1) {
             LV_LOG_USER("msgrcv() failed, recvMsgQueId: %d\n", msg_args->recvMsgQueId);
             continue;
@@ -64,6 +64,5 @@ void * message_recv_thread(void * arg)
     if(-1 != msg_args->recvMsgQueId) {
         msgctl(msg_args->recvMsgQueId, IPC_RMID, NULL);
     }
-
-    return NULL;
+    pthread_exit(NULL);
 }

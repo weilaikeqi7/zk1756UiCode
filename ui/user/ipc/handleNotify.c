@@ -13,37 +13,6 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-static pthread_mutex_t * s_pMutexReticleBmp = NULL;
-
-int InitMutex(void)
-{
-    ROE_CHAR * fileMutex = "/etc/init.d/rcS";
-
-    ROE_S32 fdMutex = open(fileMutex, O_RDWR, 0);
-
-    if(fdMutex < 0) {
-        return -1;
-    }
-    s_pMutexReticleBmp = (pthread_mutex_t *)mmap(0,
-                                                 sizeof(pthread_mutex_t),
-                                                 PROT_READ | PROT_WRITE,
-                                                 MAP_SHARED,
-                                                 fdMutex,
-                                                 0);
-
-    if(MAP_FAILED == s_pMutexReticleBmp) {
-        return -2;
-    }
-    close(fdMutex);
-
-    pthread_mutexattr_t mutexAttr;
-    pthread_mutexattr_init(&mutexAttr);
-    pthread_mutexattr_setpshared(&mutexAttr, PTHREAD_PROCESS_SHARED);
-    pthread_mutex_init(s_pMutexReticleBmp, &mutexAttr);
-
-    return 0;
-}
-
 // 函数：将米 (Meter) 转换为码 (Yard)
 ROE_S32 handleMagneticDeclinationNotify(ROE_U8 * msgData)
 {

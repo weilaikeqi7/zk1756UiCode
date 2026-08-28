@@ -12,8 +12,6 @@
 #define YARDS_PER_METER 1.09361f
 #define METERS_PER_YARD 0.9144f
 
-int InitMutex(void);
-
 float meterToYard(float meters);
 
 float yardToMeter(float yards);

@@ -45,7 +45,6 @@ extern "C" {
 extern lv_obj_t * ui____initial_actions0;
 
 #define IMAGES_PATH "A:./assets/images/"
-#define FONTS_PATH "./assets/fonts/"
 #define OFF 0
 #define ON  1
 // FONTS
@@ -66,7 +65,6 @@ extern uint8_t g_my_keypad_btn_points[4];
 extern lv_indev_t * indev_keypad;
 extern lv_group_t * keypad_group;
 extern popup_stack_t g_popup_stack;
-extern sem_t sem;
 
 // UI INIT
 void ui_init(void);
