@@ -5,9 +5,9 @@
 #include "ui_attitude_scale.h"
 
 /* 三个实际的 scale 对象 */
-static lv_obj_t* s_yaw = NULL;
-static lv_obj_t* s_roll = NULL;
-static lv_obj_t* s_pitch = NULL;
+static lv_obj_t * s_yaw = NULL;
+static lv_obj_t * s_roll = NULL;
+static lv_obj_t * s_pitch = NULL;
 
 /* 展开后的方位角（可以累积很多圈），和上一次原始 yaw */
 static float yaw_unwrap = 0.0f;
@@ -18,12 +18,12 @@ static bool yaw_inited = false;
 #define AZI_WINDOW_DEG   45.0f
 
 /* 8 个方位字符串 */
-static const char* dir8[8] = {
+static const char * dir8[8] = {
     "N", "NE", "E", "SE", "S", "SW", "W", "NW"
 };
 
 /* 3 个刻度上要显示的文本（左/中/右），最后一个 NULL 是结束标记 */
-static const char* s_scale_labels[4] = {"NW", "N", "NE", NULL};
+static const char * s_scale_labels[4] = {"NW", "N", "NE", NULL};
 
 /* 左侧 roll 标尺的“零位”旋转角度，和 create_roll_scale 里保持一致 */
 #define ROLL_ZERO_ROTATION   10
@@ -36,13 +36,13 @@ static bool s_pitch_inited = false;
 
 static float normalize_deg_360(float a)
 {
-    while (a < 0.0f) a += 360.0f;
-    while (a >= 360.0f) a -= 360.0f;
+    while(a < 0.0f) a += 360.0f;
+    while(a >= 360.0f) a -= 360.0f;
     return a;
 }
 
 /* 把任意角度映射成 N / NE / ... / NW */
-static const char* azimuth_from_deg(float deg)
+static const char * azimuth_from_deg(float deg)
 {
     float a = normalize_deg_360(deg);
     int idx = (int)((a + 22.5f) / 45.0f) & 7; /* 每 45° 一个扇区 */
@@ -52,7 +52,7 @@ static const char* azimuth_from_deg(float deg)
 /* 顶部方位角：整圆罗盘 */
 static void create_yaw_scale(void)
 {
-    if (!ui_yawscale) return;
+    if(!ui_yawscale) return;
 
     s_yaw = lv_scale_create(ui_yawscale);
     lv_obj_set_size(s_yaw, 194, 44);
@@ -104,7 +104,7 @@ static void create_yaw_scale(void)
 /* 左侧横滚：弧形刻度 */
 static void create_roll_scale(void)
 {
-    if (!ui_rollscale) return;
+    if(!ui_rollscale) return;
 
     s_roll = lv_scale_create(ui_rollscale);
     lv_obj_set_size(s_roll, 625, 625);
@@ -115,7 +115,7 @@ static void create_roll_scale(void)
     lv_scale_set_major_tick_every(s_roll, 5);
     lv_scale_set_label_show(s_roll, true);
 
-    static const char* custom_labels[] = {
+    static const char * custom_labels[] = {
         "     ", "   -160", "     ", "   -140", "     ", "   -120", "     ", "   -100", "     ", "   -80",
         "     ", "   -60", "     ", "   -40", "     ", "   -20", "     ", "   0", "     ", "   20",
         "     ", "   40", "     ", "   60", "     ", "   80", "     ", "   100", "     ", "   120",
@@ -157,20 +157,19 @@ static void create_roll_scale(void)
 /* 右侧俯仰：竖直刻度 */
 static void create_pitch_scale(void)
 {
-    if (!ui_pitchscale) return;
+    if(!ui_pitchscale) return;
 
     s_pitch = lv_scale_create(ui_pitchscale);
     lv_obj_set_size(s_pitch, 23, 940);
     lv_scale_set_mode(s_pitch, LV_SCALE_MODE_VERTICAL_LEFT);
     lv_obj_set_align(s_pitch, LV_ALIGN_CENTER);
 
-
     lv_scale_set_range(s_pitch, -90, 90);
     lv_scale_set_total_tick_count(s_pitch, 91); // -20..20 每 2° 一刻度
     lv_scale_set_major_tick_every(s_pitch, 5);
     lv_scale_set_label_show(s_pitch, true);
 
-    static const char* custom_labels[] = {
+    static const char * custom_labels[] = {
         "     ", "-80  ", "     ", "-60  ", "     ", "-40  ", "     ",
         "-20  ", "     ", "0  ", "     ", "20  ", "     ", "40  ",
         "     ", "60  ", "     ", "80  ", "     ", NULL
@@ -222,24 +221,21 @@ void ui_attitude_scale_init(void)
 /* 顶部罗盘：只改 rotation，让刻度盘转起来 */
 static void update_yaw(float yaw_raw_deg)
 {
-    if (s_yaw == NULL) return;
+    if(s_yaw == NULL) return;
 
     /* 传感器原始角度归一到 0~360 */
     yaw_raw_deg = normalize_deg_360(yaw_raw_deg);
 
-    if (!yaw_inited)
-    {
+    if(!yaw_inited) {
         yaw_unwrap = yaw_raw_deg;
         last_yaw_raw = yaw_raw_deg;
         yaw_inited = true;
-    }
-    else
-    {
+    } else {
         float diff = yaw_raw_deg - last_yaw_raw;
 
         /* 处理跨 0/360 的情况，保证 diff 在 (-180, 180] 范围 */
-        if (diff > 180.0f) diff -= 360.0f;
-        if (diff < -180.0f) diff += 360.0f;
+        if(diff > 180.0f) diff -= 360.0f;
+        if(diff < -180.0f) diff += 360.0f;
 
         yaw_unwrap += diff; /* 让 yaw_unwrap 连续增长/减小 */
         last_yaw_raw = yaw_raw_deg;
@@ -271,11 +267,11 @@ static void update_yaw(float yaw_raw_deg)
 /* 左侧横滚：保持窗口宽度 ±ROLL_WINDOW，改数值范围实现“滚动” */
 static void update_roll(float roll_deg)
 {
-    if (s_roll == NULL) return;
+    if(s_roll == NULL) return;
 
     /* 限制一下范围，防止传感器偶尔给出 >180 的数 */
-    if (roll_deg > 180.0f) roll_deg = 180.0f;
-    if (roll_deg < -180.0f) roll_deg = -180.0f;
+    if(roll_deg > 180.0f) roll_deg = 180.0f;
+    if(roll_deg < -180.0f) roll_deg = -180.0f;
 
     /*
      * ROLL_ZERO_ROTATION 对应 roll = 0° 时的标尺角度。
@@ -291,11 +287,11 @@ static void update_roll(float roll_deg)
 /* 右侧俯仰：通过平移 s_pitch，让刻度在红箭头后面上下滚动 */
 static void update_pitch(float pitch_deg)
 {
-    if (s_pitch == NULL || !s_pitch_inited || s_pitch_px_per_deg <= 0.0f) return;
+    if(s_pitch == NULL || !s_pitch_inited || s_pitch_px_per_deg <= 0.0f) return;
 
     /* 限制到 [-90, 90] */
-    if (pitch_deg > 90.0f) pitch_deg = 90.0f;
-    if (pitch_deg < -90.0f) pitch_deg = -90.0f;
+    if(pitch_deg > 90.0f) pitch_deg = 90.0f;
+    if(pitch_deg < -90.0f) pitch_deg = -90.0f;
 
     /*
      * 设计：pitch = 0° 时，s_pitch 在 s_pitch_y0；
@@ -321,40 +317,4 @@ void ui_attitude_scale_update(float yaw_deg,
     update_yaw(yaw_deg);
     update_roll(roll_deg);
     update_pitch(pitch_deg);
-}
-
-static void attitude_test_timer_cb(lv_timer_t * timer)
-{
-    LV_UNUSED(timer);
-
-    /* 静态变量：每次回调在上次基础上增加 */
-    static float yaw   = 0.0f;
-    static float roll  = -30.0f;
-    static float pitch = 0.0f;
-
-    /* 让 yaw 一直绕圈转（0~360） */
-    yaw += 2.0f;                 // 每次+2°
-    if(yaw >= 360.0f) yaw -= 360.0f;
-
-    /* roll 在 -30° ~ +30° 之间来回摆动 */
-    static float roll_dir = 1.0f;  // 1 往上，-1 往下
-    roll += roll_dir * 1.5f;
-    if(roll > 30.0f)  { roll = 30.0f;  roll_dir = -1.0f; }
-    if(roll < -30.0f) { roll = -30.0f; roll_dir =  1.0f; }
-
-    /* pitch 在 -20° ~ +20° 之间上下摆动 */
-    static float pitch_dir = 1.0f;
-    pitch += pitch_dir * 1.0f;
-    if(pitch > 20.0f)  { pitch = 20.0f;  pitch_dir = -1.0f; }
-    if(pitch < -20.0f) { pitch = -20.0f; pitch_dir =  1.0f; }
-
-    /* 调用你已有的更新函数 */
-    ui_attitude_scale_update(yaw, roll, pitch);
-}
-
-/* 对外提供一个接口：创建测试定时器 */
-void ui_attitude_start_test_timer(void)
-{
-    /* 每 50ms 更新一次，大约 20 FPS */
-    lv_timer_create(attitude_test_timer_cb, 50, NULL);
 }

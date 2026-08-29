@@ -276,7 +276,9 @@ void ui_event_pixel_item2(lv_event_t * e)
             if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
                 lv_group_focus_prev(keypad_group);
             } else {
-                g_app.bad_point.threshold -= 1;
+                if(g_app.bad_point.threshold != 0) {
+                    g_app.bad_point.threshold -= 1;
+                }
                 if(g_app.bad_point.threshold < g_app.bad_point.threshold_min) {
                     g_app.bad_point.threshold = g_app.bad_point.threshold_min;
                 }

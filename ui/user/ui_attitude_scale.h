@@ -14,5 +14,4 @@ void ui_attitude_scale_init(void);
 void ui_attitude_scale_update(float yaw_deg,
                               float roll_deg,
                               float pitch_deg);
-void ui_attitude_start_test_timer(void);
 #endif //ZKSL_75_6LC_UI_ATTITUDE_SCALE_H

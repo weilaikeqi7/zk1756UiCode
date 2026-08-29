@@ -174,6 +174,7 @@ void ui_ScrFileMgr_screen_init(void)
     ui_BTN1 = ui_BTN_create(ui_UPLIST);
     lv_obj_set_x(ui_BTN1, 0);
     lv_obj_set_y(ui_BTN1, 0);
+    lv_obj_set_width(ui_BTN1, 70);
 
     lv_label_set_text(ui_comp_get_child(ui_BTN1, UI_COMP_BTN_BTNL), "Search");
 

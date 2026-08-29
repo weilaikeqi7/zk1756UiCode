@@ -227,7 +227,7 @@ void ui_MainPage_screen_init(void)
     lv_obj_set_align(ui_dividing_image[2], LV_ALIGN_TOP_LEFT);
 
     ui_contstatusbar = ui_paneleg_create(ui_MainPage);
-    lv_obj_set_width(ui_contstatusbar, 1024);
+    lv_obj_set_width(ui_contstatusbar, lv_pct(100));
     lv_obj_set_height(ui_contstatusbar, 50);
     lv_obj_set_x(ui_contstatusbar, 0);
     lv_obj_set_y(ui_contstatusbar, 0);
