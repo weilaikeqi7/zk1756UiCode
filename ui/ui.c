@@ -51,7 +51,7 @@ void ui_init(void)
     timer_init();
     add_event_of_menu();
     ui____initial_actions0 = lv_obj_create(NULL);
-    lv_disp_load_scr(ui_MainPage);
+    lv_disp_load_scr(ui_self);
     lv_obj_set_style_bg_opa(lv_layer_bottom(), LV_OPA_TRANSP, LV_PART_MAIN);
 }
 

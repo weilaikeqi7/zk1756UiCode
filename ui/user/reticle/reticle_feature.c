@@ -387,12 +387,13 @@ void load_gun_cfg_to_ui(void)
     // 注意：load_from_cfg 会把 primary icon、selected style 都刷好
 }
 
-void send_reticle_common_req(int show, int rotate, int ballistic, int saveFlag)
+void send_reticle_common_req(int show, int rotate, int brightness, int ballistic, int saveFlag)
 {
     ReqSetReticleCommonConfig_st req = {
         .saveFlag = (ROE_U8)saveFlag,
         .showReticle = (ROE_S8)show,
         .rotateReticle = (ROE_S8)rotate,
+        .brightnessBall = (ROE_S8)brightness,
         .ballisticSolve = (ROE_S8)ballistic,
     };
     SendMsg4UiSetReticuleCommonConfigReq(global_parameters.sendMsgQueId, &req);

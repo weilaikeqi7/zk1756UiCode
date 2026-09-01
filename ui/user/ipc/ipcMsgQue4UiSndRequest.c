@@ -50,16 +50,19 @@ static ROE_S32 fillMsg4UiTransmission(ROE_U8 * buf, ROE_VOID * arg, ROE_S32 argS
 
 static ROE_S32 SendMsg4Ui(ROE_S32 msgQueId, ROE_SL msgType, ROE_VOID * param)
 {
-    if(msgQueId < 0 || msgType < 1 || !param) {
+    if(msgQueId < 0 || msgType < 1) {
         return ROE_FAILURE;
     }
-    ParamOfMsg4Ui_st * uiParam = (ParamOfMsg4Ui_st *)param;
+    ParamOfMsg4Ui_st * uiParam = param;
     RoeIpcMsgQueBuff_st msgBuf = {.msgType = msgType};
     RoeIpcMsgQueRawData_st * raw = (RoeIpcMsgQueRawData_st *)(msgBuf.msgData);
 
     raw->dataLength += setMsgHeader4Ui((MsgQueHeader4Ui_st *)raw->data, uiParam->version, uiParam->concreteType);
     raw->dataLength += fillMsg4UiTransmission(
-        raw->data + raw->dataLength, uiParam->pFormatParam, uiParam->formatParamSize, &uiParam->strData);
+        raw->data + raw->dataLength,
+        uiParam->pFormatParam,
+        uiParam->formatParamSize,
+        &uiParam->strData);
 
     if(msgsnd(msgQueId, &msgBuf, raw->dataLength + sizeof(raw->dataLength), IPC_NOWAIT) == -1) {
         return ROE_FAILURE;
@@ -68,11 +71,14 @@ static ROE_S32 SendMsg4Ui(ROE_S32 msgQueId, ROE_SL msgType, ROE_VOID * param)
     return ROE_SUCCESS;
 }
 
-static ROE_S32 SendMsg4UiConcreteType(
-    ROE_S32 msgQueId, ROE_S32 msgType, ROE_S32 msgTypeInit, void * arg, ROE_S32 argSize, StringData_st * pStrData)
+static ROE_S32 SendMsg4UiConcreteType(ROE_S32 msgQueId,
+                                      ROE_S32 msgType,
+                                      void * arg,
+                                      ROE_S32 argSize,
+                                      StringData_st * pStrData)
 {
     ParamOfMsg4Ui_st uiParam = {.version = UI_MSG_VERSION,
-                                .concreteType = msgType - msgTypeInit,
+                                .concreteType = msgType - MSG_4_REQ_RES_INIT,
                                 .pFormatParam = arg,
                                 .formatParamSize = argSize};
     if(pStrData) {
@@ -83,6 +89,5 @@ static ROE_S32 SendMsg4UiConcreteType(
 
 ROE_S32 SendMsg4UiReq(ROE_S32 msgQueId, ROE_S32 msgType, void * arg, ROE_S32 argSize, StringData_st * pStrData)
 {
-    return SendMsg4UiConcreteType(msgQueId, msgType, MSG_4_REQ_RES_INIT, arg, argSize, pStrData);
+    return SendMsg4UiConcreteType(msgQueId, msgType, arg, argSize, pStrData);
 }
-

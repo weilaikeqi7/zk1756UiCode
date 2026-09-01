@@ -58,9 +58,10 @@ ROE_S32 handlePeripheralSelfTest(ROE_U8 * msgData)
 {
     NotifySelfCheck_st * selfCheck = (NotifySelfCheck_st *)msgData;
     int sum = 0;
-
+    LV_LOG_USER("selfCheck->selfCheckState = %d", selfCheck->selfCheckState);
     for(int i = 0; i < SELF_ITEM_NUM; i++) {
         lv_label_set_text(ui_self_item_label[i], self_info[selfCheck->selfItem[i]]);
+        LV_LOG_USER("selfCheck->selfItem[%d] = %d", i, selfCheck->selfItem[i]);
         if(selfCheck->selfItem[i] == 2) {
             lv_obj_set_style_text_color(ui_self_item_label[i], lv_color_hex(0xFF3B30), LV_PART_MAIN | LV_STATE_DEFAULT);
         }
@@ -74,6 +75,11 @@ ROE_S32 handlePeripheralSelfTest(ROE_U8 * msgData)
             self_timer = lv_timer_create(self_timer_cb, 1000, NULL);
         } else {
             popup_stack_push(&g_popup_stack, &g_popup_self);
+        }
+        if(selfCheck->selfItem[2] == 1) {
+            lv_obj_set_style_image_recolor_opa(ui_imgsd, LV_OPA_100, LV_PART_MAIN);
+        } else {
+            lv_obj_set_style_image_recolor_opa(ui_imgsd, LV_OPA_0, LV_PART_MAIN);
         }
     }
     return ROE_SUCCESS;
@@ -118,14 +124,24 @@ ROE_S32 handleCompassCalibrationNotify(ROE_U8 * msgData)
 ROE_S32 handleDialogBoxNotify(ROE_U8 * msgData)
 {
     NotifyDialog_st * dialog = (NotifyDialog_st *)msgData;
+    LV_LOG_USER("dialog->dialogType:%d, dialog->option:%d", dialog->dialogType, dialog->option);
     if(dialog->dialogType == 0) {
         if(dialog->option == 0) {
+            if(&g_popup_self == popup_stack_get_top(&g_popup_stack)) {
+                lv_disp_load_scr(ui_MainPage);
+            }
             popup_stack_pop(&g_popup_stack);
             if(popup_stack_depth(&g_popup_stack) == 0) {
                 SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
             }
         } else if(dialog->option == 1) {
-            popup_stack_pop_all(&g_popup_stack);
+            int depth = popup_stack_depth(&g_popup_stack);
+            for(int i = 0; i < depth; i++) {
+                if(&g_popup_self == popup_stack_get_top(&g_popup_stack)) {
+                    lv_disp_load_scr(ui_MainPage);
+                }
+                popup_stack_pop(&g_popup_stack);
+            }
             SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
         }
     } else if(dialog->dialogType == 2) {
@@ -137,7 +153,7 @@ ROE_S32 handleDialogBoxNotify(ROE_U8 * msgData)
 ROE_S32 handleMenuNotify(ROE_U8 * msgData)
 {
     NotifyMenuMode_st * menu = (NotifyMenuMode_st *)msgData;
-    // LV_LOG_USER("menu->action:%d, menu->option:%d", menu->action, menu->option);
+    LV_LOG_USER("menu->action:%d, menu->option:%d", menu->action, menu->option);
     if(menu->action == 0) {
         if(menu->option == 0) {
             g_my_keypad_btn_points[3] = 1;

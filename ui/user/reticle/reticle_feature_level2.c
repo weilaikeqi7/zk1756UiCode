@@ -206,7 +206,7 @@ void ev_visible(lv_event_t * e)
 
     if(key == LV_KEY_ENTER) {
         reticle_cfg_t * cfg = reticle_model_cfg();
-        send_reticle_common_req(cfg->visible ? 0 : 1, -1, -1, 0);
+        send_reticle_common_req(cfg->visible ? 0 : 1, -1, -1, -1, 0);
     } else {
         ev_level2_common_nav(e);
     }
@@ -225,7 +225,7 @@ void ev_rotate(lv_event_t * e)
 
     if(key == LV_KEY_ENTER) {
         reticle_cfg_t * cfg = reticle_model_cfg();
-        send_reticle_common_req(-1, cfg->rotate ? 0 : 1, -1, 0);
+        send_reticle_common_req(-1, cfg->rotate ? 0 : 1, -1, -1, 0);
     } else {
         ev_level2_common_nav(e);
     }

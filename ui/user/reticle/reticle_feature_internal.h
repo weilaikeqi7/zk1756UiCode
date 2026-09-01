@@ -68,7 +68,7 @@ void load_global_cfg_to_ui(void);
 void load_gun_cfg_to_ui(void);
 
 /* 协议请求发送 */
-void send_reticle_common_req(int show, int rotate, int ballistic, int saveFlag);
+void send_reticle_common_req(int show, int rotate, int brightness, int ballistic, int saveFlag);
 
 void send_query_current_gun(void);
 

@@ -147,4 +147,5 @@ ROE_S32 handleParseWeaponSetShootZeroMsg(ROE_U8 * msgData);
 
 ROE_S32 handleParseWeaponSaveConfigMsg(ROE_U8 * msgData);
 
+ROE_S32 handleParseWeaponBrightnessAdjustMsg(ROE_U8 * msgData);
 #endif //ZKSL_75_6LC_HANDLERCVRES_H

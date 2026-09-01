@@ -71,6 +71,15 @@ ROE_S32 SendMsg4UiWeaponSetReticleColorReq(ROE_S32 msgQueId, ReqWeaponSetReticle
                          ROE_NULL);
 }
 
+ROE_S32 SendMsg4UiWeqponSetBrightnessReq(ROE_S32 msgQueId, ReqWeaponSetBrightness_st * weaponSetBrightness)
+{
+    return SendMsg4UiReq(msgQueId,
+                         MSG_4_REQ_RES_WEAPON_SET_RETICLE_LUMA,
+                         weaponSetBrightness,
+                         sizeof(ReqWeaponSetBrightness_st),
+                         ROE_NULL);
+}
+
 ROE_S32 SendMsg4UiWeaponSetDefaltShootDistReq(ROE_S32 msgQueId,
                                               ReqWeaponSetDefaultShootDist_st * weaponSetDefaltShootDist)
 {

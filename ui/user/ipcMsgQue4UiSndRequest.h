@@ -367,6 +367,11 @@ typedef struct {
     ROE_U8 reticleColorIndex; // 分划板颜色索引 1-最大索引
 } ReqWeaponSetReticleColor_st;
 
+/* 5.1.4 武器分划板亮度设置 */
+typedef struct {
+    ROE_U8 brightness; //分划板亮度 0-100
+} ReqWeaponSetBrightness_st;
+
 /* 3.65 武器默认射击距离设置 */
 typedef struct {
     ROE_U8 videoChannel;
@@ -536,6 +541,8 @@ ROE_S32 SendMsg4UiWeaponSetReticleColorReq(ROE_S32 msgQueId, ReqWeaponSetReticle
 
 ROE_S32 SendMsg4UiWeaponSetDefaltShootDistReq(ROE_S32 msgQueId,
                                               ReqWeaponSetDefaultShootDist_st * weaponSetDefaltShootDist);
+
+ROE_S32 SendMsg4UiWeqponSetBrightnessReq(ROE_S32 msgQueId, ReqWeaponSetBrightness_st * weaponSetBrightness);
 
 ROE_S32 SendMsg4UiWeaponOperateShootDistReq(ROE_S32 msgQueId, ReqWeaponOperateShootDist_st * weaponSetShootDist);
 

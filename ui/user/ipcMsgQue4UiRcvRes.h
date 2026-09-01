@@ -461,6 +461,12 @@ typedef struct {
     ROE_U8 reticleColorIndex;
 } RspWeaponSetReticleColor_st;
 
+/* 5.1.4*/
+typedef struct {
+    MsgQueHeader4Ui_st head;
+    ROE_U8 result;
+} RspWeaponSetBrightness_st;
+
 /* 3.65 武器默认射击距离设置 */
 typedef struct {
     MsgQueHeader4Ui_st head;

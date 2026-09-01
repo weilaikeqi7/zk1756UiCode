@@ -126,6 +126,7 @@ void ui_event_rowballistic(lv_event_t * e)
                     .saveFlag = (ROE_U8)1,
                     .showReticle = (ROE_S8)-1,
                     .rotateReticle = (ROE_S8)-1,
+                    .brightnessBall = (ROE_S8)-1,
                     .ballisticSolve = (ROE_S8)0,
                 };
                 SendMsg4UiSetReticuleCommonConfigReq(global_parameters.sendMsgQueId, &req);
@@ -134,6 +135,7 @@ void ui_event_rowballistic(lv_event_t * e)
                     .saveFlag = (ROE_U8)1,
                     .showReticle = (ROE_S8)-1,
                     .rotateReticle = (ROE_S8)-1,
+                    .brightnessBall = (ROE_S8)-1,
                     .ballisticSolve = (ROE_S8)1,
                 };
                 SendMsg4UiSetReticuleCommonConfigReq(global_parameters.sendMsgQueId, &req);

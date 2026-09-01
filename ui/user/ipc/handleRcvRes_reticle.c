@@ -215,6 +215,12 @@ ROE_S32 handleParseWeaponSetReticleColorMsg(ROE_U8 * msgData)
     return ROE_SUCCESS;
 }
 
+ROE_S32 handleParseWeaponBrightnessAdjustMsg(ROE_U8 * msgData)
+{
+    RspWeaponSetBrightness_st * result = (RspWeaponSetBrightness_st *)msgData;
+    return ROE_SUCCESS;
+}
+
 /* 处理 3.65：设置优先距离。
  * 默认索引以下位机返回的 defaultDistIndex 为准。 */
 ROE_S32 handleParseWeaponSetDefaultShootDistanceMsg(ROE_U8 * msgData)

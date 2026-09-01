@@ -57,6 +57,11 @@ void * message_recv_thread(void * arg)
         lv_unlock();
     }
 
+    ReqRegister_st reqRegister = {.reg = 0};
+    if(SendMsg4UiRegisterReq(msg_args->sendMsgQueId, &reqRegister)) {
+        LV_LOG_USER("SendMsg4UiRegisterReq() failed!\n");
+    }
+
     if(-1 != msg_args->sendMsgQueId) {
         msgctl(msg_args->sendMsgQueId, IPC_RMID, NULL);
     }

@@ -36,7 +36,7 @@ static FtHandleReqRes_st f_ShootingDifferentiation[
     handleParseSetReticleCommonConfigMsg,
     handleParseWeaponSetReticleStyleMsg,
     handleParseWeaponSetReticleColorMsg,
-    NULL,
+    handleParseWeaponBrightnessAdjustMsg,
     handleParseWeaponSaveConfigMsg,
     handleParseWeaponMarkConfigOperateMsg,
     handleParseWeaponSetDefaultShootDistanceMsg,
@@ -46,6 +46,7 @@ static FtHandleReqRes_st f_ShootingDifferentiation[
 };
 
 static FtHandleReqRes_st f_VideoOutputDisplay[MSG_4_REQ_RES_VIDEO_OUTPUT_BUTT - MSG_4_REQ_RES_VIDEO_OUTPUT_OFFSET] = {
+    NULL,
     handleParseAdjustOledBrightnessMsg,
     handleParseAdjustOledContrastMsg,
     handleParseAdjustExtendDisplaySwitchStatusMsg,
@@ -201,6 +202,13 @@ ROE_S32 ParseResMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
         ROE_U32 idx = msgType - MSG_4_REQ_RES_SYSTEM_USER_INTERFACE_OFFSET;
         if(f_SystemUserInterface[idx] != NULL) {
             return f_SystemUserInterface[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_RETICLE_GENERAL_OFFSET && msgType < MSG_4_REQ_RES_RETICLE_GENERAL_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_RETICLE_GENERAL_OFFSET;
+        if(f_ShootingDifferentiation[idx] != NULL) {
+            return f_ShootingDifferentiation[idx](msgData);
         }
     }
 
