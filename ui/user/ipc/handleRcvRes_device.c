@@ -66,9 +66,6 @@ ROE_S32 handleParseShutdownMsg(ROE_U8 * msgData)
 {
     RspShutdown_st * result = (RspShutdown_st *)msgData;
     /* 处理关机结果 */
-    if(result->result == 0) {
-        popup_stack_pop(&g_popup_stack);
-    }
     return ROE_SUCCESS;
 }
 

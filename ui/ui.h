@@ -39,6 +39,7 @@ extern "C" {
 #include "screens/ui_ScrFileMgr.h"
 #include "screens/ui_PlayBar.h"
 #include "screens/ui_Temp.h"
+#include "screens/ui_Self.h"
 ///////////////////// VARIABLES ////////////////////
 
 // EVENTS

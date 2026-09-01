@@ -11,6 +11,7 @@ set(UI_GENERATED_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/screens/ui_PlayBar.c
         ${CMAKE_CURRENT_SOURCE_DIR}/screens/ui_ScrFileMgr.c
         ${CMAKE_CURRENT_SOURCE_DIR}/screens/ui_Temp.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/screens/ui_Self.c
         ${CMAKE_CURRENT_SOURCE_DIR}/components/ui_comp.c
         ${CMAKE_CURRENT_SOURCE_DIR}/components/ui_comp_btn.c
         ${CMAKE_CURRENT_SOURCE_DIR}/components/ui_comp_cmpdatetimebar.c

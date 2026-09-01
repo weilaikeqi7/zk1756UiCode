@@ -8,6 +8,7 @@
 #include "roeTypes.h"
 #include "msg.h"
 #include "ipcMsgQue4UiTypeCommon.h"
+#include "ui_Self.h"
 
 #pragma pack(push, 1)
 
@@ -28,13 +29,7 @@ typedef struct {
 typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 selfCheckState;
-    ROE_U8 visibleLight;
-    ROE_U8 infrared;
-    ROE_U8 sdCard;
-    ROE_U8 wifi;
-    ROE_U8 laser;
-    ROE_U8 compass;
-    ROE_U8 satellite;
+    ROE_U8 selfItem[SELF_ITEM_NUM];
 } NotifySelfCheck_st;
 
 /* 4. 电子罗盘信息 */

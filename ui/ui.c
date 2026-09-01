@@ -40,6 +40,9 @@ void ui_init(void)
     lv_port_indev_init();
     lv_group_set_editing(keypad_group, false);
     popup_stack_init(&g_popup_stack, indev_keypad);
+    if(app_args.self_pass_index == 1) {
+        ui_self_screen_init();
+    }
     ui_MainPage_screen_init();
     ui_attitude_scale_init();
     ui_ScrFileMgr_screen_init();
@@ -58,4 +61,5 @@ void ui_destroy(void)
     ui_ScrFileMgr_screen_destroy();
     ui_PlayBar_screen_destroy();
     ui_Temp_screen_destroy();
+    ui_self_screen_destroy();
 }

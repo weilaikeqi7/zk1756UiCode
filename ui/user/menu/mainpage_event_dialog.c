@@ -201,11 +201,15 @@ void ui_event_powerOffOK(lv_event_t * e)
         case LV_KEY_ENTER:
             SendMsg4UiShutdownReq(global_parameters.sendMsgQueId);
             popup_stack_pop(&g_popup_stack);
-            SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+            if(popup_stack_depth(&g_popup_stack) == 0) {
+                SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+            }
             break;
         case LV_KEY_ESC:
             popup_stack_pop(&g_popup_stack);
-            SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+            if(popup_stack_depth(&g_popup_stack) == 0) {
+                SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+            }
             break;
         default:
             break;
@@ -228,15 +232,30 @@ void ui_event_powerOffCancel(lv_event_t * e)
             lv_group_focus_prev(g_popup_poweroff.group);
             break;
         case LV_KEY_ENTER:
-            popup_stack_pop(&g_popup_stack);
-            SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
-            break;
         case LV_KEY_ESC:
             popup_stack_pop(&g_popup_stack);
-            SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+            if(popup_stack_depth(&g_popup_stack) == 0) {
+                SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+            }
             break;
         default:
             break;
+        }
+    }
+}
+
+void ui_event_self_button(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        if(key == LV_KEY_ENTER || key == LV_KEY_ESC) {
+            popup_stack_pop(&g_popup_stack);
+            if(popup_stack_depth(&g_popup_stack) == 0) {
+                SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+            }
+            lv_disp_load_scr(ui_MainPage);
         }
     }
 }

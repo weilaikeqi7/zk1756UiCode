@@ -161,6 +161,8 @@ void ui_event_powerOffOK(lv_event_t * e);
 
 void ui_event_powerOffCancel(lv_event_t * e);
 
+void ui_event_self_button(lv_event_t * e);
+
 void ui_event_bad_pixel(lv_event_t * e);
 
 void ui_event_pixel_return(lv_event_t * e);
