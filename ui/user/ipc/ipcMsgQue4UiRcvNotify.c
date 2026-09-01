@@ -103,48 +103,104 @@ ROE_S32 ParseNotifyMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
     ROE_U8 * msgData = rawData->data;
 
     if(msgType >= MSG_4_NOTIFY_SYSTEM_OFFSET && msgType < MSG_4_NOTIFY_SYSTEM_BUTT) {
-        return f_systemFunction[msgType - MSG_4_NOTIFY_SYSTEM_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_SYSTEM_OFFSET;
+        if(f_systemFunction[idx] != NULL) {
+            return f_systemFunction[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_RETICLE_OFFSET && msgType < MSG_4_NOTIFY_RETICLE_BUTT) {
-        return f_shootingDifferentiation[msgType - MSG_4_NOTIFY_RETICLE_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_RETICLE_OFFSET;
+        if(f_shootingDifferentiation[idx] != NULL) {
+            return f_shootingDifferentiation[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_VIDEO_OUTPUT_OFFSET && msgType < MSG_4_NOTIFY_VIDEO_OUTPUT_BUTT) {
-        return f_videoOutputDisplay[msgType - MSG_4_NOTIFY_VIDEO_OUTPUT_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_VIDEO_OUTPUT_OFFSET;
+        if(f_videoOutputDisplay[idx] != NULL) {
+            return f_videoOutputDisplay[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_VIDEO_INPUT_OFFSET && msgType < MSG_4_NOTIFY_VIDEO_INPUT_BUTT) {
-        return f_videoCaptureInput[msgType - MSG_4_NOTIFY_VIDEO_INPUT_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_VIDEO_INPUT_OFFSET;
+        if(f_videoCaptureInput[idx] != NULL) {
+            return f_videoCaptureInput[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_AUDIO_OFFSET && msgType < MSG_4_NOTIFY_AUDIO_BUTT) {
-        return f_audioInputAndOutput[msgType - MSG_4_NOTIFY_AUDIO_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_AUDIO_OFFSET;
+        if(f_audioInputAndOutput[idx] != NULL) {
+            return f_audioInputAndOutput[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_MEDIA_FILE_OFFSET && msgType < MSG_4_NOTIFY_MEDIA_FILE_BUTT) {
-        return f_mediaFile[msgType - MSG_4_NOTIFY_MEDIA_FILE_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_MEDIA_FILE_OFFSET;
+        if(f_mediaFile[idx] != NULL) {
+            return f_mediaFile[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_PERIPHERAL_GENERAL_OFFSET && msgType < MSG_4_NOTIFY_PERIPHERAL_GENERAL_BUTT) {
-        return f_externalDeviceGenerally[msgType - MSG_4_NOTIFY_PERIPHERAL_GENERAL_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_PERIPHERAL_GENERAL_OFFSET;
+        if(f_externalDeviceGenerally[idx] != NULL) {
+            return f_externalDeviceGenerally[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_PERIPHERAL_NETWORK_OFFSET && msgType < MSG_4_NOTIFY_PERIPHERAL_NETWORK_BUTT) {
-        return f_network[msgType - MSG_4_NOTIFY_PERIPHERAL_NETWORK_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_PERIPHERAL_NETWORK_OFFSET;
+        if(f_network[idx] != NULL) {
+            return f_network[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_PERIPHERAL_CAMERA_MODULE_OFFSET && msgType <
        MSG_4_NOTIFY_PERIPHERAL_CAMERA_MODULE_BUTT) {
-        return f_visibleLightModule[msgType - MSG_4_NOTIFY_PERIPHERAL_CAMERA_MODULE_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_PERIPHERAL_CAMERA_MODULE_OFFSET;
+        if(f_visibleLightModule[idx] != NULL) {
+            return f_visibleLightModule[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_PERIPHERAL_INFRARED_MODULE_OFFSET && msgType <
        MSG_4_NOTIFY_PERIPHERAL_INFRARED_MODULE_BUTT) {
-        return f_infraredModule[msgType - MSG_4_NOTIFY_PERIPHERAL_INFRARED_MODULE_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_PERIPHERAL_INFRARED_MODULE_OFFSET;
+        if(f_infraredModule[idx] != NULL) {
+            return f_infraredModule[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_PERIPHERAL_COMPASS_OFFSET && msgType < MSG_4_NOTIFY_PERIPHERAL_COMPASS_BUTT) {
-        return f_externalDeviceGenerally[msgType - MSG_4_NOTIFY_PERIPHERAL_COMPASS_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_PERIPHERAL_COMPASS_OFFSET;
+        if(f_externalDeviceGenerally[idx] != NULL) {
+            return f_externalDeviceGenerally[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_PERIPHERAL_GNSS_OFFSET && msgType < MSG_4_NOTIFY_PERIPHERAL_GNSS_BUTT) {
-        return f_satellitePositioning[msgType - MSG_4_NOTIFY_PERIPHERAL_GNSS_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_PERIPHERAL_GNSS_OFFSET;
+        if(f_satellitePositioning[idx] != NULL) {
+            return f_satellitePositioning[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_PERIPHERAL_RANGE_FINDER_OFFSET && msgType < MSG_4_NOTIFY_PERIPHERAL_RANGE_FINDER_BUTT) {
-        return f_rangefinder[msgType - MSG_4_NOTIFY_PERIPHERAL_RANGE_FINDER_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_PERIPHERAL_RANGE_FINDER_OFFSET;
+        if(f_rangefinder[idx] != NULL) {
+            return f_rangefinder[idx](msgData);
+        }
     }
+
     if(msgType >= MSG_4_NOTIFY_PERIPHERAL_PANTILT_OFFSET && msgType < MSG_4_NOTIFY_PERIPHERAL_PANTILT_BUTT) {
-        return f_holder[msgType - MSG_4_NOTIFY_PERIPHERAL_PANTILT_OFFSET](msgData);
+        uint32_t idx = msgType - MSG_4_NOTIFY_PERIPHERAL_PANTILT_OFFSET;
+        if(f_holder[idx] != NULL) {
+            return f_holder[idx](msgData);
+        }
     }
+
     return ROE_FAILURE;
 }

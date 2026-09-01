@@ -5,156 +5,333 @@
 #include "ipcMsgQue4UiRcvRes.h"
 #include "handleRcvRes.h"
 
+typedef ROE_S32 (*FtHandleReqRes_st)(ROE_U8 * msgData);
+
+static FtHandleReqRes_st f_SystemFunction[MSG_4_REQ_RES_SYSTEM_GENERAL_BUTT - MSG_4_REQ_RES_SYSTEM_GENERAL_OFFSET] = {
+    handleParseRegisterMsg,
+    handleParseShutdownMsg,
+    handleParseGetAppVersionMsg,
+    handleParseSetSystemTimeMsg,
+    handleParseFormatDiskPartitionMsg,
+};
+
+static FtHandleReqRes_st f_SystemConfiguration[MSG_4_REQ_RES_SYSTEM_CONFIG_BUTT - MSG_4_REQ_RES_SYSTEM_CONFIG_OFFSET] =
+{
+    handleParseRestoreFactorySettingMsg,
+    handleParseSaveLanguageConfigMsg,
+    handleParseGetUserCommonConfigMsg,
+    handleParseSetUserCommonConfigMsg,
+    handleParseGetUserMediaConfigMsg,
+    handleParseSetUserMediaConfigMsg,
+};
+
+static FtHandleReqRes_st f_SystemUserInterface[MSG_4_REQ_RES_SYSTEM_USER_INTERFACE_BUTT -
+                                               MSG_4_REQ_RES_SYSTEM_USER_INTERFACE_OFFSET] = {
+    handleParseExitMenuMsg,
+    handleParseExitDialogBoxMsg,
+};
+
+static FtHandleReqRes_st f_ShootingDifferentiation[
+    MSG_4_REQ_RES_RETICLE_GENERAL_BUTT - MSG_4_REQ_RES_RETICLE_GENERAL_OFFSET] = {
+    handleParseSetReticleCommonConfigMsg,
+    handleParseWeaponSetReticleStyleMsg,
+    handleParseWeaponSetReticleColorMsg,
+    NULL,
+    handleParseWeaponSaveConfigMsg,
+    handleParseWeaponMarkConfigOperateMsg,
+    handleParseWeaponSetDefaultShootDistanceMsg,
+    handleParseWeaponOperateShootDistanceMsg,
+    handleParseWeaponSetShootPositionMsg,
+    handleParseWeaponSetShootZeroMsg,
+};
+
+static FtHandleReqRes_st f_VideoOutputDisplay[MSG_4_REQ_RES_VIDEO_OUTPUT_BUTT - MSG_4_REQ_RES_VIDEO_OUTPUT_OFFSET] = {
+    handleParseAdjustOledBrightnessMsg,
+    handleParseAdjustOledContrastMsg,
+    handleParseAdjustExtendDisplaySwitchStatusMsg,
+    handleParseAdjustPipSwitchStatusMsg,
+    handleParseAdjustVideoZoomMsg,
+    handleParseFreezeVideoInputMsg,
+    handleParseAdjustRecognitionSwitchStatusMsg,
+};
+
+static FtHandleReqRes_st f_VideoCaptureInput[MSG_4_REQ_RES_VIDEO_INPUT_GENERAL_BUTT -
+                                             MSG_4_REQ_RES_VIDEO_INPUT_GENERAL_OFFSET] = {
+    NULL,
+    handleParseAdjustObserveModeMsg,
+    handleParseAdjustPipObserveModeMsg,
+};
+
+static FtHandleReqRes_st f_VisibleLight[MSG_4_REQ_RES_VIDEO_INPUT_CAMERA_BUTT - MSG_4_REQ_RES_VIDEO_INPUT_CAMERA_OFFSET]
+    =
+    {
+        NULL,
+        handleParseAdjustDaynightSwitchStatusMsg,
+        handleParseAdjustCameraBrightnessMsg,
+        handleParseAdjustCameraContrastMsg,
+        handleParseAdjustCameraSaturationMsg,
+        handleParseAdjustCameraHueMsg,
+        handleParseAdjustFogSwitchStatusMsg,
+        handleParseAdjustFogIntensityMsg,
+        NULL,
+    };
+
+static FtHandleReqRes_st f_LowOllumination[MSG_4_REQ_RES_VIDEO_INPUT_LOW_LIGHT_BUTT -
+                                           MSG_4_REQ_RES_VIDEO_INPUT_LOW_LIGHT_OFFSET] = {
+    NULL,
+};
+
+static FtHandleReqRes_st f_Infrared[MSG_4_REQ_RES_VIDEO_INPUT_INFRARED_BUTT - MSG_4_REQ_RES_VIDEO_INPUT_INFRARED_OFFSET]
+    = {
+        NULL,
+        handleParseAdjustInfraredPseudocolorModeMsg,
+        handleParseAdjustInfraredBrightnessMsg,
+        handleParseAdjustInfraredContrastMsg,
+        handleParseInfraredEnhanceImageMsg,
+        handleParseInfraredAdjustScenarioModeMsg,
+        handleParseInfraredSwitchHotspotTrackingMsg,
+    };
+
+static FtHandleReqRes_st f_RemoteVideo[MSG_4_REQ_RES_VIDEO_INPUT_REMOTE_BUTT - MSG_4_REQ_RES_VIDEO_INPUT_REMOTE_OFFSET]
+    = {
+        NULL,
+    };
+
+static FtHandleReqRes_st f_AudioInputAndOutput[MSG_4_REQ_RES_AUDIO_BUTT - MSG_4_REQ_RES_AUDIO_GENERAL_OFFSET] = {
+    NULL,
+};
+
+static FtHandleReqRes_st f_MediaFile[MSG_4_REQ_RES_MEDIA_FILE_BUTT - MSG_4_REQ_RES_MEDIA_FILE_OFFSET] = {
+    NULL,
+    NULL,
+    handleParseGetMediaFileListMsg,
+    handleParseExitPlaybackMediaListMsg,
+    handleParseDelMediaFileMsg,
+    handleParsePlayMediaFileMsg,
+    handleParsePlayPriorOrNextMediaFileMsg,
+    handleParseExitMediaPlayStatusMsg,
+};
+
+static FtHandleReqRes_st F_usb[MSG_4_REQ_RES_PERIPHERAL_USB_BUTT - MSG_4_REQ_RES_PERIPHERAL_USB_OFFSET] = {
+    NULL,
+};
+
+static FtHandleReqRes_st f_Network[MSG_4_REQ_RES_PERIPHERAL_NETWORK_BUTT - MSG_4_REQ_RES_PERIPHERAL_NETWORK_OFFSET] = {
+    NULL,
+    handleParseAdjustWifiSwitchMsg,
+    handleParseGetWifiInfoMsg,
+};
+
+static FtHandleReqRes_st f_VisibleLightModule[MSG_4_REQ_RES_PERIPHERAL_CAMERA_MODULE_BUTT -
+                                              MSG_4_REQ_RES_PERIPHERAL_CAMERA_MODULE_OFFSET] = {
+    NULL,
+};
+
+static FtHandleReqRes_st f_LowLightModule[MSG_4_REQ_RES_PERIPHERAL_LOW_LIGHT_MODULE_BUTT -
+                                          MSG_4_REQ_RES_PERIPHERAL_LOW_LIGHT_MODULE_OFFSET] = {
+    NULL,
+};
+
+static FtHandleReqRes_st f_InfraredModule[MSG_4_REQ_RES_PERIPHERAL_INFRARED_MODULE_BUTT -
+                                          MSG_4_REQ_RES_PERIPHERAL_INFRARED_MODULE_OFFSET] = {
+    NULL,
+    NULL,
+    handleParseInfraredSetBadPixelThresholdMsg,
+    handleParseInfraredBadPixelOperateMsg,
+    handleParseInfraredHotPixelRepairOperateMsg,
+    NULL,
+};
+
+static FtHandleReqRes_st f_RomoteVideoEquipment[MSG_4_REQ_RES_PERIPHERAL_REMOTE_VIDEO_MODULE_BUTT -
+                                                MSG_4_REQ_RES_PERIPHERAL_REMOTED_VIDEO_MODULE_OFFSET] = {
+    NULL,
+};
+
+static FtHandleReqRes_st f_ElectronicCompass[MSG_4_REQ_RES_PERIPHERAL_COMPASS_BUTT -
+                                             MSG_4_REQ_RES_PERIPHERAL_COMPASS_OFFSET] = {
+    NULL,
+    handleParseAdjustCompassSwitchStatusMsg,
+    handleParseSetCompassMagneticDeclinationMsg,
+    handleParseSaveCompassConfigMsg,
+    handleParseStartCompassCalibrationMsg,
+    handleParseStopCompassCalibrationMsg,
+};
+
+static FtHandleReqRes_st f_SatellitePositioning[MSG_4_REQ_RES_PERIPHERAL_GNSS_BUTT -
+                                                MSG_4_REQ_RES_PERIPHERAL_GNSS_OFFSET] = {
+    NULL,
+    handleParseAdjustGnssSwitchStatusMsg,
+    handleParseAdjustGnssPositionSystemMsg,
+    handleParseAdjustCoordinateSystemMsg,
+};
+
+static FtHandleReqRes_st f_RangeFinder[MSG_4_REQ_RES_PERIPHERAL_RANGE_FINDER_BUTT -
+                                       MSG_4_REQ_RES_PERIPHERAL_RANGE_FINDER_OFFSET] = {
+    NULL,
+    handleParseAdjustRangeFinderSwitchStatusMsg,
+    handleParseAdjustRangeFrequencyMsg,
+    handleParseAdjustRangeTimeDurationMsg,
+};
+
+static FtHandleReqRes_st f_Holder[MSG_4_REQ_RES_PERIPHERAL_PANTILT_BUTT - MSG_4_REQ_RES_PERIPHERAL_PANTILT_OFFSET] = {
+    NULL,
+    handleParsePanTiltMovingControlMsg,
+    handleParsePanTiltMovingSpeedControlMsg,
+};
+
 ROE_S32 ParseResMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
 {
     ROE_U8 * msgData = rawData->data;
-    switch((RoeIpcMsgQue4UiType_e)msgType) {
-    case MSG_4_REQ_RES_LOG_IN_OUT:
-        return handleParseRegisterMsg(msgData);
-    case MSG_4_REQ_RES_SHUTDOWN:
-        return handleParseShutdownMsg(msgData);
-    case MSG_4_REQ_RES_GET_VERSION_INFO:
-        return handleParseGetAppVersionMsg(msgData);
-    case MSG_4_REQ_RES_SET_SYSTEM_TIME:
-        return handleParseSetSystemTimeMsg(msgData);
-    case MSG_4_REQ_RES_FORMAT_DISK_PARTITION:
-        return handleParseFormatDiskPartitionMsg(msgData);
-    case MSG_4_REQ_RES_RESTORE_FACTORY_SETTING:
-        return handleParseRestoreFactorySettingMsg(msgData);
-    case MSG_4_REQ_RES_SAVE_LANGUAGE_CONFIG:
-        return handleParseSaveLanguageConfigMsg(msgData);
-    case MSG_4_REQ_RES_GET_USER_COMMON_CONFIG:
-        return handleParseGetUserCommonConfigMsg(msgData);
-    case MSG_4_REQ_RES_SET_USER_COMMON_CONFIG:
-        return handleParseSetUserCommonConfigMsg(msgData);
-    case MSG_4_REQ_RES_GET_USER_MEDIA_CONFIG:
-        return handleParseGetUserMediaConfigMsg(msgData);
-    case MSG_4_REQ_RES_SET_USER_MEDIA_CONFIG:
-        return handleParseSetUserMediaConfigMsg(msgData);
-    case MSG_4_REQ_RES_EXIT_MENU_MODE:
-        return handleParseExitMenuMsg(msgData);
-    case MSG_4_REQ_RES_EXIT_DIALOG_BOX:
-        return handleParseExitDialogBoxMsg(msgData);
-    case MSG_4_REQ_RES_SET_RETICLE_COMMON_CONFIG:
-        return handleParseSetReticleCommonConfigMsg(msgData);
-    case MSG_4_REQ_RES_WEAPON_SET_RETICLE_STYLE:
-        return handleParseWeaponSetReticleStyleMsg(msgData);
-    case MSG_4_REQ_RES_WEAPON_SET_RETICLE_COLOR:
-        return handleParseWeaponSetReticleColorMsg(msgData);
-    case MSG_4_REQ_RES_WEAPON_SET_RETICLE_LUMA:
-        return ROE_SUCCESS;
-    case MSG_4_REQ_RES_WEAPON_SAVE_CONFIG:
-        return handleParseWeaponSaveConfigMsg(msgData);
-    case MSG_4_REQ_RES_WEAPON_OPERATE_MARK_CONFIG:
-        return handleParseWeaponMarkConfigOperateMsg(msgData);
-    case MSG_4_REQ_RES_WEAPON_SET_DEFAULT_SHOOT_DISTANCE:
-        return handleParseWeaponSetDefaultShootDistanceMsg(msgData);
-    case MSG_4_REQ_RES_WEAPON_OPERATE_SHOOT_DISTANCE:
-        return handleParseWeaponOperateShootDistanceMsg(msgData);
-    case MSG_4_REQ_RES_WEAPON_SET_SHOOT_POSITION:
-        return handleParseWeaponSetShootPositionMsg(msgData);
-    case MSG_4_REQ_RES_WEAPON_SET_SHOOT_ZERO:
-        return handleParseWeaponSetShootZeroMsg(msgData);
-    case MSG_4_REQ_RES_MAIN_DISPLAY_BRIGHTNESS_ADJUST:
-        return handleParseAdjustOledBrightnessMsg(msgData);
-    case MSG_4_REQ_RES_MAIN_DISPLAY_CONTRAST_ADJUST:
-        return handleParseAdjustOledContrastMsg(msgData);
-    case MSG_4_REQ_RES_EXTEND_DISPLAY_SWITCH:
-        return handleParseAdjustExtendDisplaySwitchStatusMsg(msgData);
-    case MSG_4_REQ_RES_PIP_SWITCH:
-        return handleParseAdjustPipSwitchStatusMsg(msgData);
-    case MSG_4_REQ_RES_VIDEO_ZOOM:
-        return handleParseAdjustVideoZoomMsg(msgData);
-    case MSG_4_REQ_RES_VIDEO_OUTPUT_FREEZE:
-        return handleParseFreezeVideoInputMsg(msgData);
-    case MSG_4_REQ_RES_OBJECT_RECOGNITION_SWITCH:
-        return handleParseAdjustRecognitionSwitchStatusMsg(msgData);
-    case MSG_4_REQ_RES_MAIN_OBSERVE_MODE_SWITCHING:
-        return handleParseAdjustObserveModeMsg(msgData);
-    case MSG_4_REQ_RES_PIP_OBSERVE_MODE_SWITCHING:
-        return handleParseAdjustPipObserveModeMsg(msgData);
-    case MSG_4_REQ_RES_CAMERA_DAYNIGHT_MODE_SWITCHING:
-        return handleParseAdjustDaynightSwitchStatusMsg(msgData);
-    case MSG_4_REQ_RES_CAMERA_BRIGHTNESS_ADJUST:
-        return handleParseAdjustCameraBrightnessMsg(msgData);
-    case MSG_4_REQ_RES_CAMERA_CONTRAST_ADJUST:
-        return handleParseAdjustCameraContrastMsg(msgData);
-    case MSG_4_REQ_RES_CAMERA_SATURATION_ADJUST:
-        return handleParseAdjustCameraSaturationMsg(msgData);
-    case MSG_4_REQ_RES_CAMERA_HUE_ADJUST:
-        return handleParseAdjustCameraHueMsg(msgData);
-    case MSG_4_REQ_RES_CAMERA_DEHAZE_SWITCH:
-        return handleParseAdjustFogSwitchStatusMsg(msgData);
-    case MSG_4_REQ_RES_CAMERA_DEHAZE_STRENGTH_ADJUST:
-        return handleParseAdjustFogIntensityMsg(msgData);
-    case MSG_4_REQ_RES_INFRARED_PSEUDOCOLOR_MODE_SWITCHING:
-        return handleParseAdjustInfraredPseudocolorModeMsg(msgData);
-    case MSG_4_REQ_RES_INFRARED_BRIGHTNESS_ADJUST:
-        return handleParseAdjustInfraredBrightnessMsg(msgData);
-    case MSG_4_REQ_RES_INFRARED_CONTRAST_ADJUST:
-        return handleParseAdjustInfraredContrastMsg(msgData);
-    case MSG_4_REQ_RES_INFRARED_IMAGE_ENHANCE_ADJUST:
-        return handleParseInfraredEnhanceImageMsg(msgData);
-    case MSG_4_REQ_RES_INFRARED_SCENARIO_MODE_SWITCHING:
-        return handleParseInfraredAdjustScenarioModeMsg(msgData);
-    case MSG_4_REQ_RES_INFRARED_HOTSPOT_TRACKING_SWITCH:
-        return handleParseInfraredSwitchHotspotTrackingMsg(msgData);
-    case MSG_4_REQ_RES_CAPTURE_MEDIA_FILE:
-        return ROE_SUCCESS;
-    case MSG_4_REQ_RES_RECORD_MEDIA_FILE:
-        return ROE_SUCCESS;
-    case MSG_4_REQ_RES_GET_MEDIA_FILE_LIST:
-        return handleParseGetMediaFileListMsg(msgData);
-    case MSG_4_REQ_RES_EXIT_PLAYBACK_MEDIA_LIST:
-        return handleParseExitPlaybackMediaListMsg(msgData);
-    case MSG_4_REQ_RES_DEL_MEDIA_FILE:
-        return handleParseDelMediaFileMsg(msgData);
-    case MSG_4_REQ_RES_PLAY_MEDIA_FILE:
-        return handleParsePlayMediaFileMsg(msgData);
-    case MSG_4_REQ_RES_PLAY_ADJACENT_MEDIA_FILE:
-        return handleParsePlayPriorOrNextMediaFileMsg(msgData);
-    case MSG_4_REQ_RES_STOP_MEDIA_FILE_PLAY:
-        return handleParseExitMediaPlayStatusMsg(msgData);
-    case MSG_4_REQ_RES_WIFI_SWITCH:
-        return handleParseAdjustWifiSwitchMsg(msgData);
-    case MSG_4_REQ_RES_GET_WIFI_INFO:
-        return handleParseGetWifiInfoMsg(msgData);
-    case MSG_4_REQ_RES_INFRARED_MANUAL_REMOVE_BAD_PIXEL:
-        return ROE_SUCCESS;
-    case MSG_4_REQ_RES_INFRARED_SET_BAD_PIXEL_THRESHOLD:
-        return handleParseInfraredSetBadPixelThresholdMsg(msgData);
-    case MSG_4_REQ_RES_INFRARED_BAD_PIXEL_OPERATE:
-        return handleParseInfraredBadPixelOperateMsg(msgData);
-    case MSG_4_REQ_RES_INFRARED_HOT_PIXEL_REPAIR_OPERATE:
-        return handleParseInfraredHotPixelRepairOperateMsg(msgData);
-    case MSG_4_REQ_RES_COMPASS_SWITCH:
-        return handleParseAdjustCompassSwitchStatusMsg(msgData);
-    case MSG_4_REQ_RES_COMPASS_SET_MAGNETIC_DECLINATION:
-        return handleParseSetCompassMagneticDeclinationMsg(msgData);
-    case MSG_4_REQ_RES_COMPASS_SAVE_CONFIG:
-        return handleParseSaveCompassConfigMsg(msgData);
-    case MSG_4_REQ_RES_COMPASS_START_CALIBRATION:
-        return handleParseStartCompassCalibrationMsg(msgData);
-    case MSG_4_REQ_RES_COMPASS_STOP_CALIBRATION:
-        return handleParseStopCompassCalibrationMsg(msgData);
-    case MSG_4_REQ_RES_GNSS_SWITCH:
-        return handleParseAdjustGnssSwitchStatusMsg(msgData);
-    case MSG_4_REQ_RES_GNSS_POSITION_SYSTEM_SWITCHING:
-        return handleParseAdjustGnssPositionSystemMsg(msgData);
-    case MSG_4_REQ_RES_GNSS_COORDINATE_SYSTEM_SWITCHING:
-        return handleParseAdjustCoordinateSystemMsg(msgData);
-    case MSG_4_REQ_RES_RANGE_FINDER_OPERATE:
-        return handleParseAdjustRangeFinderSwitchStatusMsg(msgData);
-    case MSG_4_REQ_RES_RANGE_FREQUENCY_ADJUST:
-        return handleParseAdjustRangeFrequencyMsg(msgData);
-    case MSG_4_REQ_RES_RANGE_TIME_DURATION_ADJUST:
-        return handleParseAdjustRangeTimeDurationMsg(msgData);
-    case MSG_4_REQ_RES_PANTILT_MOVING_CONTROL:
-        return handleParsePanTiltMovingControlMsg(msgData);
-    case MSG_4_REQ_RES_PANTILT_MOVING_SPEED_ADJUST:
-        handleParsePanTiltMovingSpeedControlMsg(msgData);
-    default:
-        break;
+
+    if(msgType >= MSG_4_REQ_RES_SYSTEM_GENERAL_OFFSET && msgType < MSG_4_REQ_RES_SYSTEM_GENERAL_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_SYSTEM_GENERAL_OFFSET;
+        if(f_SystemFunction[idx] != NULL) {
+            return f_SystemFunction[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_SYSTEM_CONFIG_OFFSET && msgType < MSG_4_REQ_RES_SYSTEM_CONFIG_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_SYSTEM_CONFIG_OFFSET;
+        if(f_SystemConfiguration[idx] != NULL) {
+            return f_SystemConfiguration[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_SYSTEM_USER_INTERFACE_OFFSET && msgType < MSG_4_REQ_RES_SYSTEM_USER_INTERFACE_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_SYSTEM_USER_INTERFACE_OFFSET;
+        if(f_SystemUserInterface[idx] != NULL) {
+            return f_SystemUserInterface[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_VIDEO_OUTPUT_OFFSET && msgType < MSG_4_REQ_RES_VIDEO_OUTPUT_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_VIDEO_OUTPUT_OFFSET;
+        if(f_VideoOutputDisplay[idx] != NULL) {
+            return f_VideoOutputDisplay[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_VIDEO_INPUT_GENERAL_OFFSET && msgType < MSG_4_REQ_RES_VIDEO_INPUT_GENERAL_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_VIDEO_INPUT_GENERAL_OFFSET;
+        if(f_VideoCaptureInput[idx] != NULL) {
+            return f_VideoCaptureInput[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_VIDEO_INPUT_CAMERA_OFFSET && msgType < MSG_4_REQ_RES_VIDEO_INPUT_CAMERA_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_VIDEO_INPUT_CAMERA_OFFSET;
+        if(f_VisibleLight[idx] != NULL) {
+            return f_VisibleLight[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_VIDEO_INPUT_LOW_LIGHT_OFFSET && msgType < MSG_4_REQ_RES_VIDEO_INPUT_LOW_LIGHT_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_VIDEO_INPUT_LOW_LIGHT_OFFSET;
+        if(f_LowOllumination[idx] != NULL) {
+            return f_LowOllumination[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_VIDEO_INPUT_INFRARED_OFFSET && msgType < MSG_4_REQ_RES_VIDEO_INPUT_INFRARED_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_VIDEO_INPUT_INFRARED_OFFSET;
+        if(f_Infrared[idx] != NULL) {
+            return f_Infrared[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_VIDEO_INPUT_REMOTE_OFFSET && msgType < MSG_4_REQ_RES_VIDEO_INPUT_REMOTE_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_VIDEO_INPUT_REMOTE_OFFSET;
+        if(f_RemoteVideo[idx] != NULL) {
+            return f_RemoteVideo[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_AUDIO_GENERAL_OFFSET && msgType < MSG_4_REQ_RES_AUDIO_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_AUDIO_GENERAL_OFFSET;
+        if(f_AudioInputAndOutput[idx] != NULL) {
+            return f_AudioInputAndOutput[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_MEDIA_FILE_OFFSET && msgType < MSG_4_REQ_RES_MEDIA_FILE_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_MEDIA_FILE_OFFSET;
+        if(f_MediaFile[idx] != NULL) {
+            return f_MediaFile[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_USB_OFFSET && msgType < MSG_4_REQ_RES_PERIPHERAL_USB_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_PERIPHERAL_USB_OFFSET;
+        if(F_usb[idx] != NULL) {
+            return F_usb[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_NETWORK_OFFSET && msgType < MSG_4_REQ_RES_PERIPHERAL_NETWORK_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_PERIPHERAL_NETWORK_OFFSET;
+        if(f_Network[idx] != NULL) {
+            return f_Network[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_CAMERA_MODULE_OFFSET && msgType <
+       MSG_4_REQ_RES_PERIPHERAL_CAMERA_MODULE_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_PERIPHERAL_CAMERA_MODULE_OFFSET;
+        if(f_VisibleLightModule[idx] != NULL) {
+            return f_VisibleLightModule[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_LOW_LIGHT_MODULE_OFFSET && msgType <
+       MSG_4_REQ_RES_PERIPHERAL_LOW_LIGHT_MODULE_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_PERIPHERAL_LOW_LIGHT_MODULE_OFFSET;
+        if(f_LowLightModule[idx] != NULL) {
+            return f_LowLightModule[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_INFRARED_MODULE_OFFSET && msgType <
+       MSG_4_REQ_RES_PERIPHERAL_INFRARED_MODULE_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_PERIPHERAL_INFRARED_MODULE_OFFSET;
+        if(f_InfraredModule[idx] != NULL) {
+            return f_InfraredModule[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_REMOTED_VIDEO_MODULE_OFFSET && msgType <
+       MSG_4_REQ_RES_PERIPHERAL_REMOTE_VIDEO_MODULE_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_PERIPHERAL_REMOTED_VIDEO_MODULE_OFFSET;
+        if(f_RomoteVideoEquipment[idx] != NULL) {
+            return f_RomoteVideoEquipment[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_COMPASS_OFFSET && msgType < MSG_4_REQ_RES_PERIPHERAL_COMPASS_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_PERIPHERAL_COMPASS_OFFSET;
+        if(f_ElectronicCompass[idx] != NULL) {
+            return f_ElectronicCompass[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_GNSS_OFFSET && msgType < MSG_4_REQ_RES_PERIPHERAL_GNSS_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_PERIPHERAL_GNSS_OFFSET;
+        if(f_SatellitePositioning[idx] != NULL) {
+            return f_SatellitePositioning[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_RANGE_FINDER_OFFSET && msgType <
+       MSG_4_REQ_RES_PERIPHERAL_RANGE_FINDER_BUTT) {
+        ROE_U32 idx = msgType - MSG_4_REQ_RES_PERIPHERAL_RANGE_FINDER_OFFSET;
+        if(f_RangeFinder[idx] != NULL) {
+            return f_RangeFinder[idx](msgData);
+        }
+    }
+
+    if(msgType >= MSG_4_REQ_RES_PERIPHERAL_PANTILT_OFFSET && msgType < MSG_4_REQ_RES_PERIPHERAL_PANTILT_BUTT) {
+        if(f_Holder[msgType - MSG_4_REQ_RES_PERIPHERAL_PANTILT_OFFSET] != NULL) {
+            return f_Holder[msgType - MSG_4_REQ_RES_PERIPHERAL_PANTILT_OFFSET](msgData);
+        }
     }
     return ROE_FAILURE;
 }
