@@ -120,5 +120,7 @@ void add_event_of_menu(void)
                         ui_event_DialogPixelClearCancel,
                         LV_EVENT_ALL,
                         ui_comp_get_child(ui_DialogPixelClear, UI_COMP_DIALOGEG_DIALOGCANCEL));
-    lv_obj_add_event_cb(ui_self_button_label, ui_event_self_button, LV_EVENT_ALL, ui_self_button_label);
+    if(app_args.self_pass_index == 1) {
+        lv_obj_add_event_cb(ui_self_button_label, ui_event_self_button, LV_EVENT_ALL, ui_self_button_label);
+    }
 }
