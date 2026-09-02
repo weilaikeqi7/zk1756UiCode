@@ -100,6 +100,8 @@ static FtHandleNotify_st f_holder[MSG_4_NOTIFY_PERIPHERAL_PANTILT_BUTT - MSG_4_N
 
 ROE_S32 ParseNotifyMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
 {
+    if(!rawData) return ROE_FAILURE;
+
     ROE_U8 * msgData = rawData->data;
 
     if(msgType >= MSG_4_NOTIFY_SYSTEM_OFFSET && msgType < MSG_4_NOTIFY_SYSTEM_BUTT) {
@@ -176,8 +178,8 @@ ROE_S32 ParseNotifyMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
 
     if(msgType >= MSG_4_NOTIFY_PERIPHERAL_COMPASS_OFFSET && msgType < MSG_4_NOTIFY_PERIPHERAL_COMPASS_BUTT) {
         uint32_t idx = msgType - MSG_4_NOTIFY_PERIPHERAL_COMPASS_OFFSET;
-        if(f_externalDeviceGenerally[idx] != NULL) {
-            return f_externalDeviceGenerally[idx](msgData);
+        if(f_electronicCompass[idx] != NULL) {
+            return f_electronicCompass[idx](msgData);
         }
     }
 

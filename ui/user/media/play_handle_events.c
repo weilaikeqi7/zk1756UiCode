@@ -8,7 +8,7 @@
 void ui_event_PlayList_1(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
-    ReqGetMediaFileList_st getMediaFileList;
+    ReqGetMediaFileList_st getMediaFileList = {0};
     getMediaFileList.reqFileType = -1;
     if(event_code == LV_EVENT_KEY) {
         uint32_t key = lv_indev_get_key(lv_indev_active());
@@ -254,7 +254,7 @@ void ui_event_PlayList_1_5(lv_event_t * e)
 void ui_event_PlayList_6(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
-    ReqGetMediaFileList_st getMediaFileList;
+    ReqGetMediaFileList_st getMediaFileList = {0};
     getMediaFileList.reqFileType = -1;
     if(event_code == LV_EVENT_KEY) {
         uint32_t key = lv_indev_get_key(lv_indev_active());

@@ -148,4 +148,29 @@ ROE_S32 handleParseWeaponSetShootZeroMsg(ROE_U8 * msgData);
 ROE_S32 handleParseWeaponSaveConfigMsg(ROE_U8 * msgData);
 
 ROE_S32 handleParseWeaponBrightnessAdjustMsg(ROE_U8 * msgData);
+
+/* Framework handlers for protocol operations that currently only need
+ * protocol-level parsing and result propagation. */
+ROE_S32 handleParseGetVideoOutputParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetVideoInputParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetVideoInputCameraParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetVideoInputLowLightParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetVideoInputInfraredParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetVideoInputRemoteParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseAdjustCameraExposureMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetAudioParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseCaptureMediaFileMsg(ROE_U8 * msgData);
+ROE_S32 handleParseRecordMediaFileMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralUsbParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralNetworkParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralCameraModuleParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralLowLightModuleParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralInfraredModuleParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralRemotedVideoModuleParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralCompassParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralGnssParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralRangeFinderParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseGetPeripheralPanTiltParaMsg(ROE_U8 * msgData);
+ROE_S32 handleParseInfraredManualRemoveBadPixelMsg(ROE_U8 * msgData);
+ROE_S32 handleParseInfraredSdNucMsg(ROE_U8 * msgData);
 #endif //ZKSL_75_6LC_HANDLERCVRES_H

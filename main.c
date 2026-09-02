@@ -8,8 +8,9 @@
 #include "handleNotify.h"
 #include <signal.h>
 #include <getopt.h>
+#include "ui/user/core/ipc_event_queue.h"
 
-GlobalParameters global_parameters;
+GlobalParameters global_parameters = {.sendMsgQueId = -1, .recvMsgQueId = -1, .g_quit = 0};
 AppArgs app_args;
 
 static void app_args_init(AppArgs * args)
@@ -59,7 +60,8 @@ void * message_ui_thread(void * arg)
     GlobalParameters * global_parameters_ptr = (GlobalParameters *)arg;
     uint32_t idle_time;
 
-    while(!global_parameters_ptr->g_quit) {
+    while(!atomic_load(&global_parameters_ptr->g_quit)) {
+        process_pending_ipc_events();
         idle_time = lv_timer_handler();
         usleep(idle_time * 1000);
     }
@@ -81,11 +83,13 @@ void * message_sig_thread(void * arg)
     while(sigwait(&sig_set, &sig) == 0) {
         switch(sig) {
         case SIGINT:
-            global_parameters_ptr->g_quit = 1;
-            break;
+            atomic_store(&global_parameters_ptr->g_quit, 1);
+            ui_ipc_event_queue_stop();
+            return NULL;
         case SIGTERM:
-            global_parameters_ptr->g_quit = 1;
-            break;
+            atomic_store(&global_parameters_ptr->g_quit, 1);
+            ui_ipc_event_queue_stop();
+            return NULL;
         case SIGTSTP:
             raise(SIGSTOP);
             break;
@@ -176,17 +180,33 @@ int main(int argc, char * argv[])
     sigaddset(&sig_set, SIGINT);
     sigaddset(&sig_set, SIGTSTP);
     sigaddset(&sig_set, SIGTERM);
-    pthread_sigmask(SIG_UNBLOCK, &sig_set, NULL);
+    if(pthread_sigmask(SIG_BLOCK, &sig_set, NULL) != 0) {
+        fprintf(stderr, "failed to block process signals\n");
+        return 1;
+    }
 
     lv_init();
     lv_linux_disp_init();
     ui_init();
-    pthread_create(&recvMsgThread, NULL, message_recv_thread, &global_parameters);
-    pthread_create(&uiThread, NULL, message_ui_thread, &global_parameters);
-    pthread_create(&sigThread, NULL, message_sig_thread, &global_parameters);
+    ui_ipc_event_queue_init();
 
-    pthread_join(recvMsgThread, NULL);
-    pthread_join(uiThread, NULL);
+    int sigThreadCreated = pthread_create(&sigThread, NULL, message_sig_thread, &global_parameters) == 0;
+    int recvMsgThreadCreated = pthread_create(&recvMsgThread, NULL, message_recv_thread, &global_parameters) == 0;
+    int uiThreadCreated = pthread_create(&uiThread, NULL, message_ui_thread, &global_parameters) == 0;
+    if(!sigThreadCreated || !recvMsgThreadCreated || !uiThreadCreated) {
+        fprintf(stderr, "failed to create application thread\n");
+        atomic_store(&global_parameters.g_quit, 1);
+        ui_ipc_event_queue_stop();
+    }
+
+    if(recvMsgThreadCreated) pthread_join(recvMsgThread, NULL);
+    if(uiThreadCreated) pthread_join(uiThread, NULL);
+
+    ui_ipc_event_queue_stop();
+    if(sigThreadCreated) {
+        pthread_cancel(sigThread);
+        pthread_join(sigThread, NULL);
+    }
 
     ui_font_deinit();
     ui_destroy();

@@ -9,6 +9,8 @@
 #include "reticle_model.h"
 #include "reticle_feature.h"
 #include "mainpage_event_handle.h"
+#include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -191,6 +193,24 @@ ROE_S32 handleKeyEventNotify(ROE_U8 * msgData)
 ROE_S32 handleResourcePathNotify(ROE_U8 * msgData)
 {
     NotifyPath_st * path = (NotifyPath_st *)msgData;
+    const ROE_U8 * data = path->pathData;
+    char pathText[4][256] = {{0}};
+
+    for(ROE_U8 i = 0; i < 4; i++) {
+        ROE_U8 pathLen = *data++;
+        ROE_SIZE copyLen = pathLen;
+        if(copyLen >= sizeof(pathText[i])) {
+            copyLen = sizeof(pathText[i]) - 1U;
+        }
+        memcpy(pathText[i], data, copyLen);
+        pathText[i][copyLen] = '\0';
+        data += pathLen;
+    }
+    LV_LOG_USER("resource paths: media=%s bitmap=%s handheld=%s calibration=%s",
+                pathText[0],
+                pathText[1],
+                pathText[2],
+                pathText[3]);
     return ROE_SUCCESS;
 }
 
@@ -377,9 +397,18 @@ ROE_S32 handleReticleInfoUpdatingNotify(ROE_U8 * msgData)
         lv_obj_set_pos(ui_dividing_image[i],
                        -dividingPlatesinfo[i]->cuttingX,
                        -dividingPlatesinfo[i]->cuttingY);
-        rename((char *)dividingPlatesinfo[i]->name, imageName[i]);
+        char sourceName[256] = {0};
+        ROE_SIZE nameLen = dividingPlatesinfo[i]->nameLen;
+        if(nameLen >= sizeof(sourceName)) {
+            nameLen = sizeof(sourceName) - 1U;
+        }
+        memcpy(sourceName, dividingPlatesinfo[i]->name, nameLen);
+        sourceName[nameLen] = '\0';
+        if(sourceName[0] != '\0') {
+            rename(sourceName, imageName[i]);
+        }
         lv_memset(name, 0, 256);
-        sprintf(name, "A:%s", imageName[i]);
+        snprintf(name, sizeof(name), "A:%s", imageName[i]);
         lv_image_set_src(ui_dividing_image[i], name);
         lv_obj_update_layout(ui_dividing_contimage[i]);
     }

@@ -174,7 +174,7 @@ typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 result;
     ROE_U32 totalCount; // 符合条件的总文件数量
-    ROE_U8 fileCount; // 本次返回文件实际数量 (0-15)
+    ROE_U8 fileCount; // 本次返回文件实际数量 (0-UI_MAX_MEDIA_FILE_NUM_ONE_PAGE)
     /* 后面紧跟 fileCount 个媒体文件信息，每个信息为变长结构 MediaFileInfo_st */
     ROE_U8 fileData[];
 } RspGetMediaFileList_st;
@@ -193,7 +193,7 @@ typedef struct {
 typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 result;
-    ROE_U8 fileCount; // 本次返回文件实际数量 (0-15)
+    ROE_U8 fileCount; // 本次返回文件实际数量 (0-UI_MAX_MEDIA_FILE_NUM_ONE_PAGE)
     /* 后面紧跟 fileCount 个媒体文件信息 */
     ROE_U8 fileData[];
 } RspGetMediaFileListPage_st;
@@ -202,9 +202,6 @@ typedef struct {
 typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 result;
-    ROE_U8 fileCount; // 本次返回文件实际数量 (0-15)
-    /* 后面紧跟 fileCount 个媒体文件信息 */
-    ROE_U8 fileData[];
 } RspDelMediaFile_st;
 
 /* 3.30 媒体文件播放 */
@@ -531,6 +528,77 @@ typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 result;
 } RspWeaponSaveConfig_st;
+
+typedef struct {
+    MsgQueHeader4Ui_st head;
+    ROE_U8 result;
+} RspResultOnly_st;
+
+typedef RspResultOnly_st RspGetVideoOutputPara_st;
+typedef RspResultOnly_st RspGetVideoInputPara_st;
+
+typedef struct {
+    MsgQueHeader4Ui_st head;
+    ROE_U8 result;
+    ROE_U32 minExposureTimeUs;
+    ROE_U32 maxExposureTimeUs;
+} RspGetVideoInputCameraPara_st;
+
+typedef RspResultOnly_st RspGetVideoInputLowLightPara_st;
+
+typedef struct {
+    MsgQueHeader4Ui_st head;
+    ROE_U8 result;
+    ROE_U8 pseudoColorCount;
+} RspGetVideoInputInfraredPara_st;
+
+typedef struct {
+    MsgQueHeader4Ui_st head;
+    ROE_U8 result;
+    ROE_U8 pseudoColorCount;
+} RspGetVideoInputRemotePara_st;
+
+typedef RspResultOnly_st RspAdjustCameraExposure_st;
+typedef RspResultOnly_st RspGetAudioPara_st;
+typedef RspResultOnly_st RspCaptureMediaFile_st;
+
+typedef struct {
+    MsgQueHeader4Ui_st head;
+    ROE_U8 recordSwitch;
+    ROE_U8 result;
+} RspRecordMediaFile_st;
+
+typedef RspResultOnly_st RspGetPeripheralUsbPara_st;
+typedef RspResultOnly_st RspGetPeripheralNetworkPara_st;
+typedef RspResultOnly_st RspGetPeripheralCameraModulePara_st;
+typedef RspResultOnly_st RspGetPeripheralLowLightModulePara_st;
+
+typedef struct {
+    MsgQueHeader4Ui_st head;
+    ROE_U8 result;
+    ROE_U8 supportsManualNuc;
+    ROE_U8 supportsAutoNuc;
+    ROE_U8 supportsTwoPointNuc;
+    ROE_U8 supportsManualBadPixelRemoval;
+    ROE_U8 supportsAutoBadPixelRemoval;
+    ROE_U8 supportsHotPixelRepair;
+} RspGetPeripheralInfraredModulePara_st;
+
+typedef RspResultOnly_st RspGetPeripheralRemotedVideoModulePara_st;
+
+typedef struct {
+    MsgQueHeader4Ui_st head;
+    ROE_U8 result;
+    ROE_U8 supportsManualCalibration;
+    ROE_U8 supportsCalibrationEvaluation;
+    ROE_U8 supportsSampleCountDuringCalibration;
+} RspGetPeripheralCompassPara_st;
+
+typedef RspResultOnly_st RspGetPeripheralGnssPara_st;
+typedef RspResultOnly_st RspGetPeripheralRangeFinderPara_st;
+typedef RspResultOnly_st RspGetPeripheralPanTiltPara_st;
+typedef RspResultOnly_st RspInfraredManualRemoveBadPixel_st;
+typedef RspResultOnly_st RspInfraredSdNuc_st;
 
 #pragma pack(pop)
 

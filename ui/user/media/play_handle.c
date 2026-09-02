@@ -4,6 +4,7 @@
 
 #include "play_handle.h"
 #include <math.h>
+#include <string.h>
 #include "play_handle_internal.h"
 
 FindDateTime findDateTime;
@@ -14,7 +15,7 @@ lv_obj_t * ui_focus_temp[30];
 
 void show_play_page(void)
 {
-    ReqGetMediaFileList_st getMediaFileList;
+    ReqGetMediaFileList_st getMediaFileList = {0};
     time_t rawtime;
     struct tm * timeinfo;
 
@@ -134,15 +135,22 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
     }
     LV_LOG_USER("fileList->fileCount:%d, fileList->totalCount:%d", fileList->fileCount, fileList->totalCount);
     for(int i = 9; i < fileList->fileCount + 9; i++) {
+        char fileName[256] = {0};
+        ROE_SIZE nameLen = fileInfo[i - 9]->nameLen;
+        if(nameLen >= sizeof(fileName)) {
+            nameLen = sizeof(fileName) - 1U;
+        }
+        memcpy(fileName, fileInfo[i - 9]->name, nameLen);
+        fileName[nameLen] = '\0';
         LV_LOG_USER("%d %lld %d %d %s",
                     fileInfo[i - 9]->type,
                     fileInfo[i - 9]->size,
                     fileInfo[i - 9]->duration,
                     fileInfo[i - 9]->createTime,
-                    fileInfo[i - 9]->name);
+                    fileName);
         char buf[256] = {0};
         ui_PlayList[i] = ui_listItem_create(ui_List_Container);
-        lv_label_set_text(ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_1), (const char *)fileInfo[i - 9]->name);
+        lv_label_set_text(ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_1), fileName);
         int64_t bytes = fileInfo[i - 9]->size;
         const char * units[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
         int uint_index = 0;

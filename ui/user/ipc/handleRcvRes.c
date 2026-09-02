@@ -5,6 +5,8 @@
 #include "ipcMsgQue4UiRcvRes.h"
 #include "handleRcvRes.h"
 #include "play_handle.h"
+#include <stdio.h>
+#include <string.h>
 
 ROE_S32 handleParseRegisterMsg(ROE_U8 * msgData)
 {
@@ -172,20 +174,23 @@ ROE_S32 handleParseAdjustWifiSwitchMsg(ROE_U8 * msgData)
 ROE_S32 handleParseGetWifiInfoMsg(ROE_U8 * msgData)
 {
     RspGetWifiInfo_st * result = (RspGetWifiInfo_st *)msgData;
-    ROE_S8 * wifiInfo[3] = {ROE_NULL}; //0:ssid, 1: key 2:rtspServerAddr
     /* 处理 WIFI 信息获取结果 */
     if(result->result == 0) {
-        char infoStr[512];
+        char wifiInfo[3][256] = {{0}}; // 0:ssid, 1:key, 2:rtspServerAddr
         msgData += sizeof(RspGetWifiInfo_st);
-        ROE_U8 curLen;
 
         for(ROE_U8 index = 0; index < 3; index++) {
-            curLen = *msgData;
-            msgData += 1;
-            wifiInfo[index] = (ROE_S8 *)msgData;
+            ROE_U8 curLen = *msgData++;
+            ROE_SIZE copyLen = curLen;
+            if(copyLen >= sizeof(wifiInfo[index])) {
+                copyLen = sizeof(wifiInfo[index]) - 1U;
+            }
+            memcpy(wifiInfo[index], msgData, copyLen);
+            wifiInfo[index][copyLen] = '\0';
             msgData += curLen;
         }
-        lv_strcpy(infoStr, lv_label_get_text(ui_infoLabel));
+        char infoStr[512];
+        snprintf(infoStr, sizeof(infoStr), "%s", lv_label_get_text(ui_infoLabel));
         LV_LOG_USER("Hotspot Name: %s", wifiInfo[0]);
         LV_LOG_USER("Password: %s", wifiInfo[1]);
         LV_LOG_USER("Video URL: %s", wifiInfo[2]);
@@ -205,10 +210,14 @@ ROE_S32 handleParseGetAppVersionMsg(ROE_U8 * msgData)
     RspGetAppVersion_st * result = (RspGetAppVersion_st *)msgData;
     /* 处理版本信息获取结果 */
     if(result->result == 0) {
-        /* 解析版本号字符串 */
-        ROE_U8 * versionStr = result->version;
-        // versionStr[0:verLen] 为版本字符串
-        lv_label_set_text(ui_infoLabel, (const char *)versionStr);
+        char versionStr[256] = {0};
+        ROE_SIZE copyLen = result->verLen;
+        if(copyLen >= sizeof(versionStr)) {
+            copyLen = sizeof(versionStr) - 1U;
+        }
+        memcpy(versionStr, result->version, copyLen);
+        versionStr[copyLen] = '\0';
+        lv_label_set_text(ui_infoLabel, versionStr);
     }
     return ROE_SUCCESS;
 }

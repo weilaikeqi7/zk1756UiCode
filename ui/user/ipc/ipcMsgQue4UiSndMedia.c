@@ -7,6 +7,10 @@
 
 ROE_S32 SendMsg4UiGetMediaFileListReq(ROE_S32 msgQueId, ReqGetMediaFileList_st * getMediaFileList)
 {
+    if(!getMediaFileList || getMediaFileList->reqCount > UI_MAX_MEDIA_FILE_NUM_ONE_PAGE) {
+        return ROE_FAILURE;
+    }
+
     return SendMsg4UiReq(
         msgQueId,
         MSG_4_REQ_RES_GET_MEDIA_FILE_LIST,

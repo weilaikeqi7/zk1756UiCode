@@ -116,7 +116,7 @@ void ui_event_PlayList_prev(lv_event_t * e)
         case LV_KEY_ENTER:
             playlist_state.req_type = 2;
             if(playlist_state.current_page_index > 1) {
-                ReqGetMediaFileList_st getMediaFileList;
+                ReqGetMediaFileList_st getMediaFileList = {0};
                 getMediaFileList.reqFileType = -1;
                 if(playlist_state.find_type == 1) {
                     getMediaFileList.year = 2024;
@@ -189,7 +189,7 @@ void ui_event_PlayList_next(lv_event_t * e)
         case LV_KEY_ENTER:
             playlist_state.req_type = 3;
             if(playlist_state.current_page_index < (int32_t)playlist_state.total_page_index) {
-                ReqGetMediaFileList_st getMediaFileList;
+                ReqGetMediaFileList_st getMediaFileList = {0};
                 getMediaFileList.reqFileType = -1;
                 if(playlist_state.find_type == 1) {
                     getMediaFileList.year = 2024;

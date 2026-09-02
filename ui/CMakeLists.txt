@@ -40,6 +40,8 @@ set(UI_GENERATED_SOURCES
 set(UI_CORE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/app_state.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/font.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_event_queue.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_validate.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/lv_port_indev.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/msg.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/popup_stack.c
@@ -53,6 +55,7 @@ set(UI_IPC_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_media.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_device.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_framework.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_usercfg.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_reticle.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvNotify.c
@@ -61,6 +64,7 @@ set(UI_IPC_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndSystem.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndMedia.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndDevice.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndFramework.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndUsercfg.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndReticle.c
 )

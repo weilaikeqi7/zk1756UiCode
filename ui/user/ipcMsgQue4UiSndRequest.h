@@ -171,14 +171,14 @@ typedef struct {
     ROE_S8 minute; // -1-59
     ROE_S8 second; // -1-59
     ROE_U32 startIndex; // 请求起始序号，固定为0
-    ROE_U8 reqCount; // 请求文件数量
+    ROE_U8 reqCount; // 请求文件数量，最大 UI_MAX_MEDIA_FILE_NUM_ONE_PAGE
     ROE_S8 reqFileType; //-1:全部 0:照片 1:视频 2:音频
 } ReqGetMediaFileList_st;
 
 /* 3.28 媒体文件列表翻页 */
 typedef struct {
     ROE_U32 startIndex; // 请求起始序号
-    ROE_U8 reqCount; // 请求文件数量
+    ROE_U8 reqCount; // 请求文件数量，最大 UI_MAX_MEDIA_FILE_NUM_ONE_PAGE
     ROE_S8 reqFileType; //-1:全部 0:照片 1:视频 2:音频
 } ReqGetMediaFileListPage_st;
 
@@ -409,6 +409,84 @@ typedef struct {
 typedef struct {
 } ReqWeaponSaveConfig_st;
 
+/* Header-only protocol requests. The common header is added by SendMsg4UiReq. */
+typedef struct {
+} ReqGetVideoOutputPara_st;
+
+typedef struct {
+} ReqGetVideoInputPara_st;
+
+typedef struct {
+} ReqGetVideoInputCameraPara_st;
+
+typedef struct {
+} ReqGetVideoInputLowLightPara_st;
+
+typedef struct {
+} ReqGetVideoInputInfraredPara_st;
+
+typedef struct {
+} ReqGetVideoInputRemotePara_st;
+
+typedef struct {
+    ROE_U8 exposureType; // 0:手动 1:自动
+    ROE_U32 exposureTimeUs; // UINT32_MAX:自动；手动曝光时单位为微秒
+    ROE_U8 manualIspDigitalGain; // 0-100，UINT8_MAX:自动
+    ROE_U8 manualSensorDigitalGain; // 0-100，UINT8_MAX:自动
+    ROE_U8 manualSensorAnalogGain; // 0-100，UINT8_MAX:自动
+} ReqAdjustCameraExposure_st;
+
+typedef struct {
+} ReqGetAudioPara_st;
+
+typedef struct {
+} ReqCaptureMediaFile_st;
+
+typedef struct {
+    ROE_U8 recordSwitch; // 0:关闭 1:开启
+} ReqRecordMediaFile_st;
+
+typedef struct {
+} ReqGetPeripheralUsbPara_st;
+
+typedef struct {
+} ReqGetPeripheralNetworkPara_st;
+
+typedef struct {
+} ReqGetPeripheralCameraModulePara_st;
+
+typedef struct {
+} ReqGetPeripheralLowLightModulePara_st;
+
+typedef struct {
+} ReqGetPeripheralInfraredModulePara_st;
+
+typedef struct {
+} ReqGetPeripheralRemotedVideoModulePara_st;
+
+typedef struct {
+} ReqGetPeripheralCompassPara_st;
+
+typedef struct {
+} ReqGetPeripheralGnssPara_st;
+
+typedef struct {
+} ReqGetPeripheralRangeFinderPara_st;
+
+typedef struct {
+} ReqGetPeripheralPanTiltPara_st;
+
+typedef struct {
+    ROE_U8 operationType; // 1:功能 2:光标 3:坏点
+    ROE_U8 functionOperation; // 0:关闭 1:开启
+    ROE_U8 cursorOperation; // 0:居中 1:上 2:下 3:左 4:右
+    ROE_U8 badPixelOperation; // 0:取消 1:去除
+} ReqInfraredManualRemoveBadPixel_st;
+
+typedef struct {
+    ROE_U8 operationType; // 0:快门 1:背景 2:虚焦 3:渐晕
+} ReqInfraredSdNuc_st;
+
 #pragma pack(pop)
 
 ROE_S32 SendMsg4UiRegisterReq(ROE_S32 msgQueId, ReqRegister_st * registerType);
@@ -551,4 +629,29 @@ ROE_S32 SendMsg4UiWeaponSetShootPositionReq(ROE_S32 msgQueId, ReqWeaponSetShootP
 ROE_S32 SendMsg4UiWeaponSetShootZeroReq(ROE_S32 msgQueId, ReqWeaponSetShootZero_st * weaponSetShootZero);
 
 ROE_S32 SendMsg4UiWeaponSaveConfigReq(ROE_S32 msgQueId);
+
+ROE_S32 SendMsg4UiGetVideoOutputParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetVideoInputParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetVideoInputCameraParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetVideoInputLowLightParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetVideoInputInfraredParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetVideoInputRemoteParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiCameraExposureReq(ROE_S32 msgQueId, ReqAdjustCameraExposure_st * cameraExposure);
+ROE_S32 SendMsg4UiGetAudioParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiCaptureMediaFileReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiRecordMediaFileReq(ROE_S32 msgQueId, ReqRecordMediaFile_st * recordMediaFile);
+ROE_S32 SendMsg4UiGetPeripheralUsbParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetPeripheralNetworkParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetPeripheralCameraModuleParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetPeripheralLowLightModuleParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetPeripheralInfraredModuleParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetPeripheralRemotedVideoModuleParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetPeripheralCompassParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetPeripheralGnssParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetPeripheralRangeFinderParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiGetPeripheralPanTiltParaReq(ROE_S32 msgQueId);
+ROE_S32 SendMsg4UiInfraredManualRemoveBadPixelReq(
+    ROE_S32 msgQueId,
+    ReqInfraredManualRemoveBadPixel_st * manualRemoveBadPixel);
+ROE_S32 SendMsg4UiInfraredSdNucReq(ROE_S32 msgQueId, ReqInfraredSdNuc_st * infraredSdNuc);
 #endif //ZKSL_75_6LC_IPCMSGQUE4UISNDREQUEST_H

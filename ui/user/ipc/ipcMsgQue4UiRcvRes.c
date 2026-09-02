@@ -46,7 +46,7 @@ static FtHandleReqRes_st f_ShootingDifferentiation[
 };
 
 static FtHandleReqRes_st f_VideoOutputDisplay[MSG_4_REQ_RES_VIDEO_OUTPUT_BUTT - MSG_4_REQ_RES_VIDEO_OUTPUT_OFFSET] = {
-    NULL,
+    handleParseGetVideoOutputParaMsg,
     handleParseAdjustOledBrightnessMsg,
     handleParseAdjustOledContrastMsg,
     handleParseAdjustExtendDisplaySwitchStatusMsg,
@@ -58,7 +58,7 @@ static FtHandleReqRes_st f_VideoOutputDisplay[MSG_4_REQ_RES_VIDEO_OUTPUT_BUTT - 
 
 static FtHandleReqRes_st f_VideoCaptureInput[MSG_4_REQ_RES_VIDEO_INPUT_GENERAL_BUTT -
                                              MSG_4_REQ_RES_VIDEO_INPUT_GENERAL_OFFSET] = {
-    NULL,
+    handleParseGetVideoInputParaMsg,
     handleParseAdjustObserveModeMsg,
     handleParseAdjustPipObserveModeMsg,
 };
@@ -66,7 +66,7 @@ static FtHandleReqRes_st f_VideoCaptureInput[MSG_4_REQ_RES_VIDEO_INPUT_GENERAL_B
 static FtHandleReqRes_st f_VisibleLight[MSG_4_REQ_RES_VIDEO_INPUT_CAMERA_BUTT - MSG_4_REQ_RES_VIDEO_INPUT_CAMERA_OFFSET]
     =
     {
-        NULL,
+        handleParseGetVideoInputCameraParaMsg,
         handleParseAdjustDaynightSwitchStatusMsg,
         handleParseAdjustCameraBrightnessMsg,
         handleParseAdjustCameraContrastMsg,
@@ -74,17 +74,17 @@ static FtHandleReqRes_st f_VisibleLight[MSG_4_REQ_RES_VIDEO_INPUT_CAMERA_BUTT - 
         handleParseAdjustCameraHueMsg,
         handleParseAdjustFogSwitchStatusMsg,
         handleParseAdjustFogIntensityMsg,
-        NULL,
+        handleParseAdjustCameraExposureMsg,
     };
 
 static FtHandleReqRes_st f_LowOllumination[MSG_4_REQ_RES_VIDEO_INPUT_LOW_LIGHT_BUTT -
                                            MSG_4_REQ_RES_VIDEO_INPUT_LOW_LIGHT_OFFSET] = {
-    NULL,
+    handleParseGetVideoInputLowLightParaMsg,
 };
 
 static FtHandleReqRes_st f_Infrared[MSG_4_REQ_RES_VIDEO_INPUT_INFRARED_BUTT - MSG_4_REQ_RES_VIDEO_INPUT_INFRARED_OFFSET]
     = {
-        NULL,
+        handleParseGetVideoInputInfraredParaMsg,
         handleParseAdjustInfraredPseudocolorModeMsg,
         handleParseAdjustInfraredBrightnessMsg,
         handleParseAdjustInfraredContrastMsg,
@@ -95,16 +95,16 @@ static FtHandleReqRes_st f_Infrared[MSG_4_REQ_RES_VIDEO_INPUT_INFRARED_BUTT - MS
 
 static FtHandleReqRes_st f_RemoteVideo[MSG_4_REQ_RES_VIDEO_INPUT_REMOTE_BUTT - MSG_4_REQ_RES_VIDEO_INPUT_REMOTE_OFFSET]
     = {
-        NULL,
+        handleParseGetVideoInputRemoteParaMsg,
     };
 
 static FtHandleReqRes_st f_AudioInputAndOutput[MSG_4_REQ_RES_AUDIO_BUTT - MSG_4_REQ_RES_AUDIO_GENERAL_OFFSET] = {
-    NULL,
+    handleParseGetAudioParaMsg,
 };
 
 static FtHandleReqRes_st f_MediaFile[MSG_4_REQ_RES_MEDIA_FILE_BUTT - MSG_4_REQ_RES_MEDIA_FILE_OFFSET] = {
-    NULL,
-    NULL,
+    handleParseCaptureMediaFileMsg,
+    handleParseRecordMediaFileMsg,
     handleParseGetMediaFileListMsg,
     handleParseExitPlaybackMediaListMsg,
     handleParseDelMediaFileMsg,
@@ -114,43 +114,43 @@ static FtHandleReqRes_st f_MediaFile[MSG_4_REQ_RES_MEDIA_FILE_BUTT - MSG_4_REQ_R
 };
 
 static FtHandleReqRes_st F_usb[MSG_4_REQ_RES_PERIPHERAL_USB_BUTT - MSG_4_REQ_RES_PERIPHERAL_USB_OFFSET] = {
-    NULL,
+    handleParseGetPeripheralUsbParaMsg,
 };
 
 static FtHandleReqRes_st f_Network[MSG_4_REQ_RES_PERIPHERAL_NETWORK_BUTT - MSG_4_REQ_RES_PERIPHERAL_NETWORK_OFFSET] = {
-    NULL,
+    handleParseGetPeripheralNetworkParaMsg,
     handleParseAdjustWifiSwitchMsg,
     handleParseGetWifiInfoMsg,
 };
 
 static FtHandleReqRes_st f_VisibleLightModule[MSG_4_REQ_RES_PERIPHERAL_CAMERA_MODULE_BUTT -
                                               MSG_4_REQ_RES_PERIPHERAL_CAMERA_MODULE_OFFSET] = {
-    NULL,
+    handleParseGetPeripheralCameraModuleParaMsg,
 };
 
 static FtHandleReqRes_st f_LowLightModule[MSG_4_REQ_RES_PERIPHERAL_LOW_LIGHT_MODULE_BUTT -
                                           MSG_4_REQ_RES_PERIPHERAL_LOW_LIGHT_MODULE_OFFSET] = {
-    NULL,
+    handleParseGetPeripheralLowLightModuleParaMsg,
 };
 
 static FtHandleReqRes_st f_InfraredModule[MSG_4_REQ_RES_PERIPHERAL_INFRARED_MODULE_BUTT -
                                           MSG_4_REQ_RES_PERIPHERAL_INFRARED_MODULE_OFFSET] = {
-    NULL,
-    NULL,
+    handleParseGetPeripheralInfraredModuleParaMsg,
+    handleParseInfraredManualRemoveBadPixelMsg,
     handleParseInfraredSetBadPixelThresholdMsg,
     handleParseInfraredBadPixelOperateMsg,
     handleParseInfraredHotPixelRepairOperateMsg,
-    NULL,
+    handleParseInfraredSdNucMsg,
 };
 
 static FtHandleReqRes_st f_RomoteVideoEquipment[MSG_4_REQ_RES_PERIPHERAL_REMOTE_VIDEO_MODULE_BUTT -
                                                 MSG_4_REQ_RES_PERIPHERAL_REMOTED_VIDEO_MODULE_OFFSET] = {
-    NULL,
+    handleParseGetPeripheralRemotedVideoModuleParaMsg,
 };
 
 static FtHandleReqRes_st f_ElectronicCompass[MSG_4_REQ_RES_PERIPHERAL_COMPASS_BUTT -
                                              MSG_4_REQ_RES_PERIPHERAL_COMPASS_OFFSET] = {
-    NULL,
+    handleParseGetPeripheralCompassParaMsg,
     handleParseAdjustCompassSwitchStatusMsg,
     handleParseSetCompassMagneticDeclinationMsg,
     handleParseSaveCompassConfigMsg,
@@ -160,7 +160,7 @@ static FtHandleReqRes_st f_ElectronicCompass[MSG_4_REQ_RES_PERIPHERAL_COMPASS_BU
 
 static FtHandleReqRes_st f_SatellitePositioning[MSG_4_REQ_RES_PERIPHERAL_GNSS_BUTT -
                                                 MSG_4_REQ_RES_PERIPHERAL_GNSS_OFFSET] = {
-    NULL,
+    handleParseGetPeripheralGnssParaMsg,
     handleParseAdjustGnssSwitchStatusMsg,
     handleParseAdjustGnssPositionSystemMsg,
     handleParseAdjustCoordinateSystemMsg,
@@ -168,20 +168,22 @@ static FtHandleReqRes_st f_SatellitePositioning[MSG_4_REQ_RES_PERIPHERAL_GNSS_BU
 
 static FtHandleReqRes_st f_RangeFinder[MSG_4_REQ_RES_PERIPHERAL_RANGE_FINDER_BUTT -
                                        MSG_4_REQ_RES_PERIPHERAL_RANGE_FINDER_OFFSET] = {
-    NULL,
+    handleParseGetPeripheralRangeFinderParaMsg,
     handleParseAdjustRangeFinderSwitchStatusMsg,
     handleParseAdjustRangeFrequencyMsg,
     handleParseAdjustRangeTimeDurationMsg,
 };
 
 static FtHandleReqRes_st f_Holder[MSG_4_REQ_RES_PERIPHERAL_PANTILT_BUTT - MSG_4_REQ_RES_PERIPHERAL_PANTILT_OFFSET] = {
-    NULL,
+    handleParseGetPeripheralPanTiltParaMsg,
     handleParsePanTiltMovingControlMsg,
     handleParsePanTiltMovingSpeedControlMsg,
 };
 
 ROE_S32 ParseResMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
 {
+    if(!rawData) return ROE_FAILURE;
+
     ROE_U8 * msgData = rawData->data;
 
     if(msgType >= MSG_4_REQ_RES_SYSTEM_GENERAL_OFFSET && msgType < MSG_4_REQ_RES_SYSTEM_GENERAL_BUTT) {

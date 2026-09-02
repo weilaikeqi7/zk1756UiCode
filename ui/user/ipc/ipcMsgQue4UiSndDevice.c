@@ -154,7 +154,7 @@ ROE_S32 SendMsg4UiInfraredHotspotTrackingSwitchReq(ROE_S32 msgQueId,
                                                    ReqInfraredHotspotTrackingSwitch_st * infraredHotspotTrackingSwitch)
 {
     return SendMsg4UiReq(msgQueId,
-                         MSG_4_REQ_RES_INFRARED_HOT_PIXEL_REPAIR_OPERATE,
+                         MSG_4_REQ_RES_INFRARED_HOTSPOT_TRACKING_SWITCH,
                          infraredHotspotTrackingSwitch,
                          sizeof(ReqInfraredHotspotTrackingSwitch_st),
                          ROE_NULL);

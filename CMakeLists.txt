@@ -19,7 +19,63 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 add_subdirectory(freetype)
 set(LV_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
 set(LV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(CONFIG_LV_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
+set(CONFIG_LV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(CONFIG_LV_USE_THORVG_INTERNAL OFF CACHE BOOL "" FORCE)
 add_subdirectory(lvgl)
+
+# LVGL's desktop helper collects every source below lvgl/src. Keep the source
+# selection in the application project so the vendored LVGL tree stays intact.
+get_target_property(LVGL_SOURCES lvgl SOURCES)
+set(LVGL_SOURCE_SKIP_PATTERNS
+        "^debugging/"
+        "^others/"
+        "^drivers/display/(drm|ft81x|ili9341|lcd|lovyan_gfx|nv3007|nxp_elcdif|renesas_glcdc|st_ltdc|st7735|st7789|st7796|tft_espi)/"
+        "^drivers/(draw|evdev|libinput|nuttx|opengles|qnx|sdl|uefi|wayland|windows|x11)/"
+        "^draw/(dma2d|espressif|eve|nanovg|nema_gfx|nxp|opengles|renesas|sdl|snapshot|vg_lite)/"
+        "^draw/sw/blend/(arm2d|helium|neon|riscv_v)/"
+        "^draw/convert/(helium|neon)/"
+        "^draw/lv_draw_(3d|vector)\\.c$"
+        "^draw/sw/lv_draw_sw_vector\\.c$"
+        "^libs/(barcode|ffmpeg|frogfs|FT800-FT813|gif|gltf|gstreamer|libjpeg_turbo|libpng|libwebp|lz4|nanovg|qrcode|rle|rlottie|svg|thorvg|tiny_ttf|tjpgd|vg_lite_driver)/"
+        "^libs/fsdrv/lv_fs_(arduino_esp_littlefs|arduino_sd|cbfs|fatfs|frogfs|littlefs|memfs|posix|uefi|win32)\\.(c|cpp)$"
+        "^libs/freetype/lv_ftsystem\\.c$"
+        "^font/(binfont_loader|font_manager|imgfont)/"
+        "^font/lv_font_(dejavu_16_persian_hebrew|source_han_sans_sc_14_cjk|source_han_sans_sc_16_cjk|unscii_8|unscii_16|montserrat_28_compressed)\\.c$"
+        "^core/lv_obj_property\\.c$"
+        "^indev/lv_(gridnav|indev_gesture)\\.c$"
+        "^misc/lv_(matrix|profiler_builtin|profiler_builtin_posix)\\.c$"
+        "^osal/lv_(cmsis_rtos2|freertos|linux|mqx|os_none|rtthread|sdl2|windows)\\.c$"
+        "^stdlib/(clib|micropython|rtthread|uefi)/"
+        "^widgets/(3dtexture|gif|ime|lottie)/"
+        "^widgets/(objx_templ|property)/"
+)
+
+set(LVGL_FILTERED_SOURCES)
+foreach(LVGL_SOURCE IN LISTS LVGL_SOURCES)
+    file(RELATIVE_PATH LVGL_SOURCE_RELATIVE
+            "${PROJECT_SOURCE_DIR}/lvgl/src"
+            "${LVGL_SOURCE}")
+    string(REPLACE "\\" "/" LVGL_SOURCE_RELATIVE "${LVGL_SOURCE_RELATIVE}")
+
+    set(LVGL_SKIP_SOURCE OFF)
+    foreach(LVGL_SKIP_PATTERN IN LISTS LVGL_SOURCE_SKIP_PATTERNS)
+        if(LVGL_SOURCE_RELATIVE MATCHES "${LVGL_SKIP_PATTERN}")
+            set(LVGL_SKIP_SOURCE ON)
+            break()
+        endif()
+    endforeach()
+
+    if(NOT LVGL_SKIP_SOURCE)
+        list(APPEND LVGL_FILTERED_SOURCES "${LVGL_SOURCE}")
+    endif()
+endforeach()
+
+set_property(TARGET lvgl PROPERTY SOURCES "${LVGL_FILTERED_SOURCES}")
+target_sources(lvgl PRIVATE "${PROJECT_SOURCE_DIR}/lv_conf.h")
+list(LENGTH LVGL_SOURCES LVGL_SOURCE_COUNT)
+list(LENGTH LVGL_FILTERED_SOURCES LVGL_FILTERED_SOURCE_COUNT)
+message(STATUS "LVGL sources: ${LVGL_FILTERED_SOURCE_COUNT}/${LVGL_SOURCE_COUNT}")
 
 target_compile_options(lvgl
         PRIVATE

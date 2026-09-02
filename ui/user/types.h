@@ -4,12 +4,13 @@
 
 #ifndef ZKSL_75_6LC_TYPES_H
 #define ZKSL_75_6LC_TYPES_H
+#include <stdatomic.h>
 #include <stdint.h>
 
 typedef struct {
     int sendMsgQueId;
     int recvMsgQueId;
-    volatile int g_quit;
+    atomic_int g_quit;
 } GlobalParameters;
 
 typedef struct {

@@ -150,10 +150,8 @@ typedef struct {
 /* 17. 资源路径信息 */
 typedef struct {
     MsgQueHeader4Ui_st head;
-    ROE_U8 filePathLen;
-    ROE_U8 filePath[256];
-    ROE_U8 reticlePathLen;
-    ROE_U8 reticlePath[256];
+    /* Four length-prefixed strings follow the header. */
+    ROE_U8 pathData[];
 } NotifyPath_st;
 
 /* 18. 分划板总体信息 */

@@ -50,7 +50,7 @@ ROE_S32 handleParseDelMediaFileMsg(ROE_U8 * msgData)
     RspDelMediaFile_st * result = (RspDelMediaFile_st *)msgData;
     /* 处理媒体文件删除结果 */
     if(result->result == 0) {
-        ReqGetMediaFileList_st getMediaFileList;
+        ReqGetMediaFileList_st getMediaFileList = {0};
         getMediaFileList.reqFileType = -1;
         if(playlist_state.find_type == 1) {
             getMediaFileList.year = 2024;
