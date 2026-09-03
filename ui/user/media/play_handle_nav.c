@@ -5,6 +5,8 @@
 #include "play_handle.h"
 #include "play_handle_internal.h"
 
+#include <stdio.h>
+
 void ui_event_PlayList_7(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -263,17 +265,19 @@ void ui_event_play_or_del(lv_event_t * e)
         case LV_KEY_ENTER:
             if(playlist_state.current_item_mode == PLAY_MODE) {
                 char tempBuff[256];
-                sprintf(tempBuff,
-                        "%s",
-                        lv_label_get_text(
-                            ui_comp_get_child(ui_PlayList[playlist_state.current_index], UI_COMP_LISTITEM_1)));
+                snprintf(tempBuff,
+                         sizeof(tempBuff),
+                         "%s",
+                         lv_label_get_text(
+                             ui_comp_get_child(ui_PlayList[playlist_state.current_index], UI_COMP_LISTITEM_1)));
                 SendMsg4UiPlayMediaFileReq(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
             } else {
                 char tempBuff[256];
-                sprintf(tempBuff,
-                        "%s",
-                        lv_label_get_text(
-                            ui_comp_get_child(ui_PlayList[playlist_state.current_index], UI_COMP_LISTITEM_1)));
+                snprintf(tempBuff,
+                         sizeof(tempBuff),
+                         "%s",
+                         lv_label_get_text(
+                             ui_comp_get_child(ui_PlayList[playlist_state.current_index], UI_COMP_LISTITEM_1)));
                 SendMsg4UiDelMediaFileReq(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
                 cur_focus_index = FOCUS_DEL;
             }

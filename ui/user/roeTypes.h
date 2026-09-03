@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 #endif /* End of #ifdef __cplusplus */
-#include <unistd.h>
+#include <stddef.h>
 typedef 		unsigned char      	ROE_U8 ;
 typedef 		unsigned short     	ROE_U16;
 typedef		    unsigned int       	ROE_U32;

@@ -30,6 +30,7 @@ typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_U8 selfCheckState;
     ROE_U8 selfItem[SELF_ITEM_NUM];
+    ROE_U8 reserved;
 } NotifySelfCheck_st;
 
 /* 4. 电子罗盘信息 */

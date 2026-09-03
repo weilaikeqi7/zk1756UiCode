@@ -1,7 +1,9 @@
 #include "ipc_event_queue.h"
 
+#include <errno.h>
 #include <pthread.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct {
     UiIpcEvent_st items[UI_IPC_EVENT_QUEUE_CAPACITY];
@@ -11,11 +13,13 @@ typedef struct {
     int stopped;
     pthread_mutex_t mutex;
     pthread_cond_t notFull;
+    pthread_cond_t notEmpty;
 } UiIpcEventQueueState_st;
 
 static UiIpcEventQueueState_st g_eventQueue = {
     .mutex = PTHREAD_MUTEX_INITIALIZER,
     .notFull = PTHREAD_COND_INITIALIZER,
+    .notEmpty = PTHREAD_COND_INITIALIZER,
 };
 
 ROE_S32 ui_ipc_event_queue_init(void)
@@ -26,6 +30,7 @@ ROE_S32 ui_ipc_event_queue_init(void)
     g_eventQueue.count = 0;
     g_eventQueue.stopped = 0;
     pthread_cond_broadcast(&g_eventQueue.notFull);
+    pthread_cond_broadcast(&g_eventQueue.notEmpty);
     pthread_mutex_unlock(&g_eventQueue.mutex);
     return ROE_SUCCESS;
 }
@@ -35,6 +40,7 @@ void ui_ipc_event_queue_stop(void)
     pthread_mutex_lock(&g_eventQueue.mutex);
     g_eventQueue.stopped = 1;
     pthread_cond_broadcast(&g_eventQueue.notFull);
+    pthread_cond_broadcast(&g_eventQueue.notEmpty);
     pthread_mutex_unlock(&g_eventQueue.mutex);
 }
 
@@ -55,6 +61,7 @@ ROE_S32 ui_ipc_event_queue_push(const UiIpcEvent_st * event)
     memcpy(&g_eventQueue.items[g_eventQueue.writeIndex], event, sizeof(*event));
     g_eventQueue.writeIndex = (g_eventQueue.writeIndex + 1U) % UI_IPC_EVENT_QUEUE_CAPACITY;
     g_eventQueue.count++;
+    pthread_cond_signal(&g_eventQueue.notEmpty);
     pthread_mutex_unlock(&g_eventQueue.mutex);
     return ROE_SUCCESS;
 }
@@ -75,4 +82,40 @@ ROE_S32 ui_ipc_event_queue_pop(UiIpcEvent_st * event)
     pthread_cond_signal(&g_eventQueue.notFull);
     pthread_mutex_unlock(&g_eventQueue.mutex);
     return ROE_SUCCESS;
+}
+
+ROE_S32 ui_ipc_event_queue_wait(ROE_U32 timeoutMs)
+{
+    struct timespec timeout;
+    int waitResult = 0;
+
+    pthread_mutex_lock(&g_eventQueue.mutex);
+    if(g_eventQueue.count == 0U && !g_eventQueue.stopped && timeoutMs > 0U) {
+        if(clock_gettime(CLOCK_REALTIME, &timeout) != 0) {
+            pthread_mutex_unlock(&g_eventQueue.mutex);
+            return ROE_FAILURE;
+        }
+
+        timeout.tv_sec += timeoutMs / 1000U;
+        timeout.tv_nsec += (long)(timeoutMs % 1000U) * 1000000L;
+        if(timeout.tv_nsec >= 1000000000L) {
+            timeout.tv_sec++;
+            timeout.tv_nsec -= 1000000000L;
+        }
+
+        while(g_eventQueue.count == 0U && !g_eventQueue.stopped) {
+            waitResult = pthread_cond_timedwait(&g_eventQueue.notEmpty, &g_eventQueue.mutex, &timeout);
+            if(waitResult == ETIMEDOUT) {
+                break;
+            }
+            if(waitResult != 0) {
+                pthread_mutex_unlock(&g_eventQueue.mutex);
+                return ROE_FAILURE;
+            }
+        }
+    }
+
+    ROE_S32 result = (g_eventQueue.count > 0U) ? ROE_SUCCESS : ROE_FAILURE;
+    pthread_mutex_unlock(&g_eventQueue.mutex);
+    return result;
 }

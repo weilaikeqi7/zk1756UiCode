@@ -6,6 +6,8 @@
 #include "msg.h"
 #include <limits.h>
 #include <string.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
 
 static ROE_SIZE roeStrlen(const char * str)
 {

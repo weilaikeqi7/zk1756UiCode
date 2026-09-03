@@ -10,6 +10,7 @@
 typedef struct {
     int sendMsgQueId;
     int recvMsgQueId;
+    atomic_int ipc_ready;
     atomic_int g_quit;
 } GlobalParameters;
 

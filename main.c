@@ -1,7 +1,7 @@
 #define _DEFAULT_SOURCE /* needed for usleep() */
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include "lvgl/lvgl.h"
 #include "ui/ui.h"
 #include <pthread.h>
@@ -10,7 +10,7 @@
 #include <getopt.h>
 #include "ui/user/core/ipc_event_queue.h"
 
-GlobalParameters global_parameters = {.sendMsgQueId = -1, .recvMsgQueId = -1, .g_quit = 0};
+GlobalParameters global_parameters = {.sendMsgQueId = -1, .recvMsgQueId = -1, .ipc_ready = 0, .g_quit = 0};
 AppArgs app_args;
 
 static void app_args_init(AppArgs * args)
@@ -63,10 +63,12 @@ void * message_ui_thread(void * arg)
     while(!atomic_load(&global_parameters_ptr->g_quit)) {
         process_pending_ipc_events();
         idle_time = lv_timer_handler();
-        usleep(idle_time * 1000);
+        if(idle_time == 0U) idle_time = 1U;
+        if(idle_time > 1000U) idle_time = 1000U;
+        ui_ipc_event_queue_wait(idle_time);
     }
 
-    pthread_exit(NULL);
+    return NULL;
 }
 
 void * message_sig_thread(void * arg)
@@ -97,7 +99,7 @@ void * message_sig_thread(void * arg)
             break;
         }
     }
-    pthread_exit(NULL);
+    return NULL;
 }
 
 static void lv_linux_disp_init(void)
@@ -192,7 +194,17 @@ int main(int argc, char * argv[])
 
     int sigThreadCreated = pthread_create(&sigThread, NULL, message_sig_thread, &global_parameters) == 0;
     int recvMsgThreadCreated = pthread_create(&recvMsgThread, NULL, message_recv_thread, &global_parameters) == 0;
-    int uiThreadCreated = pthread_create(&uiThread, NULL, message_ui_thread, &global_parameters) == 0;
+    int uiThreadCreated = 0;
+
+    while(recvMsgThreadCreated && !atomic_load(&global_parameters.g_quit) &&
+          !atomic_load(&global_parameters.ipc_ready)) {
+        usleep(1000);
+    }
+
+    if(recvMsgThreadCreated && atomic_load(&global_parameters.ipc_ready) &&
+       !atomic_load(&global_parameters.g_quit)) {
+        uiThreadCreated = pthread_create(&uiThread, NULL, message_ui_thread, &global_parameters) == 0;
+    }
     if(!sigThreadCreated || !recvMsgThreadCreated || !uiThreadCreated) {
         fprintf(stderr, "failed to create application thread\n");
         atomic_store(&global_parameters.g_quit, 1);

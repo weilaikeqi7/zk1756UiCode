@@ -4,6 +4,8 @@
 
 #include "font.h"
 
+#include <stdio.h>
+
 lv_font_t * ui_font_WebnarItalic24;
 lv_font_t * ui_font_WebnarItalic32;
 lv_font_t * ui_font_WebnarMedium15;

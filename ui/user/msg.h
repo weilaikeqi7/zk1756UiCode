@@ -5,13 +5,6 @@
 #ifndef ZKSL_75_6LC_MSG_H
 #define ZKSL_75_6LC_MSG_H
 
-#include <pthread.h>
-#include <signal.h>
-#include <stdio.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include "roeTypes.h"
 
 #define MAX_ROE_IPC_MSG_LENGTH  (512+4)

@@ -41,6 +41,7 @@ set(UI_CORE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/app_state.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/font.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_event_queue.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_dispatch.h
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_validate.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/lv_port_indev.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/msg.c

@@ -5,7 +5,12 @@
 //
 
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "msg.h"
 #include "ipc_event_queue.h"
@@ -36,6 +41,14 @@ void process_pending_ipc_events(void)
             break;
         }
 
+        if(ipc_validate_message(event.msgType, &event.rawData, event.receivedBytes) != ROE_SUCCESS) {
+            fprintf(stderr,
+                    "discard invalid queued IPC message, msgType:%ld receivedBytes:%ld\n",
+                    event.msgType,
+                    (long)event.receivedBytes);
+            continue;
+        }
+
         if(ParseNotifyAndResMsg(event.msgType, &event.rawData) != ROE_SUCCESS) {
             fprintf(stderr, "msgType:%ld ParseNotifyAndResMsg() failed\n", event.msgType);
         }
@@ -49,6 +62,7 @@ void * message_recv_thread(void * arg)
     key_t sendKey = app_args.sendKey, recvKey = app_args.recvKey;
     int registerSent = 0;
 
+    atomic_store(&msg_args->ipc_ready, 0);
     msg_args->sendMsgQueId = -1;
     msg_args->recvMsgQueId = -1;
 
@@ -78,6 +92,7 @@ void * message_recv_thread(void * arg)
        SendMsg4UiGetUserMediaConfigReq(msg_args->sendMsgQueId) != ROE_SUCCESS) {
         fprintf(stderr, "send initial user config request failed\n");
     }
+    atomic_store(&msg_args->ipc_ready, 1);
 
     while(!atomic_load(&msg_args->g_quit)) {
         ssize_t receivedBytes = msgrcv(msg_args->recvMsgQueId,
@@ -112,7 +127,10 @@ void * message_recv_thread(void * arg)
             continue;
         }
 
-        UiIpcEvent_st event = {.msgType = msgBuf.msgType};
+        UiIpcEvent_st event = {
+            .msgType = msgBuf.msgType,
+            .receivedBytes = (ROE_SIZE)receivedBytes,
+        };
         memcpy(&event.rawData, msgBuf.msgData, (ROE_SIZE)receivedBytes);
         if(ui_ipc_event_queue_push(&event) != ROE_SUCCESS) {
             atomic_store(&msg_args->g_quit, 1);
@@ -121,6 +139,7 @@ void * message_recv_thread(void * arg)
     }
 
 cleanup:
+    atomic_store(&msg_args->ipc_ready, 0);
     if(registerSent && msg_args->sendMsgQueId >= 0) {
         ReqRegister_st reqRegister = {.reg = 0};
         if(SendMsg4UiRegisterReq(msg_args->sendMsgQueId, &reqRegister) != ROE_SUCCESS) {

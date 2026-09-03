@@ -7,6 +7,7 @@
 
 typedef struct {
     ROE_SL msgType;
+    ROE_SIZE receivedBytes;
     RoeIpcMsgQueRawData_st rawData;
 } UiIpcEvent_st;
 
@@ -14,5 +15,6 @@ ROE_S32 ui_ipc_event_queue_init(void);
 void ui_ipc_event_queue_stop(void);
 ROE_S32 ui_ipc_event_queue_push(const UiIpcEvent_st * event);
 ROE_S32 ui_ipc_event_queue_pop(UiIpcEvent_st * event);
+ROE_S32 ui_ipc_event_queue_wait(ROE_U32 timeoutMs);
 
 #endif // ZKSL_75_6LC_IPC_EVENT_QUEUE_H
