@@ -22,9 +22,8 @@ set(LV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CONFIG_LV_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
 set(CONFIG_LV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CONFIG_LV_USE_THORVG_INTERNAL OFF CACHE BOOL "" FORCE)
-# Keep the LVGL configuration explicit so CLion/clangd and remote builds use
-# the same project-local header instead of relying on directory auto-detection.
-set(LV_BUILD_CONF_PATH "${PROJECT_SOURCE_DIR}/lv_conf.h" CACHE FILEPATH "LVGL configuration file" FORCE)
+# Clear a stale cache value and let LVGL discover the project-root lv_conf.h.
+set(LV_BUILD_CONF_PATH "" CACHE PATH "LVGL configuration path" FORCE)
 add_subdirectory(lvgl)
 
 # LVGL's desktop helper collects every source below lvgl/src. Keep the source
