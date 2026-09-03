@@ -1,11 +1,9 @@
-#define _DEFAULT_SOURCE /* needed for usleep() */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include "lvgl/lvgl.h"
 #include "ui/ui.h"
 #include <pthread.h>
-#include "handleNotify.h"
 #include <signal.h>
 #include <getopt.h>
 #include "ui/user/core/ipc_event_queue.h"
@@ -55,7 +53,7 @@ static int parse_init(const char * optstr, int * out_val)
     return 0;
 }
 
-void * message_ui_thread(void * arg)
+static void * message_ui_thread(void * arg)
 {
     GlobalParameters * global_parameters_ptr = (GlobalParameters *)arg;
     uint32_t idle_time;
@@ -71,7 +69,7 @@ void * message_ui_thread(void * arg)
     return NULL;
 }
 
-void * message_sig_thread(void * arg)
+static void * message_sig_thread(void * arg)
 {
     GlobalParameters * global_parameters_ptr = (GlobalParameters *)arg;
     sigset_t sig_set;

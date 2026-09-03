@@ -145,6 +145,8 @@ target_link_libraries(ui_app
 target_compile_definitions(ui_app
         PUBLIC
         LV_CONF_INCLUDE_SIMPLE=1
+        PRIVATE
+        _DEFAULT_SOURCE
 )
 
 target_compile_options(ui_app

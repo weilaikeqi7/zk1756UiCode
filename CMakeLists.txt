@@ -118,6 +118,11 @@ target_compile_options(${PROJECT_NAME}
         -Wno-unused
 )
 
+target_compile_definitions(${PROJECT_NAME}
+        PRIVATE
+        _DEFAULT_SOURCE
+)
+
 target_include_directories(${PROJECT_NAME}
         PRIVATE
         ${PROJECT_SOURCE_DIR}

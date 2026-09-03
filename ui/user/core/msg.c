@@ -1,5 +1,3 @@
-#define _DEFAULT_SOURCE
-
 //
 // Created by jinxing on 2026/2/10.
 //
