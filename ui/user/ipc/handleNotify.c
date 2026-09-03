@@ -354,6 +354,7 @@ ROE_S32 handleReticleInfoUpdatingNotify(ROE_U8 * msgData)
     ROE_U8 * dataPtr = reticleUpdate->dividingPlatesData;
     char * imageName[3] = {"/run/reticleUi0.bmp", "/run/reticleUi1.bmp", "/run/reticleUi2.bmp"};
     char name[256];
+    char logName[256];
 
     if(conut > UI_MAX_DIVIDING_PLATES_NUM) {
         conut = UI_MAX_DIVIDING_PLATES_NUM;
@@ -363,32 +364,47 @@ ROE_S32 handleReticleInfoUpdatingNotify(ROE_U8 * msgData)
         dividingPlatesinfo[i] = (DividingPlates_st *)dataPtr;
         dataPtr += sizeof(DividingPlates_st) + dividingPlatesinfo[i]->nameLen;
 
-        // LV_LOG_USER(
-        //     "state:%d, width:%d, height:%d, displayX:%d, displayY:%d, cuttingX:%d, cuttingY:%d, cuttingWidth:%d, cuttingHeight:%d, nameLen:%d, name:%s",
-        //     dividingPlatesinfo[i]->state,
-        //     dividingPlatesinfo[i]->width,
-        //     dividingPlatesinfo[i]->height,
-        //     dividingPlatesinfo[i]->displayX,
-        //     dividingPlatesinfo[i]->displayY,
-        //     dividingPlatesinfo[i]->cuttingX,
-        //     dividingPlatesinfo[i]->cuttingY,
-        //     dividingPlatesinfo[i]->cuttingWidth,
-        //     dividingPlatesinfo[i]->cuttingHeight,
-        //     dividingPlatesinfo[i]->nameLen,
-        //     dividingPlatesinfo[i]->name);
-
-        if(g_app.playPageFlag == 0) {
-            if(dividingPlatesinfo[i]->state == 1) {
-                lv_obj_remove_flag(ui_dividing_contimage[i], LV_OBJ_FLAG_HIDDEN);
-                g_app.reticle_state[i] = dividingPlatesinfo[i]->state;
-            } else if(dividingPlatesinfo[i]->state == 0) {
-                lv_obj_add_flag(ui_dividing_contimage[i], LV_OBJ_FLAG_HIDDEN);
-                g_app.reticle_state[i] = dividingPlatesinfo[i]->state;
-                continue;
-            } else {
-                continue;
-            }
+        ROE_SIZE logNameLen = dividingPlatesinfo[i]->nameLen;
+        if(logNameLen >= sizeof(logName)) {
+            logNameLen = sizeof(logName) - 1U;
         }
+        memcpy(logName, dividingPlatesinfo[i]->name, logNameLen);
+        logName[logNameLen] = '\0';
+
+        LV_LOG_USER(
+            "state:%d, width:%d, height:%d, displayX:%d, displayY:%d, cuttingX:%d, cuttingY:%d, cuttingWidth:%d, cuttingHeight:%d, nameLen:%d, name:%s",
+            dividingPlatesinfo[i]->state,
+            dividingPlatesinfo[i]->width,
+            dividingPlatesinfo[i]->height,
+            dividingPlatesinfo[i]->displayX,
+            dividingPlatesinfo[i]->displayY,
+            dividingPlatesinfo[i]->cuttingX,
+            dividingPlatesinfo[i]->cuttingY,
+            dividingPlatesinfo[i]->cuttingWidth,
+            dividingPlatesinfo[i]->cuttingHeight,
+            dividingPlatesinfo[i]->nameLen,
+            logName);
+
+        /* -1 means unchanged. Do not resize or reload its image. */
+        if(dividingPlatesinfo[i]->state == -1) {
+            continue;
+        }
+        if(dividingPlatesinfo[i]->state != 0 && dividingPlatesinfo[i]->state != 1) {
+            continue;
+        }
+
+        /* Keep the latest state while the playback page is active. */
+        g_app.reticle_state[i] = dividingPlatesinfo[i]->state;
+        if(g_app.playPageFlag != 0) {
+            continue;
+        }
+
+        if(dividingPlatesinfo[i]->state == 0) {
+            lv_obj_add_flag(ui_dividing_contimage[i], LV_OBJ_FLAG_HIDDEN);
+            continue;
+        }
+
+        lv_obj_remove_flag(ui_dividing_contimage[i], LV_OBJ_FLAG_HIDDEN);
         lv_obj_set_width(ui_dividing_contimage[i], dividingPlatesinfo[i]->cuttingWidth);
         lv_obj_set_height(ui_dividing_contimage[i], dividingPlatesinfo[i]->cuttingHeight);
         lv_obj_set_pos(ui_dividing_contimage[i],

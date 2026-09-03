@@ -47,6 +47,7 @@ typedef struct {
 typedef struct {
     ROE_S8 wifi;
     ROE_S8 bluetooth;
+    ROE_S8 sle;
 } app_device_switch_t;
 
 typedef struct {

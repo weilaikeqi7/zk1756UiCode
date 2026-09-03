@@ -16,7 +16,7 @@ app_state_t g_app = {
     .video = {
         .zoom = {.zoomValue = 1.0f, .precision = 0},
         .osd = {.all = 0, .datetime = 0},
-        .dev_switch = {.wifi = 0, .bluetooth = 0},
+        .dev_switch = {.wifi = 0, .bluetooth = 0, .sle = 0},
         .freeze_on = 0,
         .rangefinder_on = 0,
         .mode = 0,

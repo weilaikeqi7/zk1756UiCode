@@ -317,6 +317,7 @@ typedef struct {
     MsgQueHeader4Ui_st head;
     ROE_S8 wifi;
     ROE_S8 bluetooth;
+    ROE_S8 sle;
 } NotifyDeviceSwitch_st;
 
 /* 38. 红外伪彩模式 */

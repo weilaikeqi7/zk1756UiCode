@@ -221,11 +221,25 @@ ROE_S32 handleOsdShowHideOperateNotify(ROE_U8 * msgData)
 ROE_S32 handlePeripheralsPowerStatusNotify(ROE_U8 * msgData)
 {
     NotifyDeviceSwitch_st * deviceSwitch = (NotifyDeviceSwitch_st *)msgData;
-    g_app.video.dev_switch.bluetooth = deviceSwitch->bluetooth;
-    g_app.video.dev_switch.wifi = deviceSwitch->wifi;
-    LV_LOG_USER("g_app.video.dev_switch.bluetooth:%d, g_app.video.dev_switch.wifi:%d",
-                deviceSwitch->bluetooth,
-                g_app.video.dev_switch.wifi);
+    if(deviceSwitch->bluetooth == -1 || deviceSwitch->bluetooth == OFF || deviceSwitch->bluetooth == ON) {
+        if(deviceSwitch->bluetooth != -1) {
+            g_app.video.dev_switch.bluetooth = deviceSwitch->bluetooth;
+        }
+    }
+    if(deviceSwitch->wifi == -1 || deviceSwitch->wifi == OFF || deviceSwitch->wifi == ON) {
+        if(deviceSwitch->wifi != -1) {
+            g_app.video.dev_switch.wifi = deviceSwitch->wifi;
+        }
+    }
+    if(deviceSwitch->sle == -1 || deviceSwitch->sle == OFF || deviceSwitch->sle == ON) {
+        if(deviceSwitch->sle != -1) {
+            g_app.video.dev_switch.sle = deviceSwitch->sle;
+        }
+    }
+    LV_LOG_USER("device switch: bluetooth=%d wifi=%d sle=%d",
+                g_app.video.dev_switch.bluetooth,
+                g_app.video.dev_switch.wifi,
+                g_app.video.dev_switch.sle);
     if(g_app.video.dev_switch.wifi == OFF) {
         lv_obj_set_state(ui_comp_get_child(ui_rowwifi, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED, false);
         lv_obj_send_event(
