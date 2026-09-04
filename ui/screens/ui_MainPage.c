@@ -2249,6 +2249,13 @@ void ui_MainPage_screen_init(void)
 
 void ui_MainPage_screen_destroy(void)
 {
+    /* These two objects are attached to lv_layer_top(), so they are not
+     * children of ui_MainPage and must be released explicitly. */
+    if(ui_poweroff != NULL)
+        lv_obj_del(ui_poweroff);
+    if(ui_snap != NULL)
+        lv_obj_del(ui_snap);
+
     if(ui_MainPage)
         lv_obj_del(ui_MainPage);
 

@@ -4,7 +4,7 @@
 
 #include "menu_handle.h"
 
-#include "distance_editor.h"
+#include "user/reticle/distance_editor.h"
 #include "ipcMsgQue4UiSndRequest.h"
 #include "reticle_feature.h"
 static lv_obj_t * ui_focus_temp[30];

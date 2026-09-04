@@ -1,10 +1,8 @@
 #ifndef ZKSL_75_6LC_APP_STATE_H
 #define ZKSL_75_6LC_APP_STATE_H
 
-#include "user/roeTypes.h"
-#include "ipcMsgQue4UiTypeCommon.h"
-
-#pragma pack(push, 1)
+#include "user/core/roeTypes.h"
+#include "user/ipc/ipcMsgQue4UiTypeCommon.h"
 
 typedef struct {
     const char * des[10];
@@ -105,8 +103,6 @@ typedef struct {
     ROE_U8 reticle_state[UI_MAX_DIVIDING_PLATES_NUM];
     ROE_U8 playPageFlag;
 } app_state_t;
-
-#pragma pack(pop)
 
 extern app_state_t g_app;
 

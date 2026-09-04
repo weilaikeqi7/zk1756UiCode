@@ -5,7 +5,7 @@
 #ifndef ZKSL_75_6LC_MENU_HANDLE_H
 #define ZKSL_75_6LC_MENU_HANDLE_H
 
-#include "types.h"
+#include "user/core/types.h"
 #include "ui.h"
 
 void show_menu_page1(void);

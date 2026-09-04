@@ -43,11 +43,9 @@ static void simulator_key_clicked(lv_event_t * event)
     if(key == NULL) return;
 
     /* Linux creates this focus list after the menu notification arrives. The
-     * standalone simulator has no peer process, so create that initial state
-     * on the first simulated hardware key press. */
+     * standalone simulator creates the equivalent initial menu locally. */
     if(keypad_group != NULL && lv_group_get_obj_count(keypad_group) == 0U) {
         show_menu_page1();
-        return;
     }
 
     lv_port_indev_simulate_key(key->key_index);

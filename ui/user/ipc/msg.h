@@ -5,7 +5,7 @@
 #ifndef ZKSL_75_6LC_MSG_H
 #define ZKSL_75_6LC_MSG_H
 
-#include "roeTypes.h"
+#include "user/core/roeTypes.h"
 
 #define MAX_ROE_IPC_DATA_LENGTH 512U
 #define MAX_ROE_IPC_MSG_LENGTH  (MAX_ROE_IPC_DATA_LENGTH + sizeof(ROE_S32))

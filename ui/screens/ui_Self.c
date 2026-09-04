@@ -67,9 +67,13 @@ void ui_self_screen_init(void)
         lv_obj_set_height(ui_self_item[i], 20);
 
         char buf[256] = {0};
-        sprintf(buf, "%s%s", IMAGES_PATH, selfImgItem[i]);
+        int path_len = snprintf(buf, sizeof(buf), "%s%s", IMAGES_PATH, selfImgItem[i]);
         lv_obj_t * ui_self_image = lv_image_create(ui_self_item[i]);
-        lv_image_set_src(ui_self_image, buf);
+        if(path_len < 0 || (size_t)path_len >= sizeof(buf)) {
+            LV_LOG_ERROR("[SELF][INIT] image path is too long index:%d", i);
+        } else {
+            lv_image_set_src(ui_self_image, buf);
+        }
         lv_obj_set_width(ui_self_image, LV_SIZE_CONTENT); /// 1
         lv_obj_set_height(ui_self_image, LV_SIZE_CONTENT); /// 1
         lv_obj_set_align(ui_self_image, LV_ALIGN_LEFT_MID);
@@ -107,13 +111,18 @@ void ui_self_screen_init(void)
 
     lv_group_t * group = lv_group_create();
     lv_group_add_obj(group, ui_self_button_label);
-    g_popup_self.root = ui_self_button_label;
+    g_popup_self.root = ui_self;
     g_popup_self.group = group;
     g_popup_self.default_focus = ui_self_button_label;
 }
 
 void ui_self_screen_destroy(void)
 {
+    if(g_popup_self.group != NULL) {
+        lv_group_delete(g_popup_self.group);
+        g_popup_self.group = NULL;
+    }
+
     if(ui_self) {
         lv_obj_del(ui_self);
     }

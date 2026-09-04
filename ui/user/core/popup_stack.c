@@ -18,6 +18,14 @@ void popup_stack_init(popup_stack_t * stack, lv_indev_t * indev)
     stack->indev = indev;
 }
 
+void popup_stack_deinit(popup_stack_t * stack)
+{
+    if(!stack) return;
+
+    popup_stack_pop_all(stack);
+    stack->indev = NULL;
+}
+
 uint16_t popup_stack_depth(const popup_stack_t * stack)
 {
     return stack ? stack->top : 0;
@@ -35,6 +43,10 @@ bool popup_stack_push(popup_stack_t * stack, popup_desc_t * popup)
     if(!popup->root || !popup->group) return false;
     if(stack->top >= POPUP_STACK_MAX) return false;
     if(!popup_obj_valid(popup->root)) return false;
+
+    for(uint16_t i = 0; i < stack->top; i++) {
+        if(stack->layers[i].popup == popup) return false;
+    }
 
     popup_layer_t * layer = &stack->layers[stack->top];
     memset(layer, 0, sizeof(*layer));

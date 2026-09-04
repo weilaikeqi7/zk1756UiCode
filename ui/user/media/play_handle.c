@@ -14,28 +14,89 @@ int cur_focus_index = 0;
 
 lv_obj_t * ui_focus_temp[30];
 
+void play_list_focus_index(uint32_t index)
+{
+    if(keypad_group == NULL || index >= playlist_state.current_items || ui_PlayList[index] == NULL) return;
+
+    playlist_state.current_index = index;
+    lv_group_focus_obj(ui_PlayList[index]);
+}
+
+void play_list_focus_relative(int step)
+{
+    const uint32_t item_count = playlist_state.current_items;
+    if(item_count == 0U || step == 0) return;
+
+    int64_t index = (int64_t)playlist_state.current_index;
+    const int64_t count = (int64_t)item_count;
+    index = (index + step) % count;
+    if(index < 0) index += count;
+
+    for(uint32_t i = 0; i < item_count; i++) {
+        uint32_t candidate = (uint32_t)index;
+        if(ui_PlayList[candidate] != NULL) {
+            play_list_focus_index(candidate);
+            return;
+        }
+        index = (index + (step > 0 ? 1 : -1)) % count;
+        if(index < 0) index += count;
+    }
+}
+
+void play_media_list_request_init(ReqGetMediaFileList_st * request, ROE_U32 startIndex)
+{
+    if(request == NULL) return;
+
+    memset(request, 0, sizeof(*request));
+    request->reqFileType = -1;
+    request->year = 2024;
+    request->month = 0;
+    request->day = 0;
+    request->hour = -1;
+    request->minute = -1;
+    request->second = -1;
+    request->startIndex = startIndex;
+    request->reqCount = UI_MAX_MEDIA_FILE_NUM_ONE_PAGE;
+
+    if(playlist_state.find_type != 1) return;
+
+    if(findDateTime.year == 2024) return;
+    request->year = findDateTime.year;
+    if(findDateTime.month == 0) return;
+    request->month = findDateTime.month;
+    if(findDateTime.day == 0) return;
+    request->day = findDateTime.day;
+    if(findDateTime.hour == -1) return;
+    request->hour = findDateTime.hour;
+    if(findDateTime.minute == -1) return;
+    request->minute = findDateTime.minute;
+}
+
 void show_play_page(void)
 {
-    ReqGetMediaFileList_st getMediaFileList = {0};
+    ReqGetMediaFileList_st getMediaFileList;
     time_t rawtime;
     struct tm * timeinfo;
 
-    getMediaFileList.reqFileType = -1;
-    getMediaFileList.year = 2024;
-    getMediaFileList.month = 0;
-    getMediaFileList.day = 0;
-    getMediaFileList.hour = -1;
-    getMediaFileList.minute = -1;
-    getMediaFileList.second = -1;
-    getMediaFileList.startIndex = 0;
-    getMediaFileList.reqCount = 10;
+    if(ui_PlayList[1] == NULL || ui_PlayList[2] == NULL || ui_PlayList[3] == NULL ||
+       ui_PlayList[4] == NULL || ui_PlayList[5] == NULL || ui_PlayList[7] == NULL ||
+       ui_PlayList[8] == NULL || keypad_group == NULL) {
+        LV_LOG_ERROR("[MEDIA][INIT] playlist controls are not initialized");
+        return;
+    }
+
     playlist_state.req_type = 1;
     playlist_state.current_page_index = 1;
     playlist_state.find_type = 2;
+    play_media_list_request_init(&getMediaFileList, 0);
     SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
 
     time(&rawtime);
     timeinfo = localtime(&rawtime);
+    if(timeinfo == NULL) {
+        LV_LOG_ERROR("[MEDIA][INIT] failed to get local time");
+        return;
+    }
     findDateTime.year = timeinfo->tm_year + 1900;
     findDateTime.month = timeinfo->tm_mon + 1;
     findDateTime.day = timeinfo->tm_mday;
@@ -124,7 +185,13 @@ int8_t get_days_in_month(int year, int month)
 
 void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fileInfo)
 {
+    if(fileList == NULL || fileInfo == NULL || ui_List_Container == NULL || keypad_group == NULL ||
+       ui_BTN4 == NULL || ui_BTN5 == NULL || ui_BTN6 == NULL) {
+        LV_LOG_ERROR("[MEDIA][UI][DROP] playlist objects are not initialized");
+        return;
+    }
     if(fileList->fileCount > UI_MAX_MEDIA_FILE_NUM_ONE_PAGE) {
+        LV_LOG_WARN("[MEDIA][UI][DROP] invalid file count:%u", (unsigned)fileList->fileCount);
         return;
     }
     if(playlist_state.current_play_list > 0) {
@@ -136,6 +203,10 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
     }
     LV_LOG_USER("fileList->fileCount:%d, fileList->totalCount:%d", fileList->fileCount, fileList->totalCount);
     for(int i = 9; i < fileList->fileCount + 9; i++) {
+        if(fileInfo[i - 9] == NULL) {
+            LV_LOG_WARN("[MEDIA][UI][DROP] null file info index:%d", i - 9);
+            return;
+        }
         char fileName[256] = {0};
         ROE_SIZE nameLen = fileInfo[i - 9]->nameLen;
         if(nameLen >= sizeof(fileName)) {
@@ -151,7 +222,19 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
                     fileName);
         char buf[256] = {0};
         ui_PlayList[i] = ui_listItem_create(ui_List_Container);
-        lv_label_set_text(ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_1), fileName);
+        if(ui_PlayList[i] == NULL) {
+            LV_LOG_ERROR("[MEDIA][UI][DROP] create playlist item failed index:%d", i - 9);
+            return;
+        }
+        lv_obj_t * nameLabel = ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_1);
+        lv_obj_t * sizeLabel = ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_2);
+        lv_obj_t * durationLabel = ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_3);
+        lv_obj_t * dateLabel = ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_4);
+        if(nameLabel == NULL || sizeLabel == NULL || durationLabel == NULL || dateLabel == NULL) {
+            LV_LOG_ERROR("[MEDIA][UI][DROP] playlist item children missing index:%d", i - 9);
+            return;
+        }
+        lv_label_set_text(nameLabel, fileName);
         int64_t bytes = fileInfo[i - 9]->size;
         const char * units[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
         int uint_index = 0;
@@ -160,24 +243,19 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
             value /= 1024.0;
             uint_index++;
         }
-        lv_label_set_text_fmt(
-            ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_2),
-            "%.2f%s",
-            value,
-            units[uint_index]);
+        lv_label_set_text_fmt(sizeLabel, "%.2f%s", value, units[uint_index]);
         uint32_t hours = fileInfo[i - 9]->duration / 3600;
         uint32_t mins = (fileInfo[i - 9]->duration % 3600) / 60;
         uint32_t secs = fileInfo[i - 9]->duration % 60;
-        lv_label_set_text_fmt(
-            ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_3),
-            "%02d:%02d:%02d",
-            hours,
-            mins,
-            secs);
+        lv_label_set_text_fmt(durationLabel, "%02d:%02d:%02d", hours, mins, secs);
         time_t fileTime = fileInfo[i - 9]->createTime;
         struct tm * pTmInfo = localtime(&fileTime);
-        strftime(buf, 256, "%Y-%m-%d %H:%M:%S", pTmInfo);
-        lv_label_set_text_fmt(ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_4), "%s", buf);
+        if(pTmInfo != NULL) {
+            strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", pTmInfo);
+        } else {
+            lv_snprintf(buf, sizeof(buf), "----");
+        }
+        lv_label_set_text_fmt(dateLabel, "%s", buf);
     }
     playlist_state.total_page_index = fileList->totalCount;
     if(playlist_state.total_page_index % UI_MAX_MEDIA_FILE_NUM_ONE_PAGE == 0) {
@@ -196,10 +274,15 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
         playlist_state.current_page_index = 0;
     }
 
-    lv_label_set_text_fmt(ui_comp_get_child(ui_BTN7, UI_COMP_BTN_BTNL),
-                          "%d/%d",
-                          playlist_state.current_page_index,
-                          playlist_state.total_page_index);
+    if(ui_BTN7 != NULL) {
+        lv_obj_t * pageLabel = ui_comp_get_child(ui_BTN7, UI_COMP_BTN_BTNL);
+        if(pageLabel != NULL) {
+            lv_label_set_text_fmt(pageLabel,
+                                  "%d/%d",
+                                  playlist_state.current_page_index,
+                                  playlist_state.total_page_index);
+        }
+    }
     ui_PlayList[fileList->fileCount + 9] = ui_BTN4;
     ui_PlayList[fileList->fileCount + 9 + 1] = ui_BTN5;
     ui_PlayList[fileList->fileCount + 9 + 2] = ui_BTN6;
@@ -209,11 +292,13 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
     playlist_state.current_index = 0;
     lv_group_remove_all_objs(keypad_group);
     for(uint32_t i = 0; i < playlist_state.current_items; i++) {
-        lv_group_add_obj(keypad_group, ui_PlayList[i]);
+        if(ui_PlayList[i] != NULL) lv_group_add_obj(keypad_group, ui_PlayList[i]);
     }
     LV_LOG_USER("playlist_state.current_items:%d", playlist_state.current_items);
     for(uint32_t i = 9; i < playlist_state.current_items - 3; i++) {
-        lv_obj_add_event_cb(ui_PlayList[i], ui_event_play_or_del, LV_EVENT_ALL, NULL);
+        if(ui_PlayList[i] != NULL) {
+            lv_obj_add_event_cb(ui_PlayList[i], ui_event_play_or_del, LV_EVENT_ALL, NULL);
+        }
     }
 
     if(cur_focus_index == FOCUS_ALL) {

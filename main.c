@@ -4,7 +4,7 @@
 #include "lvgl/lvgl.h"
 #include "ui/ui.h"
 #include <getopt.h>
-#include "ui/user/core/ui_runtime.h"
+#include "ui/user/runtime/ui_runtime.h"
 
 GlobalParameters global_parameters = {.sendMsgQueId = -1, .recvMsgQueId = -1, .ipc_ready = 0, .g_quit = 0};
 AppArgs app_args;
@@ -140,7 +140,6 @@ int main(int argc, char * argv[])
         LV_LOG_ERROR("[APP][EXIT] application runtime stopped with an error");
     }
 
-    ui_font_deinit();
     ui_destroy();
     lv_deinit();
 

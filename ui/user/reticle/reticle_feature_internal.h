@@ -1,11 +1,11 @@
 #ifndef RETICLE_FEATURE_INTERNAL_H
 #define RETICLE_FEATURE_INTERNAL_H
 
-#include "distance_editor.h"
+#include "user/reticle/distance_editor.h"
 #include "mainpage_event_handle.h"
-#include "reticle_distance_mgr.h"
-#include "reticle_feature.h"
-#include "reticle_model.h"
+#include "user/reticle/reticle_distance_mgr.h"
+#include "user/reticle/reticle_feature.h"
+#include "user/reticle/reticle_model.h"
 #include "ui.h"
 
 /* 保存对话框来源 */

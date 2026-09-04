@@ -1,7 +1,7 @@
 #ifndef ZKSL_75_6LC_IPCMSGQUE4UITYPECOMMON_H
 #define ZKSL_75_6LC_IPCMSGQUE4UITYPECOMMON_H
 
-#include "roeTypes.h"
+#include "user/core/roeTypes.h"
 #include <stdint.h>
 
 #define UI_RETICLE_NUM 2

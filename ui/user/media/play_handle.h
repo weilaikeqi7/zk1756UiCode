@@ -5,10 +5,9 @@
 #ifndef ZKSL_75_6LC_PLAY_HANDLE_H
 #define ZKSL_75_6LC_PLAY_HANDLE_H
 
-#include "ipcMsgQue4UiRcvRes.h"
+#include "user/ipc/ipcMsgQue4UiRcvRes.h"
+#include "user/ipc/ipcMsgQue4UiSndRequest.h"
 #include "ui.h"
-
-#pragma pack(push, 1)
 
 enum mode { PLAY_MODE, DEL_MODE };
 
@@ -33,8 +32,6 @@ typedef struct {
 } FindDateTime;
 
 typedef enum { FOCUS_ALL, FOCUS_FIND, FOCUS_PREV, FOCUS_NEXT, FOCUS_DEL } focus_item;
-
-#pragma pack(pop)
 
 void ui_event_PlayList_1(lv_event_t * e);
 void ui_event_PlayList_1_5(lv_event_t * e);

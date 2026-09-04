@@ -35,8 +35,10 @@ static void update_user_media_from_rsp(ROE_U8 burstCount,
 
 ROE_S32 handleParseGetUserCommonConfigMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspGetUserCommonConfig_st * result = (RspGetUserCommonConfig_st *)msgData;
     if(result->result != 0) {
+        LV_LOG_WARN("[IPC][RESPONSE] get user common config failed result:%u", (unsigned)result->result);
         return ROE_FAILURE;
     }
     LV_LOG_USER("Get showDateTime:%d, standbyTimeout:%d, shutdownTimeout:%d, distanceUnit:%d",
@@ -53,8 +55,10 @@ ROE_S32 handleParseGetUserCommonConfigMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseSetUserCommonConfigMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspSetUserCommonConfig_st * result = (RspSetUserCommonConfig_st *)msgData;
     if(result->result != 0) {
+        LV_LOG_WARN("[IPC][RESPONSE] set user common config failed result:%u", (unsigned)result->result);
         return ROE_FAILURE;
     }
     LV_LOG_USER("Set showDateTime:%d, standbyTimeout:%d, shutdownTimeout:%d, distanceUnit:%d",
@@ -71,8 +75,10 @@ ROE_S32 handleParseSetUserCommonConfigMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseGetUserMediaConfigMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspGetUserMediaConfig_st * result = (RspGetUserMediaConfig_st *)msgData;
     if(result->result != 0) {
+        LV_LOG_WARN("[IPC][RESPONSE] get user media config failed result:%u", (unsigned)result->result);
         return ROE_FAILURE;
     }
     LV_LOG_USER(
@@ -92,8 +98,10 @@ ROE_S32 handleParseGetUserMediaConfigMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseSetUserMediaConfigMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspSetUserMediaConfig_st * result = (RspSetUserMediaConfig_st *)msgData;
     if(result->result != 0) {
+        LV_LOG_WARN("[IPC][RESPONSE] set user media config failed result:%u", (unsigned)result->result);
         return ROE_FAILURE;
     }
     LV_LOG_USER(

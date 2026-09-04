@@ -3,136 +3,121 @@
 //
 
 #include "ipcMsgQue4UiRcvRes.h"
+#include "lvgl/lvgl.h"
 #include "handleRcvRes.h"
+#include "ipc_response_helpers.h"
 #include "play_handle.h"
+#include "play_handle_internal.h"
 #include "mainpage_event_handle.h"
 
 ROE_S32 handleParseGetMediaFileListMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
+
     RspGetMediaFileList_st * result = (RspGetMediaFileList_st *)msgData;
+    if(result->result != 0U) {
+        LV_LOG_WARN("[MEDIA][RSP] get file list failed result:%u", (unsigned)result->result);
+        return ROE_FAILURE;
+    }
     MediaFileInfo_st * fileInfo[UI_MAX_MEDIA_FILE_NUM_ONE_PAGE];
     /* 处理获取媒体文件列表结果 */
-    if(result->result == 0) {
-        /* 解析变长文件列表数据 */
-        ROE_U8 fileCount = result->fileCount;
-        ROE_U8 * fileDataPtr = result->fileData;
-
-        /* 遍历解析每个 MediaFileInfo_st */
-        for(ROE_U8 i = 0; i < fileCount; i++) {
-            fileInfo[i] = (MediaFileInfo_st *)fileDataPtr;
-            /* 处理文件信息：type, size, duration, createTime, name */
-            fileDataPtr += sizeof(MediaFileInfo_st) + fileInfo[i]->nameLen;
-        }
-        play_list_display(result, fileInfo);
+    /* 解析变长文件列表数据；完整长度和 fileCount 已在接收层校验。 */
+    ROE_U8 fileCount = result->fileCount;
+    ROE_U8 * fileDataPtr = result->fileData;
+    for(ROE_U8 i = 0; i < fileCount; i++) {
+        fileInfo[i] = (MediaFileInfo_st *)fileDataPtr;
+        fileDataPtr += sizeof(MediaFileInfo_st) + fileInfo[i]->nameLen;
     }
+    play_list_display(result, fileInfo);
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleParseGetMediaFileListPageMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
+
     RspGetMediaFileListPage_st * result = (RspGetMediaFileListPage_st *)msgData;
     /* 处理媒体文件列表翻页结果 */
-    if(result->result == 0) {
-        ROE_U8 fileCount = result->fileCount;
-        ROE_U8 * fileDataPtr = result->fileData;
-
-        for(ROE_U8 i = 0; i < fileCount; i++) {
-            MediaFileInfo_st * fileInfo = (MediaFileInfo_st *)fileDataPtr;
-            /* 处理文件信息 */
-            fileDataPtr += sizeof(MediaFileInfo_st) + fileInfo->nameLen;
-        }
+    if(result->result != 0U) {
+        LV_LOG_WARN("[MEDIA][RSP] page list failed result:%u", (unsigned)result->result);
+        return ROE_FAILURE;
     }
+    /* 3.28 的分页响应与 3.27 的列表响应布局不同，当前 UI 使用
+     * 3.27 请求完成页面刷新，因此这里只传播结果，不重复构造列表。 */
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleParseDelMediaFileMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
+
     RspDelMediaFile_st * result = (RspDelMediaFile_st *)msgData;
     /* 处理媒体文件删除结果 */
-    if(result->result == 0) {
-        ReqGetMediaFileList_st getMediaFileList = {0};
-        getMediaFileList.reqFileType = -1;
-        if(playlist_state.find_type == 1) {
-            getMediaFileList.year = 2024;
-            getMediaFileList.month = 0;
-            getMediaFileList.day = 0;
-            getMediaFileList.hour = -1;
-            getMediaFileList.minute = -1;
-            getMediaFileList.second = -1;
-            if(findDateTime.year == 2024) {
-            } else if(findDateTime.month == 0) {
-                getMediaFileList.year = findDateTime.year;
-            } else if(findDateTime.day == 0) {
-                getMediaFileList.year = findDateTime.year;
-                getMediaFileList.month = findDateTime.month;
-            } else if(findDateTime.hour == -1) {
-                getMediaFileList.year = findDateTime.year;
-                getMediaFileList.month = findDateTime.month;
-                getMediaFileList.day = findDateTime.day;
-            } else if(findDateTime.minute == -1) {
-                getMediaFileList.year = findDateTime.year;
-                getMediaFileList.month = findDateTime.month;
-                getMediaFileList.day = findDateTime.day;
-                getMediaFileList.hour = findDateTime.hour;
-            } else {
-                getMediaFileList.year = findDateTime.year;
-                getMediaFileList.month = findDateTime.month;
-                getMediaFileList.day = findDateTime.day;
-                getMediaFileList.hour = findDateTime.hour;
-                getMediaFileList.minute = findDateTime.minute;
-            }
-        } else if(playlist_state.find_type == 2) {
-            getMediaFileList.year = 2024;
-            getMediaFileList.month = 0;
-            getMediaFileList.day = 0;
-            getMediaFileList.hour = -1;
-            getMediaFileList.minute = -1;
-            getMediaFileList.second = -1;
-        }
+    if(result->result == 0U) {
+        ReqGetMediaFileList_st getMediaFileList;
+        ROE_U32 startIndex = 0;
         if(playlist_state.current_items == 13) {
-            getMediaFileList.startIndex = (playlist_state.current_page_index - 1) * UI_MAX_MEDIA_FILE_NUM_ONE_PAGE -
-                                          UI_MAX_MEDIA_FILE_NUM_ONE_PAGE;
-            playlist_state.current_page_index--;
-        } else {
-            getMediaFileList.startIndex = (playlist_state.current_page_index - 1) * UI_MAX_MEDIA_FILE_NUM_ONE_PAGE;
+            if(playlist_state.current_page_index > 1) {
+                playlist_state.current_page_index--;
+            }
         }
-        getMediaFileList.reqCount = 10;
+        if(playlist_state.current_page_index > 0) {
+            startIndex = (ROE_U32)(playlist_state.current_page_index - 1) * UI_MAX_MEDIA_FILE_NUM_ONE_PAGE;
+        }
+        play_media_list_request_init(&getMediaFileList, startIndex);
         playlist_state.req_type = 1;
         SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
+    } else {
+        LV_LOG_WARN("[MEDIA][RSP] delete file failed result:%u", (unsigned)result->result);
+        return ROE_FAILURE;
     }
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleParsePlayMediaFileMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
+
     RspPlayMediaFile_st * result = (RspPlayMediaFile_st *)msgData;
     /* 处理媒体文件播放结果 */
-    if(result->result == 0) {
+    if(result->result == 0U) {
         lv_group_remove_all_objs(keypad_group);
         lv_group_add_obj(keypad_group, ui_PlayBar);
         lv_screen_load(ui_PlayBar);
+    }
+    else {
+        LV_LOG_WARN("[MEDIA][RSP] play file failed result:%u", (unsigned)result->result);
+        return ROE_FAILURE;
     }
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleParsePlayPriorOrNextMediaFileMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
+
     RspPlayPriorOrNextMediaFile_st * result = (RspPlayPriorOrNextMediaFile_st *)msgData;
     /* 处理播放上一个/下一个媒体文件结果 */
-    return ROE_SUCCESS;
+    return ipc_response_result(result, result->result, __func__);
 }
 
 ROE_S32 handleParseExitMediaPlayStatusMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
+
     RspExitMediaPlay_st * result = (RspExitMediaPlay_st *)msgData;
     /* 处理退出媒体文件播放结果 */
-    if(result->result == 0) {
+    if(result->result == 0U) {
         lv_group_remove_all_objs(keypad_group);
         for(uint32_t i = 0; i < playlist_state.current_items; i++) {
             lv_group_add_obj(keypad_group, ui_PlayList[i]);
         }
-        lv_group_focus_obj(ui_PlayList[playlist_state.current_index]);
+        play_list_focus_index(playlist_state.current_index);
         lv_screen_load(ui_ScrFileMgr);
+    }
+    else {
+        LV_LOG_WARN("[MEDIA][RSP] exit media play failed result:%u", (unsigned)result->result);
+        return ROE_FAILURE;
     }
     return ROE_SUCCESS;
 }

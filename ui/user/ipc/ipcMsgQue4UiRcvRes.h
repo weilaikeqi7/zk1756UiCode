@@ -5,9 +5,9 @@
 #ifndef ZKSL_75_6LC_IPCMSGQUE4UIRCVRES_H
 #define ZKSL_75_6LC_IPCMSGQUE4UIRCVRES_H
 
-#include "roeTypes.h"
-#include "msg.h"
-#include "ipcMsgQue4UiTypeCommon.h"
+#include "user/core/roeTypes.h"
+#include "user/ipc/msg.h"
+#include "user/ipc/ipcMsgQue4UiTypeCommon.h"
 
 #pragma pack(push, 1)
 

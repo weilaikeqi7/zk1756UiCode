@@ -5,6 +5,7 @@
 
 #include "ui.h"
 #include "ui_helpers.h"
+#include "user/reticle/reticle_distance_mgr.h"
 
 ///////////////////// VARIABLES ////////////////////
 
@@ -37,9 +38,9 @@ void ui_init(void)
     lv_port_indev_init();
     lv_group_set_editing(keypad_group, false);
     popup_stack_init(&g_popup_stack, indev_keypad);
-    if(app_args.self_pass_index == 1) {
-        ui_self_screen_init();
-    }
+    /* The self-check page is also used as a notification-driven popup after
+     * normal startup, so it must exist regardless of the boot argument. */
+    ui_self_screen_init();
     ui_MainPage_screen_init();
     ui_attitude_scale_init();
     ui_ScrFileMgr_screen_init();
@@ -62,9 +63,32 @@ void ui_init(void)
 
 void ui_destroy(void)
 {
+    timer_deinit();
+    popup_stack_deinit(&g_popup_stack);
+
+    /* Groups own no widgets, but widgets keep group links. Delete the groups
+     * before their generated screen trees disappear. */
+    if(g_popup_poweroff.group != NULL) {
+        lv_group_delete(g_popup_poweroff.group);
+        g_popup_poweroff.group = NULL;
+    }
+    if(g_popup_self.group != NULL) {
+        lv_group_delete(g_popup_self.group);
+        g_popup_self.group = NULL;
+    }
+
+    reticle_distance_mgr_clear_all();
+    lv_port_indev_deinit();
+
     ui_MainPage_screen_destroy();
     ui_ScrFileMgr_screen_destroy();
     ui_PlayBar_screen_destroy();
     ui_Temp_screen_destroy();
     ui_self_screen_destroy();
+    ui_font_deinit();
+
+    g_popup_poweroff.root = NULL;
+    g_popup_poweroff.default_focus = NULL;
+    g_popup_self.root = NULL;
+    g_popup_self.default_focus = NULL;
 }

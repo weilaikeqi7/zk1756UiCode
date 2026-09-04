@@ -9,6 +9,7 @@
 #include "ipcMsgQue4UiRcvRes.h"
 #include "lvgl/lvgl.h"
 #include "handleRcvRes.h"
+#include "ipc_response_helpers.h"
 #include "reticle_model.h"
 #include "reticle_distance_mgr.h"
 #include "reticle_feature.h"
@@ -18,6 +19,10 @@
 static void format_dist_array_u16(char * buf, size_t buf_size, ROE_U8 count, const ROE_U16 * dists)
 {
     if(!buf || buf_size == 0U) return;
+    if(dists == NULL && count != 0U) {
+        lv_snprintf(buf, buf_size, "count=%u dists=[invalid]", (unsigned)count);
+        return;
+    }
 
     int pos = lv_snprintf(buf, buf_size, "count=%u dists=[", (unsigned)count);
     if(pos < 0) {
@@ -113,6 +118,7 @@ apply_zero_to_entry(reticle_distance_entry_t * e, ROE_U16 dist, ROE_S16 absX, RO
 
 ROE_S32 handleParseSetReticleCommonConfigMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspSetReticleCommonConfig_st * result = (RspSetReticleCommonConfig_st *)msgData;
     LV_LOG_USER("[RETICLE][RSP][3.61 common] result=%u show=%u rotate=%u ballistic=%u",
                 (unsigned)result->result,
@@ -133,6 +139,7 @@ ROE_S32 handleParseSetReticleCommonConfigMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseWeaponMarkConfigOperateMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspWeaponMarkConfigOperate_st * result = (RspWeaponMarkConfigOperate_st *)msgData;
     char dist_buf[160];
     format_dist_array_u16(dist_buf, sizeof(dist_buf), result->shootDistanceCount, result->shootDistances);
@@ -180,6 +187,7 @@ ROE_S32 handleParseWeaponMarkConfigOperateMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseWeaponSetReticleStyleMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspWeaponSetReticleStyle_st * result = (RspWeaponSetReticleStyle_st *)msgData;
     LV_LOG_USER("[RETICLE][RSP][3.63 style] result=%u video=%u weapon=%u style=%u",
                 (unsigned)result->result,
@@ -199,6 +207,7 @@ ROE_S32 handleParseWeaponSetReticleStyleMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseWeaponSetReticleColorMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspWeaponSetReticleColor_st * result = (RspWeaponSetReticleColor_st *)msgData;
     LV_LOG_USER("[RETICLE][RSP][3.64 color] result=%u video=%u weapon=%u color=%u",
                 (unsigned)result->result,
@@ -218,14 +227,14 @@ ROE_S32 handleParseWeaponSetReticleColorMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseWeaponBrightnessAdjustMsg(ROE_U8 * msgData)
 {
-    RspWeaponSetBrightness_st * result = (RspWeaponSetBrightness_st *)msgData;
-    return ROE_SUCCESS;
+    IPC_RETURN_RESPONSE(msgData, RspWeaponSetBrightness_st);
 }
 
 /* 处理 3.65：设置优先距离。
  * 默认索引以下位机返回的 defaultDistIndex 为准。 */
 ROE_S32 handleParseWeaponSetDefaultShootDistanceMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspWeaponSetDefaultShootDist_st * result = (RspWeaponSetDefaultShootDist_st *)msgData;
     LV_LOG_USER(
         "[RETICLE][RSP][3.65 defaultDist] result=%u video=%u weapon=%u distIndex=%u distValue=%u abs=(%d,%d) rel=(%d,%d)",
@@ -270,6 +279,7 @@ ROE_S32 handleParseWeaponSetDefaultShootDistanceMsg(ROE_U8 * msgData)
  * shootDistances[] 已经是下位机最终顺序，UI 直接使用。 */
 ROE_S32 handleParseWeaponOperateShootDistanceMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspWeaponOperateShootDist_st * result = (RspWeaponOperateShootDist_st *)msgData;
     char dist_buf[160];
     format_dist_array_u16(dist_buf, sizeof(dist_buf), result->shootDistanceCount, result->shootDistances);
@@ -372,6 +382,7 @@ ROE_S32 handleParseWeaponOperateShootDistanceMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseWeaponSetShootPositionMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspWeaponSetShootPosition_st * result = (RspWeaponSetShootPosition_st *)msgData;
     LV_LOG_USER(
         "[RETICLE][RSP][3.67 shootPos] result=%u video=%u weapon=%u distIndex=%u distValue=%u abs=(%d,%d) rel=(%d,%d)",
@@ -405,6 +416,7 @@ ROE_S32 handleParseWeaponSetShootPositionMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseWeaponSetShootZeroMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspWeaponSetShootZero_st * result = (RspWeaponSetShootZero_st *)msgData;
     LV_LOG_USER(
         "[RETICLE][RSP][3.68 zero] result=%u video=%u weapon=%u distIndex=%u distValue=%u abs=(%d,%d) rel=(%d,%d)",
@@ -438,6 +450,7 @@ ROE_S32 handleParseWeaponSetShootZeroMsg(ROE_U8 * msgData)
 
 ROE_S32 handleParseWeaponSaveConfigMsg(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     RspWeaponSaveConfig_st * result = (RspWeaponSaveConfig_st *)msgData;
     LV_LOG_USER("[RETICLE][RSP][3.69 save] result=%u", (unsigned)result->result);
     if(result->result != 0) {

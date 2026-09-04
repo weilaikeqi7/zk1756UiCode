@@ -5,11 +5,11 @@
 #ifndef ZKSL_75_6LC_EVENT_HANDLE_H
 #define ZKSL_75_6LC_EVENT_HANDLE_H
 
-#include "ipcMsgQue4UiSndRequest.h"
-#include "types.h"
+#include "user/ipc/ipcMsgQue4UiSndRequest.h"
+#include "user/core/types.h"
 #include "ui.h"
-#include "user/roeTypes.h"
-#include "app_state.h"
+#include "user/core/roeTypes.h"
+#include "user/core/app_state.h"
 
 
 #pragma pack(push, 1)

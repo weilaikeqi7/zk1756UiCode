@@ -65,6 +65,20 @@ void lv_port_indev_init(void)
      *`lv_indev_set_group(indev_keypad, group);`*/
 }
 
+void lv_port_indev_deinit(void)
+{
+    if(indev_keypad != NULL) {
+        lv_indev_set_group(indev_keypad, NULL);
+        lv_indev_delete(indev_keypad);
+        indev_keypad = NULL;
+    }
+
+    if(keypad_group != NULL) {
+        lv_group_delete(keypad_group);
+        keypad_group = NULL;
+    }
+}
+
 void lv_port_indev_simulate_key(uint8_t key_index)
 {
     if(key_index < 4U) {

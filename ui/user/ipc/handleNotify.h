@@ -5,9 +5,9 @@
 #ifndef ZKSL_75_6LC_HANDLENOTIFY_H
 #define ZKSL_75_6LC_HANDLENOTIFY_H
 
-#include "roeTypes.h"
-#include "msg.h"
-#include "ipcMsgQue4UiTypeCommon.h"
+#include "user/core/roeTypes.h"
+#include "user/ipc/msg.h"
+#include "user/ipc/ipcMsgQue4UiTypeCommon.h"
 
 #define YARDS_PER_METER 1.09361f
 #define METERS_PER_YARD 0.9144f

@@ -8,35 +8,25 @@
 void ui_event_PlayList_1(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
-    ReqGetMediaFileList_st getMediaFileList = {0};
-    getMediaFileList.reqFileType = -1;
     if(event_code == LV_EVENT_KEY) {
         uint32_t key = lv_indev_get_key(lv_indev_active());
         switch(key) {
         case LV_KEY_UP:
-            playlist_state.current_index = (playlist_state.current_index + 1) % playlist_state.current_items;
-            lv_group_focus_obj(ui_PlayList[playlist_state.current_index]);
+            play_list_focus_relative(1);
             break;
         case LV_KEY_DOWN:
-            playlist_state.current_index =
-                (playlist_state.current_index - 1 + playlist_state.current_items) % playlist_state.current_items;
-            lv_group_focus_obj(ui_PlayList[playlist_state.current_index]);
+            play_list_focus_relative(-1);
             break;
-        case LV_KEY_ENTER:
-            getMediaFileList.year = 2024;
-            getMediaFileList.month = 0;
-            getMediaFileList.day = 0;
-            getMediaFileList.hour = -1;
-            getMediaFileList.minute = -1;
-            getMediaFileList.second = -1;
-            getMediaFileList.startIndex = 0;
-            getMediaFileList.reqCount = 10;
+        case LV_KEY_ENTER: {
+            ReqGetMediaFileList_st getMediaFileList;
             playlist_state.req_type = 1;
             playlist_state.current_page_index = 1;
             playlist_state.find_type = 2;
+            play_media_list_request_init(&getMediaFileList, 0);
             SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
             cur_focus_index = FOCUS_ALL;
             break;
+        }
         case LV_KEY_ESC:
             break;
         default:
@@ -55,9 +45,7 @@ void ui_event_PlayList_1_5(lv_event_t * e)
         switch(key) {
         case LV_KEY_UP:
             if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
-                lv_group_focus_next(keypad_group);
-                playlist_state.current_index = (playlist_state.current_index + 1) % playlist_state.current_items;
-                lv_group_focus_obj(ui_PlayList[playlist_state.current_index]);
+                play_list_focus_relative(1);
             } else {
                 switch(playlist_state.current_index) {
                 case 1: {
@@ -142,9 +130,7 @@ void ui_event_PlayList_1_5(lv_event_t * e)
             break;
         case LV_KEY_DOWN:
             if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
-                playlist_state.current_index =
-                    (playlist_state.current_index - 1 + playlist_state.current_items) % playlist_state.current_items;
-                lv_group_focus_obj(ui_PlayList[playlist_state.current_index]);
+                play_list_focus_relative(-1);
             } else {
                 switch(playlist_state.current_index) {
                 case 1: {
@@ -254,62 +240,25 @@ void ui_event_PlayList_1_5(lv_event_t * e)
 void ui_event_PlayList_6(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
-    ReqGetMediaFileList_st getMediaFileList = {0};
-    getMediaFileList.reqFileType = -1;
     if(event_code == LV_EVENT_KEY) {
         uint32_t key = lv_indev_get_key(lv_indev_active());
         switch(key) {
         case LV_KEY_UP:
-            playlist_state.current_index = (playlist_state.current_index + 1) % playlist_state.current_items;
-            lv_group_focus_obj(ui_PlayList[playlist_state.current_index]);
+            play_list_focus_relative(1);
             break;
         case LV_KEY_DOWN:
-            playlist_state.current_index =
-                (playlist_state.current_index - 1 + playlist_state.current_items) % playlist_state.current_items;
-            lv_group_focus_obj(ui_PlayList[playlist_state.current_index]);
+            play_list_focus_relative(-1);
             break;
-        case LV_KEY_ENTER:
-            getMediaFileList.year = 2024;
-            getMediaFileList.month = 0;
-            getMediaFileList.day = 0;
-            getMediaFileList.hour = -1;
-            getMediaFileList.minute = -1;
-            getMediaFileList.second = -1;
-            getMediaFileList.startIndex = 0;
-            getMediaFileList.reqCount = 10;
+        case LV_KEY_ENTER: {
+            ReqGetMediaFileList_st getMediaFileList;
             playlist_state.req_type = 1;
             playlist_state.current_page_index = 1;
             playlist_state.find_type = 1;
-            if(findDateTime.year == 2024) {
-                SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
-            } else if(findDateTime.month == 0) {
-                getMediaFileList.year = findDateTime.year;
-                SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
-            } else if(findDateTime.day == 0) {
-                getMediaFileList.year = findDateTime.year;
-                getMediaFileList.month = findDateTime.month;
-                SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
-            } else if(findDateTime.hour == -1) {
-                getMediaFileList.year = findDateTime.year;
-                getMediaFileList.month = findDateTime.month;
-                getMediaFileList.day = findDateTime.day;
-                SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
-            } else if(findDateTime.minute == -1) {
-                getMediaFileList.year = findDateTime.year;
-                getMediaFileList.month = findDateTime.month;
-                getMediaFileList.day = findDateTime.day;
-                getMediaFileList.hour = findDateTime.hour;
-                SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
-            } else {
-                getMediaFileList.year = findDateTime.year;
-                getMediaFileList.month = findDateTime.month;
-                getMediaFileList.day = findDateTime.day;
-                getMediaFileList.hour = findDateTime.hour;
-                getMediaFileList.minute = findDateTime.minute;
-                SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
-            }
+            play_media_list_request_init(&getMediaFileList, 0);
+            SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
             cur_focus_index = FOCUS_FIND;
             break;
+        }
         case LV_KEY_ESC:
             break;
         default:

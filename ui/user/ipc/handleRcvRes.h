@@ -5,9 +5,9 @@
 #ifndef ZKSL_75_6LC_HANDLERCVRES_H
 #define ZKSL_75_6LC_HANDLERCVRES_H
 
-#include "roeTypes.h"
-#include "msg.h"
-#include "ipcMsgQue4UiTypeCommon.h"
+#include "user/core/roeTypes.h"
+#include "user/ipc/msg.h"
+#include "user/ipc/ipcMsgQue4UiTypeCommon.h"
 
 ROE_S32 handleParseRegisterMsg(ROE_U8 * msgData);
 

@@ -29,10 +29,13 @@ static void refresh_global_zoom_ui(void)
     }
 
     if(ui_calibrationrow4) {
-        lv_label_set_text_fmt(ui_comp_get_child(ui_calibrationrow4, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1),
-                              "%.*f",
-                              g_app.video.zoom.precision,
-                              g_app.video.zoom.zoomValue);
+        lv_obj_t * label = ui_comp_get_child(ui_calibrationrow4, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1);
+        if(label != NULL) {
+            lv_label_set_text_fmt(label,
+                                  "%.*f",
+                                  g_app.video.zoom.precision,
+                                  g_app.video.zoom.zoomValue);
+        }
     }
 }
 
@@ -41,6 +44,7 @@ static void refresh_global_freeze_ui(void)
     if(!ui_calibrationrow5) return;
 
     lv_obj_t * sw = ui_comp_get_child(ui_calibrationrow5, UI_COMP_ROWSWITCH_CONTPILL_SWITCH);
+    if(sw == NULL) return;
     if(g_freeze_switch) {
         lv_obj_add_state(sw, LV_STATE_CHECKED);
     } else {
@@ -51,6 +55,7 @@ static void refresh_global_freeze_ui(void)
 
 ROE_S32 handleRangeData(ROE_U8 * msgData)
 {
+    if(msgData == NULL || ui_distancelabel == NULL || ui_tempdistancelabel == NULL) return ROE_FAILURE;
     NotifyLaser_st * laser = (NotifyLaser_st *)msgData;
     if(laser->targetCount != 0) {
         if(g_app.ui.distance_unit_item.index == TARGET_UNIT_METER) {
@@ -74,12 +79,14 @@ ROE_S32 handleRangeData(ROE_U8 * msgData)
 
 ROE_S32 handleRangeCountdownNotify(ROE_U8 * msgData)
 {
-    NotifyLaserCountDown_st * laserCountDown = (NotifyLaserCountDown_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[RANGE][NTF] countdown received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleSnapStatusNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL || ui_snap == NULL) return ROE_FAILURE;
     NotifyPhoto_st * photo = (NotifyPhoto_st *)msgData;
     if(photo->action == 1) {
         lv_obj_remove_flag(ui_snap, LV_OBJ_FLAG_HIDDEN);
@@ -92,6 +99,7 @@ ROE_S32 handleSnapStatusNotify(ROE_U8 * msgData)
 ROE_S32 handleRecordStatusNotify(ROE_U8 * msgData)
 {
     static int hidden_flag = 0;
+    if(msgData == NULL || ui_contrecord == NULL || ui_recordtimelabel == NULL) return ROE_FAILURE;
     NotifyRecord_st * record = (NotifyRecord_st *)msgData;
     if(record->countUpTime < 0) {
         lv_obj_add_flag(ui_contrecord, LV_OBJ_FLAG_HIDDEN);
@@ -111,6 +119,7 @@ ROE_S32 handleRecordStatusNotify(ROE_U8 * msgData)
 
 ROE_S32 handleZoomInfoNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyZoom_st * zoom = (NotifyZoom_st *)msgData;
     g_app.video.zoom.zoomValue = zoom->zoomValue;
     g_app.video.zoom.precision = zoom->precision;
@@ -120,32 +129,32 @@ ROE_S32 handleZoomInfoNotify(ROE_U8 * msgData)
 
 ROE_S32 handleRangeFinderStatusNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL || ui_menu1row1 == NULL || ui_menu1row3 == NULL || ui_rowlrf == NULL ||
+       ui_contdistance == NULL || ui_tempcontdistance == NULL || ui_distancelabel == NULL ||
+       ui_tempdistancelabel == NULL) {
+        return ROE_FAILURE;
+    }
     NotifyLaserState_st * laserState = (NotifyLaserState_st *)msgData;
+    lv_obj_t * rangefinder_switch = ui_comp_get_child(ui_menu1row1, UI_COMP_ROWSWITCH_CONTPILL_SWITCH);
+    lv_obj_t * rangefinder_menu_switch = ui_comp_get_child(ui_menu1row3, UI_COMP_ROWSWITCH_CONTPILL_SWITCH);
+    lv_obj_t * rangefinder_label = ui_comp_get_child(ui_rowlrf, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1);
+    if(rangefinder_switch == NULL || rangefinder_menu_switch == NULL || rangefinder_label == NULL) {
+        LV_LOG_WARN("[VIDEO][NTF] rangefinder controls are not initialized");
+        return ROE_FAILURE;
+    }
     if(laserState->state == 0) {
-        lv_obj_set_state(ui_comp_get_child(ui_menu1row1, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED, false);
-        lv_obj_send_event(
-            ui_comp_get_child(ui_menu1row1, UI_COMP_ROWSWITCH_CONTPILL_SWITCH),
-            LV_EVENT_VALUE_CHANGED,
-            NULL);
-        lv_obj_set_state(
-            ui_comp_get_child(ui_menu1row3, UI_COMP_ROWSWITCH_CONTPILL_SWITCH),
-            LV_STATE_CHECKED,
-            false);
-        lv_obj_send_event(
-            ui_comp_get_child(ui_menu1row3, UI_COMP_ROWSWITCH_CONTPILL_SWITCH),
-            LV_EVENT_VALUE_CHANGED,
-            NULL);
-        lv_label_set_text(ui_comp_get_child(ui_rowlrf, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "OFF");
+        lv_obj_set_state(rangefinder_switch, LV_STATE_CHECKED, false);
+        lv_obj_send_event(rangefinder_switch, LV_EVENT_VALUE_CHANGED, NULL);
+        lv_obj_set_state(rangefinder_menu_switch, LV_STATE_CHECKED, false);
+        lv_obj_send_event(rangefinder_menu_switch, LV_EVENT_VALUE_CHANGED, NULL);
+        lv_label_set_text(rangefinder_label, "OFF");
         g_app.video.rangefinder_on = OFF;
         lv_obj_add_flag(ui_contdistance, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(ui_tempcontdistance, LV_OBJ_FLAG_HIDDEN);
     } else if(laserState->state == 1) {
-        lv_obj_set_state(ui_comp_get_child(ui_menu1row1, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED, true);
-        lv_obj_send_event(
-            ui_comp_get_child(ui_menu1row1, UI_COMP_ROWSWITCH_CONTPILL_SWITCH),
-            LV_EVENT_VALUE_CHANGED,
-            NULL);
-        lv_label_set_text(ui_comp_get_child(ui_rowlrf, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "ON");
+        lv_obj_set_state(rangefinder_switch, LV_STATE_CHECKED, true);
+        lv_obj_send_event(rangefinder_switch, LV_EVENT_VALUE_CHANGED, NULL);
+        lv_label_set_text(rangefinder_label, "ON");
         g_app.video.rangefinder_on = ON;
         if(g_app.ui.distance_unit_item.index == 0) {
             lv_label_set_text(ui_distancelabel, "----M");
@@ -162,18 +171,21 @@ ROE_S32 handleRangeFinderStatusNotify(ROE_U8 * msgData)
 
 ROE_S32 handleVideoInputDeviceSwitchStatusNotify(ROE_U8 * msgData)
 {
-    NotifyVideoInput_st * videoInput = (NotifyVideoInput_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[VIDEO][NTF] input device status received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleVideoInputDeviceAuxiliaryLightingNotify(ROE_U8 * msgData)
 {
-    NotifyLight_st * light = (NotifyLight_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[VIDEO][NTF] auxiliary lighting status received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleVideoInputDeviceFreezingNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyFreeze_st * freeze = (NotifyFreeze_st *)msgData;
     g_app.video.freeze_on = freeze->state;
     refresh_global_freeze_ui();
@@ -183,24 +195,28 @@ ROE_S32 handleVideoInputDeviceFreezingNotify(ROE_U8 * msgData)
 
 ROE_S32 handleVideoInputDeviceMirrorFlipNotify(ROE_U8 * msgData)
 {
-    NotifyMirror_st * mirror = (NotifyMirror_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[VIDEO][NTF] mirror status received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleVideoInputDeviceRotatingNotify(ROE_U8 * msgData)
 {
-    NotifyRotate_st * rotate = (NotifyRotate_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[VIDEO][NTF] rotate status received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleMediaFilePlayOperateNotify(ROE_U8 * msgData)
 {
-    NotifyMediaPlay_st * mediaPlay = (NotifyMediaPlay_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[MEDIA][NTF] play operation received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleOsdShowHideOperateNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL || ui_contitemdate == NULL || ui_contitemtime == NULL) return ROE_FAILURE;
     NotifyOsd_st * osdShowHide = (NotifyOsd_st *)msgData;
     g_app.video.osd.all = osdShowHide->all;
     g_app.video.osd.datetime = osdShowHide->datetime;
@@ -221,6 +237,7 @@ ROE_S32 handleOsdShowHideOperateNotify(ROE_U8 * msgData)
 
 ROE_S32 handlePeripheralsPowerStatusNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL || ui_rowwifi == NULL || ui_imgwifi == NULL) return ROE_FAILURE;
     NotifyDeviceSwitch_st * deviceSwitch = (NotifyDeviceSwitch_st *)msgData;
     if(deviceSwitch->bluetooth == -1 || deviceSwitch->bluetooth == OFF || deviceSwitch->bluetooth == ON) {
         if(deviceSwitch->bluetooth != -1) {
@@ -237,23 +254,22 @@ ROE_S32 handlePeripheralsPowerStatusNotify(ROE_U8 * msgData)
             g_app.video.dev_switch.sle = deviceSwitch->sle;
         }
     }
+    lv_obj_t * wifi_switch = ui_comp_get_child(ui_rowwifi, UI_COMP_ROWSWITCH_CONTPILL_SWITCH);
+    if(wifi_switch == NULL) {
+        LV_LOG_WARN("[VIDEO][NTF] wifi switch control is not initialized");
+        return ROE_FAILURE;
+    }
     LV_LOG_USER("device switch: bluetooth=%d wifi=%d sle=%d",
                 g_app.video.dev_switch.bluetooth,
                 g_app.video.dev_switch.wifi,
                 g_app.video.dev_switch.sle);
     if(g_app.video.dev_switch.wifi == OFF) {
-        lv_obj_set_state(ui_comp_get_child(ui_rowwifi, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED, false);
-        lv_obj_send_event(
-            ui_comp_get_child(ui_rowwifi, UI_COMP_ROWSWITCH_CONTPILL_SWITCH),
-            LV_EVENT_VALUE_CHANGED,
-            NULL);
+        lv_obj_set_state(wifi_switch, LV_STATE_CHECKED, false);
+        lv_obj_send_event(wifi_switch, LV_EVENT_VALUE_CHANGED, NULL);
         lv_obj_set_style_image_recolor_opa(ui_imgwifi, LV_OPA_30, LV_PART_MAIN);
     } else {
-        lv_obj_set_state(ui_comp_get_child(ui_rowwifi, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED, true);
-        lv_obj_send_event(
-            ui_comp_get_child(ui_rowwifi, UI_COMP_ROWSWITCH_CONTPILL_SWITCH),
-            LV_EVENT_VALUE_CHANGED,
-            NULL);
+        lv_obj_set_state(wifi_switch, LV_STATE_CHECKED, true);
+        lv_obj_send_event(wifi_switch, LV_EVENT_VALUE_CHANGED, NULL);
         lv_obj_set_style_image_recolor_opa(ui_imgwifi, LV_OPA_0, LV_PART_MAIN);
     }
     return ROE_SUCCESS;
@@ -261,39 +277,45 @@ ROE_S32 handlePeripheralsPowerStatusNotify(ROE_U8 * msgData)
 
 ROE_S32 handleInfraredPseudoColorModeNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL || ui_rowimagemode == NULL || ui_imgpolarity == NULL) return ROE_FAILURE;
     NotifyPseudoColor_st * pseudoColor = (NotifyPseudoColor_st *)msgData;
+    lv_obj_t * mode_label = ui_comp_get_child(ui_rowimagemode, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1);
+    if(mode_label == NULL) {
+        LV_LOG_WARN("[VIDEO][NTF] pseudo-color mode label is not initialized");
+        return ROE_FAILURE;
+    }
     g_app.video.mode = pseudoColor->mode;
     switch(g_app.video.mode) {
     case 0:
-        lv_label_set_text(ui_comp_get_child(ui_rowimagemode, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "White Hot");
+        lv_label_set_text(mode_label, "White Hot");
         lv_image_set_src(ui_imgpolarity, IMAGES_PATH "HOT-W.png");
         break;
     case 1:
-        lv_label_set_text(ui_comp_get_child(ui_rowimagemode, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "Black Hot");
+        lv_label_set_text(mode_label, "Black Hot");
         lv_image_set_src(ui_imgpolarity, IMAGES_PATH "HOT-B.png");
         break;
     case 2:
-        lv_label_set_text(ui_comp_get_child(ui_rowimagemode, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "Iron Red");
+        lv_label_set_text(mode_label, "Iron Red");
         lv_image_set_src(ui_imgpolarity, IMAGES_PATH "HOT-I.png");
         break;
     case 3:
-        lv_label_set_text(ui_comp_get_child(ui_rowimagemode, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "Desert Yellow");
+        lv_label_set_text(mode_label, "Desert Yellow");
         lv_image_set_src(ui_imgpolarity, IMAGES_PATH "HOT-Y.png");
         break;
     case 4:
-        lv_label_set_text(ui_comp_get_child(ui_rowimagemode, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "Green Hot");
+        lv_label_set_text(mode_label, "Green Hot");
         lv_image_set_src(ui_imgpolarity, IMAGES_PATH "HOT-G.png");
         break;
     case 5:
-        lv_label_set_text(ui_comp_get_child(ui_rowimagemode, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "Red Hot");
+        lv_label_set_text(mode_label, "Red Hot");
         lv_image_set_src(ui_imgpolarity, IMAGES_PATH "HOT-R.png");
         break;
     case 6:
-        lv_label_set_text(ui_comp_get_child(ui_rowimagemode, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "Highlight");
+        lv_label_set_text(mode_label, "Highlight");
         lv_image_set_src(ui_imgpolarity, IMAGES_PATH "HOT-H.png");
         break;
     case 7:
-        lv_label_set_text(ui_comp_get_child(ui_rowimagemode, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), "Outline");
+        lv_label_set_text(mode_label, "Outline");
         lv_image_set_src(ui_imgpolarity, IMAGES_PATH "HOT-O.png");
         break;
     default:

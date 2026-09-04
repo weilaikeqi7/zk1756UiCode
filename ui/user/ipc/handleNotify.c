@@ -22,7 +22,9 @@ static void
 self_timer_cb(lv_timer_t * timer)
 {
     (void)timer;
-    lv_disp_load_scr(ui_MainPage);
+    if(ui_MainPage != NULL) {
+        lv_disp_load_scr(ui_MainPage);
+    }
     if(self_timer != NULL) {
         lv_timer_delete(self_timer);
         self_timer = NULL;
@@ -32,6 +34,7 @@ self_timer_cb(lv_timer_t * timer)
 // 函数：将米 (Meter) 转换为码 (Yard)
 ROE_S32 handleMagneticDeclinationNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyMagneticDeclination_st * magneticDecLination = (NotifyMagneticDeclination_st *)msgData;
     magnetic.value = magneticDecLination->magneticDeclination;
     float v = magnetic.value;
@@ -53,20 +56,37 @@ ROE_S32 handleMagneticDeclinationNotify(ROE_U8 * msgData)
 
 ROE_S32 handleObserveModeNotify(ROE_U8 * msgData)
 {
-    NotifyObserveMode_st * observeMode = (NotifyObserveMode_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[VIDEO][NTF] observe mode received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handlePeripheralSelfTest(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
+
     NotifySelfCheck_st * selfCheck = (NotifySelfCheck_st *)msgData;
+    if(ui_self == NULL || ui_self_item_label[0] == NULL) {
+        LV_LOG_WARN("[SELFTEST][DROP] self-check screen is not initialized");
+        return ROE_FAILURE;
+    }
+
     int sum = 0;
     LV_LOG_USER("selfCheck->selfCheckState = %d", selfCheck->selfCheckState);
     for(int i = 0; i < SELF_ITEM_NUM; i++) {
-        lv_label_set_text(ui_self_item_label[i], self_info[selfCheck->selfItem[i]]);
+        ROE_U8 state = selfCheck->selfItem[i];
+        if(state >= 3U) {
+            LV_LOG_WARN("[SELFTEST][DROP] invalid item state index:%d value:%u", i, (unsigned)state);
+            state = 0;
+        }
+        if(ui_self_item_label[i] == NULL) continue;
+
+        lv_label_set_text(ui_self_item_label[i], self_info[state]);
         LV_LOG_USER("selfCheck->selfItem[%d] = %d", i, selfCheck->selfItem[i]);
         if(selfCheck->selfItem[i] == 2) {
             lv_obj_set_style_text_color(ui_self_item_label[i], lv_color_hex(0xFF3B30), LV_PART_MAIN | LV_STATE_DEFAULT);
+        } else {
+            lv_obj_set_style_text_color(ui_self_item_label[i], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
         }
     }
     if(selfCheck->selfCheckState == 1) {
@@ -75,8 +95,16 @@ ROE_S32 handlePeripheralSelfTest(ROE_U8 * msgData)
         }
 
         if(sum == 7) {
+            if(self_timer != NULL) {
+                lv_timer_delete(self_timer);
+                self_timer = NULL;
+            }
             self_timer = lv_timer_create(self_timer_cb, 1000, NULL);
         } else {
+            lv_obj_remove_flag(ui_self_button_label, LV_OBJ_FLAG_HIDDEN);
+            if(lv_screen_active() != ui_self) {
+                lv_screen_load(ui_self);
+            }
             popup_stack_push(&g_popup_stack, &g_popup_self);
         }
         if(selfCheck->selfItem[2] == 1) {
@@ -90,6 +118,7 @@ ROE_S32 handlePeripheralSelfTest(ROE_U8 * msgData)
 
 ROE_S32 handleCompassData(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyCompass_st * compass = (NotifyCompass_st *)msgData;
     ui_attitude_scale_update(compass->yaw, compass->roll, compass->pitch);
     return ROE_SUCCESS;
@@ -97,12 +126,14 @@ ROE_S32 handleCompassData(ROE_U8 * msgData)
 
 ROE_S32 handleGpsData(ROE_U8 * msgData)
 {
-    NotifyGps_st * gps = (NotifyGps_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[GNSS][NTF] position update received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleSdVccVolNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL || ui_labelsd == NULL || ui_imgbattery == NULL) return ROE_FAILURE;
     NotifyPower_st * sdVccVol = (NotifyPower_st *)msgData;
     lv_label_set_text_fmt(ui_labelsd, "%.1fG", sdVccVol->sdAvailableGB);
 
@@ -120,12 +151,14 @@ ROE_S32 handleSdVccVolNotify(ROE_U8 * msgData)
 
 ROE_S32 handleCompassCalibrationNotify(ROE_U8 * msgData)
 {
-    NotifyCompassScore_st * compassScore = (NotifyCompassScore_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[COMPASS][NTF] calibration score received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleDialogBoxNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyDialog_st * dialog = (NotifyDialog_st *)msgData;
     LV_LOG_USER("dialog->dialogType:%d, dialog->option:%d", dialog->dialogType, dialog->option);
     if(dialog->dialogType == 0) {
@@ -155,6 +188,7 @@ ROE_S32 handleDialogBoxNotify(ROE_U8 * msgData)
 
 ROE_S32 handleMenuNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyMenuMode_st * menu = (NotifyMenuMode_st *)msgData;
     LV_LOG_USER("menu->action:%d, menu->option:%d", menu->action, menu->option);
     if(menu->action == 0) {
@@ -171,6 +205,7 @@ ROE_S32 handleMenuNotify(ROE_U8 * msgData)
 
 ROE_S32 handleKeyEventNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyMenuKey_st * menuKey = (NotifyMenuKey_st *)msgData;
     if(menuKey->inMenu == 1) {
         // LV_LOG_USER("menuKey->keyCode:%d, menuKey->keyEvent:%d", menuKey->keyCode, menuKey->keyEvent);
@@ -193,6 +228,7 @@ ROE_S32 handleKeyEventNotify(ROE_U8 * msgData)
 
 ROE_S32 handleResourcePathNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyPath_st * path = (NotifyPath_st *)msgData;
     const ROE_U8 * data = path->pathData;
     char pathText[4][256] = {{0}};
@@ -217,6 +253,7 @@ ROE_S32 handleResourcePathNotify(ROE_U8 * msgData)
 
 ROE_S32 handleReticleOverallInfoNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyReticleInfo_st * reticleInfo = (NotifyReticleInfo_st *)msgData;
     LV_LOG_USER(
         "[RETICLE][NTF][2.18 overall] gunCount=%u styleCount=%u colorCount=%u display=%u rotate=%u ballistic=%u curGun=%u maxDist=%u defaultDistIndex=%u defaultDist=%u",
@@ -262,36 +299,42 @@ ROE_S32 handleReticleOverallInfoNotify(ROE_U8 * msgData)
 
 ROE_S32 handlePanTiltHorizontalAngleNotify(ROE_U8 * msgData)
 {
-    NotifyGimbalYaw_st * gimbalYaw = (NotifyGimbalYaw_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[PANTILT][NTF] horizontal angle received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handlePanTiltVerticalAngleNotify(ROE_U8 * msgData)
 {
-    NotifyGimbalPitch_st * gimbalPitch = (NotifyGimbalPitch_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[PANTILT][NTF] vertical angle received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handlePanTiltHorizontalRunningStatusNotify(ROE_U8 * msgData)
 {
-    NotifyGimbalYawState_st * gimbalYawState = (NotifyGimbalYawState_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[PANTILT][NTF] horizontal running status received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handlePanTiltVerticalRunningStatusNotify(ROE_U8 * msgData)
 {
-    NotifyGimbalPitchState_st * gimbalPitchState = (NotifyGimbalPitchState_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[PANTILT][NTF] vertical running status received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handlePeripheralsAbilityNotify(ROE_U8 * msgData)
 {
-    NotifyDeviceCapability_st * deviceCapability = (NotifyDeviceCapability_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[DEVICE][NTF] capability received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleInfraredBadPixelThresholdNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyBadPixelThreshold_st * badPixelThreshold = (NotifyBadPixelThreshold_st *)msgData;
     g_app.bad_point.threshold = badPixelThreshold->defaultValue;
     g_app.bad_point.threshold_max = badPixelThreshold->maxValue;
@@ -305,6 +348,7 @@ ROE_S32 handleInfraredBadPixelThresholdNotify(ROE_U8 * msgData)
 
 ROE_S32 handleInfraredBadPixelNumNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL || ui_bad_pixel_item1 == NULL) return ROE_FAILURE;
     NotifyBadPixelCount_st * badPixelNum = (NotifyBadPixelCount_st *)msgData;
     g_app.bad_point.bpnum = badPixelNum->badPixelCount;
     lv_label_set_text_fmt(
@@ -317,43 +361,50 @@ ROE_S32 handleInfraredBadPixelNumNotify(ROE_U8 * msgData)
 
 ROE_S32 handleInitConfigNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyInitConfig_st * initConfig = (NotifyInitConfig_st *)msgData;
+    if(initConfig->language >= (ROE_U8)g_app.ui.language_item.count) return ROE_FAILURE;
     g_app.ui.language_item.index = initConfig->language;
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleBatteryInfoNotify(ROE_U8 * msgData)
 {
-    NotifyBattery_st * batteryInfo = (NotifyBattery_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[DEVICE][NTF] battery status received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleRtCtlPanTiltInfoNotify(ROE_U8 * msgData)
 {
-    NotifyGimbalControl_st * gimbalControl = (NotifyGimbalControl_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[PANTILT][NTF] control status received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleOledStatusInfoNotify(ROE_U8 * msgData)
 {
-    NotifyOled_st * oledStatus = (NotifyOled_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[DISPLAY][NTF] OLED status received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleInfraredHotPixelRepairedCorrectedValueNotify(ROE_U8 * msgData)
 {
-    NotifyHotPixelFix_st * hotPixelFix = (NotifyHotPixelFix_st *)msgData;
+    if(msgData == NULL) return ROE_FAILURE;
+    LV_LOG_USER("[INFRARED][NTF] hot pixel correction value received");
     return ROE_SUCCESS;
 }
 
 ROE_S32 handleReticleInfoUpdatingNotify(ROE_U8 * msgData)
 {
+    if(msgData == NULL) return ROE_FAILURE;
     NotifyReticleUpdate_st * reticleUpdate = (NotifyReticleUpdate_st *)msgData;
     DividingPlates_st * dividingPlatesinfo[UI_MAX_DIVIDING_PLATES_NUM];
 
     ROE_S8 conut = reticleUpdate->num;
     ROE_U8 * dataPtr = reticleUpdate->dividingPlatesData;
-    char * imageName[3] = {"/run/reticleUi0.bmp", "/run/reticleUi1.bmp", "/run/reticleUi2.bmp"};
+    const char * imageName[3] = {"/run/reticleUi0.bmp", "/run/reticleUi1.bmp", "/run/reticleUi2.bmp"};
     char name[256];
     char logName[256];
 

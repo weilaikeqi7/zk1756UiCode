@@ -5,8 +5,8 @@
 #ifndef ZKSL_75_6LC_IPCMSGQUE4UISNDREQUEST_H
 #define ZKSL_75_6LC_IPCMSGQUE4UISNDREQUEST_H
 
-#include "ipcMsgQue4UiTypeCommon.h"
-#include "roeTypes.h"
+#include "user/ipc/ipcMsgQue4UiTypeCommon.h"
+#include "user/core/roeTypes.h"
 
 #define UI_MSG_VERSION 0
 #define UI_MAX(x, y) ((x) > (y) ? (x) : (y))

@@ -168,7 +168,10 @@ uint8_t reticle_distance_mgr_get_primary(void)
 void reticle_distance_mgr_clear_all(void)
 {
     for(int i = (int)s_cnt - 1; i >= 0; i--) {
-        lv_obj_del(s_obj[i]);
+        if(s_obj[i] != NULL) {
+            lv_obj_del(s_obj[i]);
+            s_obj[i] = NULL;
+        }
     }
     s_cnt = 0;
     s_sel = 0;
@@ -181,27 +184,28 @@ void reticle_distance_mgr_load_from_cfg(const reticle_gun_cfg_t * cfg, lv_event_
     reticle_distance_mgr_clear_all();
     if(!cfg) return;
 
-    s_cnt = cfg->count;
-    if(s_cnt > RETICLE_MAX_DISTANCE_ITEMS) s_cnt = RETICLE_MAX_DISTANCE_ITEMS;
+    uint8_t requested_count = cfg->count;
+    if(requested_count > RETICLE_MAX_DISTANCE_ITEMS) requested_count = RETICLE_MAX_DISTANCE_ITEMS;
 
-    for(uint8_t i = 0; i < s_cnt; i++) {
+    for(uint8_t i = 0; i < requested_count; i++) {
         lv_obj_t * obj = create_item_obj();
         if(!obj) break;
 
-        s_obj[i] = obj;
-        s_entry[i] = cfg->items[i];
+        s_obj[s_cnt] = obj;
+        s_entry[s_cnt] = cfg->items[i];
 
         /* tag_idx 未初始化时，默认按当前位置处理。 */
-        if(s_entry[i].tag_idx >= RETICLE_MAX_DISTANCE_ITEMS) {
-            s_entry[i].tag_idx = i;
+        if(s_entry[s_cnt].tag_idx >= RETICLE_MAX_DISTANCE_ITEMS) {
+            s_entry[s_cnt].tag_idx = s_cnt;
         }
 
-        set_item_text(obj, s_entry[i].dist);
+        set_item_text(obj, s_entry[s_cnt].dist);
         set_item_primary_icon(obj);
 
         if(item_event_cb) {
             lv_obj_add_event_cb(obj, item_event_cb, LV_EVENT_ALL, NULL);
         }
+        s_cnt++;
     }
 
     if(s_sel >= s_cnt) s_sel = (s_cnt > 0) ? (uint8_t)(s_cnt - 1) : 0;

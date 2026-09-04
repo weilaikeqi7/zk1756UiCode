@@ -36,6 +36,8 @@ extern "C" {
  **********************/
 void lv_port_indev_init(void);
 
+void lv_port_indev_deinit(void);
+
 /** Queue one of the four hardware-equivalent keys: UP, ENTER, DOWN, ESC. */
 void lv_port_indev_simulate_key(uint8_t key_index);
 

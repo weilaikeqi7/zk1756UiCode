@@ -3,7 +3,7 @@
 
 #define SELF_ITEM_NUM   7
 #include "lvgl/lvgl.h"
-#include "popup_stack.h"
+#include "user/core/popup_stack.h"
 
 extern lv_obj_t * ui_self;
 extern lv_obj_t * ui_self_count;

@@ -1,12 +1,11 @@
 #include "ipcMsgQue4UiRcvRes.h"
 #include "handleRcvRes.h"
+#include "ipc_response_helpers.h"
 
 #define DEFINE_RESULT_HANDLER(functionName, responseType) \
     ROE_S32 functionName(ROE_U8 * msgData) \
     { \
-        if(!msgData) return ROE_FAILURE; \
-        const responseType * response = (const responseType *)msgData; \
-        return response->result == 0 ? ROE_SUCCESS : ROE_FAILURE; \
+        IPC_RETURN_RESPONSE(msgData, responseType); \
     }
 
 DEFINE_RESULT_HANDLER(handleParseGetVideoOutputParaMsg, RspGetVideoOutputPara_st)

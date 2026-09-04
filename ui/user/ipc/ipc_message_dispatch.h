@@ -1,7 +1,7 @@
 #ifndef ZKSL_75_6LC_IPC_MESSAGE_DISPATCH_H
 #define ZKSL_75_6LC_IPC_MESSAGE_DISPATCH_H
 
-#include "roeTypes.h"
+#include "user/core/roeTypes.h"
 
 typedef ROE_S32 (*IpcMessageHandler)(ROE_U8 * msgData);
 

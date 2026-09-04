@@ -6,7 +6,7 @@
 #define ZKSL_75_6LC_TIMER_HANDLE_H
 
 #include "ui.h"
-#include "types.h"
+#include "user/core/types.h"
 
 typedef struct {
     int year;
@@ -20,6 +20,8 @@ typedef struct {
 void datetime_get_local(DateTime * d);
 
 void timer_init(void);
+
+void timer_deinit(void);
 
 extern DateTime datatime;
 extern lv_timer_t * timer_datetime;

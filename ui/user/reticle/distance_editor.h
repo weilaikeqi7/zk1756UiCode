@@ -6,7 +6,7 @@
 #define ZKSL_75_6LC_DISTANCE_EDITOR_H
 
 #include <stdbool.h>
-#include "lvgl.h"
+#include "lvgl/lvgl.h"
 
 #ifdef __cplusplus
 extern "C" {

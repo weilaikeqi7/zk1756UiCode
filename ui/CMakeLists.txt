@@ -56,20 +56,20 @@ set(UI_IPC_SEND_SOURCES
 )
 
 set(UI_IPC_QUEUE_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_event_queue.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipc_event_queue.c
 )
 
 set(UI_IPC_RUNTIME_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_receiver.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_runtime.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipc_receiver.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/runtime/ui_runtime.c
 )
 
 set(UI_IPC_VALIDATION_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_validate.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipc_message_validate.c
 )
 
 set(UI_IPC_DISPATCH_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/msg.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/msg.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvNotify.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvRes.c
 )
@@ -142,6 +142,57 @@ set(UI_RETICLE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_model.c
 )
 
+set(UI_CORE_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/app_state.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/font.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/lv_port_indev.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/popup_stack.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/roeTypes.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/timer_handle.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/types.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_attitude_scale.h
+)
+
+set(UI_IPC_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleNotify.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipc_event_queue.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipc_message_dispatch.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipc_message_validate.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvNotify.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvRes.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndInternal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndRequest.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiTypeCommon.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipc_response_helpers.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/msg.h
+)
+
+set(UI_RUNTIME_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/runtime/ui_runtime.h
+)
+
+set(UI_MENU_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_handle.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_internal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_usercfg_internal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/menu_handle.h
+)
+
+set(UI_MEDIA_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/media/play_handle.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/media/play_handle_internal.h
+)
+
+set(UI_RETICLE_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/distance_editor.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_distance_mgr.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_feature.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_feature_internal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_model.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_types.h
+)
+
 set(UI_MISC_SOURCES)
 
 target_sources(ui_app
@@ -153,6 +204,12 @@ target_sources(ui_app
         ${UI_SYSTEM_SOURCES}
         ${UI_MEDIA_SOURCES}
         ${UI_RETICLE_SOURCES}
+        ${UI_CORE_HEADERS}
+        ${UI_IPC_HEADERS}
+        ${UI_RUNTIME_HEADERS}
+        ${UI_MENU_HEADERS}
+        ${UI_MEDIA_HEADERS}
+        ${UI_RETICLE_HEADERS}
         ${UI_MISC_SOURCES}
 )
 
@@ -164,6 +221,7 @@ target_include_directories(ui_app
         ${CMAKE_CURRENT_SOURCE_DIR}/user
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/runtime
         ${CMAKE_CURRENT_SOURCE_DIR}/user/menu
         ${CMAKE_CURRENT_SOURCE_DIR}/user/media
         ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle
@@ -212,5 +270,11 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES
         ${UI_SYSTEM_SOURCES}
         ${UI_MEDIA_SOURCES}
         ${UI_RETICLE_SOURCES}
+        ${UI_CORE_HEADERS}
+        ${UI_IPC_HEADERS}
+        ${UI_RUNTIME_HEADERS}
+        ${UI_MENU_HEADERS}
+        ${UI_MEDIA_HEADERS}
+        ${UI_RETICLE_HEADERS}
         ${UI_MISC_SOURCES}
 )

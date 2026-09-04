@@ -21,17 +21,17 @@ extern "C" {
 #include "ui_events.h"
 #include "ui_theme_manager.h"
 #include "ui_themes.h"
-#include "user/lv_port_indev.h"
-#include "user/mainpage_event_handle.h"
-#include "user/menu_handle.h"
-#include "user/font.h"
-#include "user/play_handle.h"
-#include "user/timer_handle.h"
-#include "user/types.h"
+#include "user/core/lv_port_indev.h"
+#include "user/menu/mainpage_event_handle.h"
+#include "user/menu/menu_handle.h"
+#include "user/core/font.h"
+#include "user/media/play_handle.h"
+#include "user/core/timer_handle.h"
+#include "user/core/types.h"
 #include <time.h>
-#include "user/ui_attitude_scale.h"
-#include "user/msg.h"
-#include "user/popup_stack.h"
+#include "user/core/ui_attitude_scale.h"
+#include "user/ipc/msg.h"
+#include "user/core/popup_stack.h"
 #include <semaphore.h>
 ///////////////////// SCREENS ////////////////////
 

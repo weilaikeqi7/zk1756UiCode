@@ -45,6 +45,9 @@ typedef struct {
 /* 初始化 */
 void popup_stack_init(popup_stack_t * stack, lv_indev_t * indev);
 
+/* Remove all active layers and detach the input device. */
+void popup_stack_deinit(popup_stack_t * stack);
+
 /* 栈深 */
 uint16_t popup_stack_depth(const popup_stack_t * stack);
 

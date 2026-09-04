@@ -7,7 +7,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "reticle_types.h"
+#include "user/reticle/reticle_types.h"
 
 #ifdef __cplusplus
 extern "C" {
