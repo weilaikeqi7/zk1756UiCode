@@ -30,11 +30,8 @@ void ui_init(void)
     LV_EVENT_GET_COMP_CHILD = lv_event_register_id();
 
     lv_disp_t * dispp = lv_display_get_default();
-    lv_theme_t * theme = lv_theme_default_init(dispp,
-                                               lv_palette_main(LV_PALETTE_BLUE),
-                                               lv_palette_main(LV_PALETTE_RED),
-                                               false,
-                                               LV_FONT_DEFAULT);
+    lv_theme_t * theme = lv_theme_default_init(
+        dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
     ui_font_init();
     lv_port_indev_init();
@@ -56,7 +53,11 @@ void ui_init(void)
     } else {
         lv_disp_load_scr(ui_MainPage);
     }
+#if defined(_WIN32) || defined(_WIN64)
+    lv_obj_set_style_bg_color(lv_layer_bottom(), lv_color_hex(0x323232), LV_PART_MAIN);
+#else
     lv_obj_set_style_bg_opa(lv_layer_bottom(), LV_OPA_TRANSP, LV_PART_MAIN);
+#endif
 }
 
 void ui_destroy(void)

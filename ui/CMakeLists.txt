@@ -40,17 +40,26 @@ set(UI_GENERATED_SOURCES
 set(UI_CORE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/app_state.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/font.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_event_queue.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_dispatch.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_validate.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/lv_port_indev.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/msg.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/popup_stack.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/timer_handle.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_attitude_scale.c
 )
 
-set(UI_IPC_SOURCES
+set(UI_IPC_SEND_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndSystem.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndMedia.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndDevice.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndFramework.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndUsercfg.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndReticle.c
+)
+
+set(UI_IPC_LINUX_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_event_queue.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_dispatch.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_validate.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/msg.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleNotify.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleNotify_video.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes.c
@@ -62,13 +71,15 @@ set(UI_IPC_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvNotify.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvRes.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndRequest.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndSystem.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndMedia.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndDevice.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndFramework.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndUsercfg.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndReticle.c
 )
+
+if(WIN32)
+    set(UI_PLATFORM_SOURCES
+            ${CMAKE_CURRENT_SOURCE_DIR}/simulator/windows_ipc_stub.c
+    )
+else()
+    set(UI_PLATFORM_SOURCES ${UI_IPC_LINUX_SOURCES})
+endif()
 
 set(UI_SYSTEM_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_handle.c
@@ -112,7 +123,8 @@ target_sources(ui_app
         PRIVATE
         ${UI_GENERATED_SOURCES}
         ${UI_CORE_SOURCES}
-        ${UI_IPC_SOURCES}
+        ${UI_IPC_SEND_SOURCES}
+        ${UI_PLATFORM_SOURCES}
         ${UI_SYSTEM_SOURCES}
         ${UI_MEDIA_SOURCES}
         ${UI_RETICLE_SOURCES}
@@ -138,9 +150,16 @@ target_link_libraries(ui_app
         PUBLIC
         lvgl
         freetype
-        m
-        pthread
 )
+
+if(NOT WIN32)
+    target_link_libraries(ui_app PUBLIC m pthread)
+else()
+    target_compile_definitions(ui_app
+            PUBLIC
+            UI_IMAGES_PATH="A:${PROJECT_SOURCE_DIR}/ui/images/"
+    )
+endif()
 
 target_compile_definitions(ui_app
         PUBLIC
@@ -159,7 +178,8 @@ target_compile_options(ui_app
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES
         ${UI_GENERATED_SOURCES}
         ${UI_CORE_SOURCES}
-        ${UI_IPC_SOURCES}
+        ${UI_IPC_SEND_SOURCES}
+        ${UI_PLATFORM_SOURCES}
         ${UI_SYSTEM_SOURCES}
         ${UI_MEDIA_SOURCES}
         ${UI_RETICLE_SOURCES}

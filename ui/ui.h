@@ -45,7 +45,10 @@ extern "C" {
 // EVENTS
 extern lv_obj_t * ui____initial_actions0;
 
-#define IMAGES_PATH "A:./assets/images/"
+#ifndef UI_IMAGES_PATH
+#define UI_IMAGES_PATH "A:./assets/images/"
+#endif
+#define IMAGES_PATH UI_IMAGES_PATH
 #define OFF 0
 #define ON  1
 // FONTS

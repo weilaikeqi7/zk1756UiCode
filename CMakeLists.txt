@@ -17,6 +17,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 add_subdirectory(freetype)
+
+if(WIN32)
+    find_package(SDL2 CONFIG REQUIRED)
+endif()
+
 set(LV_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
 set(LV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CONFIG_LV_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
@@ -33,7 +38,7 @@ set(LVGL_SOURCE_SKIP_PATTERNS
         "^debugging/"
         "^others/"
         "^drivers/display/(drm|ft81x|ili9341|lcd|lovyan_gfx|nv3007|nxp_elcdif|renesas_glcdc|st_ltdc|st7735|st7789|st7796|tft_espi)/"
-        "^drivers/(draw|evdev|libinput|nuttx|opengles|qnx|sdl|uefi|wayland|windows|x11)/"
+        "^drivers/(draw|evdev|libinput|nuttx|opengles|qnx|uefi|wayland|windows|x11)/"
         "^draw/(dma2d|espressif|eve|nanovg|nema_gfx|nxp|opengles|renesas|sdl|snapshot|vg_lite)/"
         "^draw/sw/blend/(arm2d|helium|neon|riscv_v)/"
         "^draw/convert/(helium|neon)/"
@@ -47,11 +52,22 @@ set(LVGL_SOURCE_SKIP_PATTERNS
         "^core/lv_obj_property\\.c$"
         "^indev/lv_(gridnav|indev_gesture)\\.c$"
         "^misc/lv_(matrix|profiler_builtin|profiler_builtin_posix)\\.c$"
-        "^osal/lv_(cmsis_rtos2|freertos|linux|mqx|os_none|rtthread|sdl2|windows)\\.c$"
         "^stdlib/(clib|micropython|rtthread|uefi)/"
         "^widgets/(3dtexture|gif|ime|lottie)/"
         "^widgets/(objx_templ|property)/"
 )
+
+if(WIN32)
+    list(APPEND LVGL_SOURCE_SKIP_PATTERNS
+            "^drivers/display/fb/"
+            "^osal/lv_(cmsis_rtos2|freertos|linux|mqx|pthread|rtthread|sdl2|windows)\\.c$"
+    )
+else()
+    list(APPEND LVGL_SOURCE_SKIP_PATTERNS
+            "^drivers/sdl/"
+            "^osal/lv_(cmsis_rtos2|freertos|linux|mqx|os_none|rtthread|sdl2|windows)\\.c$"
+    )
+endif()
 
 set(LVGL_FILTERED_SOURCES)
 foreach(LVGL_SOURCE IN LISTS LVGL_SOURCES)
@@ -95,6 +111,10 @@ target_link_libraries(lvgl
         freetype
 )
 
+if(WIN32)
+    target_link_libraries(lvgl PUBLIC SDL2::SDL2)
+endif()
+
 target_compile_definitions(lvgl
         PUBLIC
         LV_CONF_INCLUDE_SIMPLE=1
@@ -103,7 +123,15 @@ target_compile_definitions(lvgl
 
 add_subdirectory(ui)
 
-add_executable(${PROJECT_NAME} main.c)
+if(WIN32)
+    add_executable(${PROJECT_NAME} windows_simulator.c)
+    target_compile_definitions(${PROJECT_NAME}
+            PRIVATE
+            UI_SIMULATOR_FONT_PATH="${PROJECT_SOURCE_DIR}/ui/fonts/"
+    )
+else()
+    add_executable(${PROJECT_NAME} main.c)
+endif()
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
@@ -130,4 +158,4 @@ target_include_directories(${PROJECT_NAME}
 )
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-add_custom_target(run COMMAND ${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME} DEPENDS ${PROJECT_NAME})
+add_custom_target(run COMMAND $<TARGET_FILE:${PROJECT_NAME}> DEPENDS ${PROJECT_NAME})

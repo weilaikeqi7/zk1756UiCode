@@ -65,6 +65,16 @@ void lv_port_indev_init(void)
      *`lv_indev_set_group(indev_keypad, group);`*/
 }
 
+void lv_port_indev_simulate_key(uint8_t key_index)
+{
+    if(key_index < 4U) {
+        g_my_keypad_btn_points[key_index] = 1U;
+        if(indev_keypad != NULL) {
+            lv_timer_ready(lv_indev_get_read_timer(indev_keypad));
+        }
+    }
+}
+
 /**********************
  *   STATIC FUNCTIONS
  **********************/
