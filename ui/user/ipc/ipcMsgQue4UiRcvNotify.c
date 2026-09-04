@@ -5,6 +5,7 @@
 #include "ipcMsgQue4UiRcvNotify.h"
 #include "ipc_message_dispatch.h"
 #include "handleNotify.h"
+#include "lvgl/lvgl.h"
 
 typedef IpcMessageHandler FtHandleNotify_st;
 
@@ -117,12 +118,16 @@ static const IpcMessageHandlerRange_st g_notifyHandlerRanges[] = {
     {MSG_4_NOTIFY_PERIPHERAL_PANTILT_OFFSET, MSG_4_NOTIFY_PERIPHERAL_PANTILT_BUTT, f_holder},
 };
 
-ROE_S32 ParseNotifyMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
+ROE_S32 ParseNotifyMsg(ROE_SL msgType, const RoeIpcMsgQueRawData_st * rawData)
 {
     if(!rawData) return ROE_FAILURE;
 
-    return ipc_dispatch_message(msgType,
-                                rawData->data,
-                                g_notifyHandlerRanges,
-                                sizeof(g_notifyHandlerRanges) / sizeof(g_notifyHandlerRanges[0]));
+    ROE_S32 result = ipc_dispatch_message(msgType,
+                                          (ROE_U8 *)rawData->data,
+                                          g_notifyHandlerRanges,
+                                          sizeof(g_notifyHandlerRanges) / sizeof(g_notifyHandlerRanges[0]));
+    if(result != ROE_SUCCESS) {
+        LV_LOG_ERROR("[IPC][NOTIFY] no handler or handler failed type:%ld", msgType);
+    }
+    return result;
 }

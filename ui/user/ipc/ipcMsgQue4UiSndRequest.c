@@ -4,10 +4,13 @@
 
 #include "ipcMsgQue4UiSndRequest.h"
 #include "msg.h"
+#include "lvgl/lvgl.h"
+#include <errno.h>
 #include <limits.h>
 #include <string.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <sys/time.h>
 
 static ROE_SIZE roeStrlen(const char * str)
 {
@@ -16,29 +19,41 @@ static ROE_SIZE roeStrlen(const char * str)
 
 static ROE_S32 setMsgHeader4Ui(MsgQueHeader4Ui_st * head, ROE_U8 version, ROE_U8 concreteType)
 {
+    struct timeval now;
+
+    if(!head || gettimeofday(&now, ROE_NULL) != 0) {
+        return ROE_FAILURE;
+    }
+
     head->version = version;
     head->concreteMsgType = concreteType;
-    gettimeofday(&head->tv, ROE_NULL);
+    head->timestamp.seconds = (ROE_S64)now.tv_sec;
+    head->timestamp.microseconds = (ROE_S64)now.tv_usec;
     return sizeof(MsgQueHeader4Ui_st);
 }
 
-static ROE_S32 fillExtendstringToMsg(ROE_U8 * buf, ROE_SIZE bufSize, StringData_st * strData)
+static ROE_S32 fillExtendstringToMsg(ROE_U8 * buf,
+                                      ROE_SIZE bufSize,
+                                      const StringData_st * strData)
 {
     if(!buf || !strData || strData->stringNum > UI_MAX_EXTEND_STRING_NUM) {
         return ROE_FAILURE;
     }
 
     ROE_U8 totalNum = strData->stringNum;
-    ROE_S8 ** pStr = strData->pStringList;
+    const ROE_S8 * const * pStr = strData->pStringList;
     if(totalNum > 0 && !pStr) {
         return ROE_FAILURE;
     }
 
     ROE_U8 * cur = buf;
-    ROE_U8 * pCurStrText;
+    const ROE_U8 * pCurStrText;
     ROE_U8 size;
     for(ROE_U8 index = 0; index < totalNum; index++) {
-        pCurStrText = (ROE_U8 *)pStr[index];
+        pCurStrText = (const ROE_U8 *)pStr[index];
+        if(!pCurStrText) {
+            return ROE_FAILURE;
+        }
         ROE_SIZE strLen = roeStrlen((const char *)pCurStrText);
         if(strLen >= UCHAR_MAX) {
             return ROE_FAILURE;
@@ -62,9 +77,9 @@ static ROE_S32 fillExtendstringToMsg(ROE_U8 * buf, ROE_SIZE bufSize, StringData_
 
 static ROE_S32 fillMsg4UiTransmission(ROE_U8 * buf,
                                        ROE_SIZE bufSize,
-                                       ROE_VOID * arg,
+                                       const void * arg,
                                        ROE_S32 argSize,
-                                       StringData_st * strData)
+                                       const StringData_st * strData)
 {
     if(!buf || argSize < 0 || (argSize > 0 && !arg) || (ROE_SIZE)argSize > bufSize) {
         return ROE_FAILURE;
@@ -101,7 +116,7 @@ static ROE_S32 SendMsg4Ui(ROE_S32 msgQueId, ROE_SL msgType, ROE_VOID * param)
         return ROE_FAILURE;
     }
 
-    ParamOfMsg4Ui_st * uiParam = param;
+    const ParamOfMsg4Ui_st * uiParam = param;
     RoeIpcMsgQueBuff_st msgBuf = {.msgType = msgType};
     RoeIpcMsgQueRawData_st * raw = (RoeIpcMsgQueRawData_st *)(msgBuf.msgData);
 
@@ -121,30 +136,49 @@ static ROE_S32 SendMsg4Ui(ROE_S32 msgQueId, ROE_SL msgType, ROE_VOID * param)
     }
     raw->dataLength += transmissionSize;
 
-    if(msgsnd(msgQueId, &msgBuf, raw->dataLength + sizeof(raw->dataLength), IPC_NOWAIT) == -1) {
+    const size_t messageBytes = (size_t)raw->dataLength + sizeof(raw->dataLength);
+    if(msgsnd(msgQueId, &msgBuf, messageBytes, IPC_NOWAIT) == -1) {
+        LV_LOG_ERROR("[IPC][SEND] msgsnd failed type:%ld bytes:%zu errno:%d",
+                     msgType,
+                     messageBytes,
+                     errno);
         return ROE_FAILURE;
     }
+
+    LV_LOG_USER("[IPC][SEND] type:%ld concrete:%u payload:%d bytes:%zu",
+                msgType,
+                (unsigned)uiParam->concreteType,
+                raw->dataLength,
+                messageBytes);
 
     return ROE_SUCCESS;
 }
 
 static ROE_S32 SendMsg4UiConcreteType(ROE_S32 msgQueId,
                                       ROE_S32 msgType,
-                                      void * arg,
+                                      const void * arg,
                                       ROE_S32 argSize,
-                                      StringData_st * pStrData)
+                                      const StringData_st * pStrData)
 {
-    ParamOfMsg4Ui_st uiParam = {.version = UI_MSG_VERSION,
-                                .concreteType = msgType - MSG_4_REQ_RES_INIT,
-                                .pFormatParam = arg,
-                                .formatParamSize = argSize};
-    if(pStrData) {
-        memcpy(&uiParam.strData, pStrData, sizeof(uiParam.strData));
+    if(msgType < MSG_4_REQ_RES_INIT || msgType >= MSG_4_REQ_RES_BUTT) {
+        LV_LOG_ERROR("[IPC][SEND] invalid request type:%d", msgType);
+        return ROE_FAILURE;
     }
+
+    ParamOfMsg4Ui_st uiParam = {.version = UI_MSG_VERSION,
+                                .concreteType = ipc_concrete_type(msgType),
+                                .pFormatParam = arg,
+                                .formatParamSize = argSize,
+                                .strData = {0}};
+    if(pStrData) uiParam.strData = *pStrData;
     return SendMsg4Ui(msgQueId, msgType, &uiParam);
 }
 
-ROE_S32 SendMsg4UiReq(ROE_S32 msgQueId, ROE_S32 msgType, void * arg, ROE_S32 argSize, StringData_st * pStrData)
+ROE_S32 SendMsg4UiReq(ROE_S32 msgQueId,
+                      ROE_S32 msgType,
+                      const void * arg,
+                      ROE_S32 argSize,
+                      const StringData_st * pStrData)
 {
     return SendMsg4UiConcreteType(msgQueId, msgType, arg, argSize, pStrData);
 }

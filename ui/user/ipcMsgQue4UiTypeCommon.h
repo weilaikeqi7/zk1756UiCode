@@ -2,12 +2,14 @@
 #define ZKSL_75_6LC_IPCMSGQUE4UITYPECOMMON_H
 
 #include "roeTypes.h"
-#include <sys/time.h>
+#include <stdint.h>
 
 #define UI_RETICLE_NUM 2
 #define UI_MAX_MEDIA_FILE_NUM_ONE_PAGE 10
 #define UI_MAX_DIVIDING_PLATES_NUM 3
 
+/* This is a wire-format header. Keep platform-specific types and pointers out
+ * of it so Linux and the Windows simulator use the same byte layout. */
 #pragma pack(push, 1)
 
 typedef enum {
@@ -288,11 +290,30 @@ typedef enum {
 } RoeIpcMsgQue4UiType_e;
 
 typedef struct {
+    int64_t seconds;
+    int64_t microseconds;
+} IpcTimestamp4Ui_st;
+
+typedef struct {
     ROE_U8 version; // 版本
     ROE_U8 concreteMsgType; // 具体类型
-    struct timeval tv; // 时间戳
+    IpcTimestamp4Ui_st timestamp; // 时间戳，秒/微秒
 } MsgQueHeader4Ui_st;
 
 #pragma pack(pop)
+
+#if defined(__cplusplus)
+static_assert(sizeof(IpcTimestamp4Ui_st) == 16, "IPC timestamp layout changed");
+static_assert(sizeof(MsgQueHeader4Ui_st) == 18, "IPC message header layout changed");
+#else
+_Static_assert(sizeof(IpcTimestamp4Ui_st) == 16, "IPC timestamp layout changed");
+_Static_assert(sizeof(MsgQueHeader4Ui_st) == 18, "IPC message header layout changed");
+#endif
+
+static inline ROE_U8 ipc_concrete_type(ROE_SL msgType)
+{
+    /* Every protocol group stores its local type in the low byte. */
+    return (ROE_U8)((ROE_U64)msgType & 0xFFU);
+}
 
 #endif //ZKSL_75_6LC_IPCMSGQUE4UITYPECOMMON_H

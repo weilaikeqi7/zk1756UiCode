@@ -7,8 +7,8 @@
 
 #include "roeTypes.h"
 
-#define MAX_ROE_IPC_MSG_LENGTH  (512+4)
-#define MAX_ROE_IPC_DATA_LENGTH (MAX_ROE_IPC_MSG_LENGTH - sizeof(ROE_S32))
+#define MAX_ROE_IPC_DATA_LENGTH 512U
+#define MAX_ROE_IPC_MSG_LENGTH  (MAX_ROE_IPC_DATA_LENGTH + sizeof(ROE_S32))
 
 /* 消息缓冲区定义 */
 typedef struct
@@ -21,9 +21,8 @@ typedef struct
 typedef struct
 {
     ROE_S32 dataLength;  /* 数据长度 */
-    ROE_U8  data[MAX_ROE_IPC_MSG_LENGTH-4];
+    ROE_U8  data[MAX_ROE_IPC_DATA_LENGTH];
 } RoeIpcMsgQueRawData_st;
 
-void* message_recv_thread(void* arg);
 void process_pending_ipc_events(void);
 #endif //ZKSL_75_6LC_MSG_H

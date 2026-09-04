@@ -3,6 +3,7 @@
 
 #include "msg.h"
 
+/* Validate the complete SysV message body returned by msgrcv(). */
 ROE_S32 ipc_validate_message(ROE_SL msgType,
                              const RoeIpcMsgQueRawData_st * rawData,
                              ROE_SIZE receivedBytes);

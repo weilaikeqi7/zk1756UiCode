@@ -602,5 +602,5 @@ typedef RspResultOnly_st RspInfraredSdNuc_st;
 
 #pragma pack(pop)
 
-ROE_S32 ParseResMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData);
+ROE_S32 ParseResMsg(ROE_SL msgType, const RoeIpcMsgQueRawData_st * rawData);
 #endif //ZKSL_75_6LC_IPCMSGQUE4UIRCVRES_H

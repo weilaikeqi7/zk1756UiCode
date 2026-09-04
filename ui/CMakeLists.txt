@@ -55,21 +55,46 @@ set(UI_IPC_SEND_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndReticle.c
 )
 
-set(UI_IPC_LINUX_SOURCES
+set(UI_IPC_QUEUE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_event_queue.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_dispatch.h
+)
+
+set(UI_IPC_RUNTIME_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_receiver.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_runtime.c
+)
+
+set(UI_IPC_VALIDATION_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ipc_message_validate.c
+)
+
+set(UI_IPC_DISPATCH_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/msg.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvNotify.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvRes.c
+)
+
+set(UI_IPC_NOTIFY_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleNotify.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleNotify_video.c
+)
+
+set(UI_IPC_RESPONSE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_media.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_device.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_framework.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_usercfg.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/handleRcvRes_reticle.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvNotify.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiRcvRes.c
+)
+
+set(UI_IPC_LINUX_SOURCES
+        ${UI_IPC_QUEUE_SOURCES}
+        ${UI_IPC_RUNTIME_SOURCES}
+        ${UI_IPC_VALIDATION_SOURCES}
+        ${UI_IPC_DISPATCH_SOURCES}
+        ${UI_IPC_NOTIFY_SOURCES}
+        ${UI_IPC_RESPONSE_SOURCES}
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ipcMsgQue4UiSndRequest.c
 )
 
@@ -162,8 +187,6 @@ else()
 endif()
 
 target_compile_definitions(ui_app
-        PUBLIC
-        LV_CONF_INCLUDE_SIMPLE=1
         PRIVATE
         _DEFAULT_SOURCE
 )
@@ -179,6 +202,12 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES
         ${UI_GENERATED_SOURCES}
         ${UI_CORE_SOURCES}
         ${UI_IPC_SEND_SOURCES}
+        ${UI_IPC_QUEUE_SOURCES}
+        ${UI_IPC_RUNTIME_SOURCES}
+        ${UI_IPC_VALIDATION_SOURCES}
+        ${UI_IPC_DISPATCH_SOURCES}
+        ${UI_IPC_NOTIFY_SOURCES}
+        ${UI_IPC_RESPONSE_SOURCES}
         ${UI_PLATFORM_SOURCES}
         ${UI_SYSTEM_SOURCES}
         ${UI_MEDIA_SOURCES}

@@ -356,6 +356,6 @@ typedef struct {
 
 #pragma pack(pop)
 
-ROE_S32 ParseNotifyMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData);
+ROE_S32 ParseNotifyMsg(ROE_SL msgType, const RoeIpcMsgQueRawData_st * rawData);
 
 #endif //ZKSL_75_6LC_IPCMSGQUE4UIRCVNOTIFY_H

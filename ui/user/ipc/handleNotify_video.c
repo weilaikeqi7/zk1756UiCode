@@ -3,6 +3,7 @@
 //
 
 #include "ui.h"
+#include "lvgl/lvgl.h"
 #include "handleNotify.h"
 #include "ipcMsgQue4UiRcvNotify.h"
 #include "reticle_model.h"

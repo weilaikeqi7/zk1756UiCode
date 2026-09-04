@@ -3,6 +3,10 @@
 
 #include "ipcMsgQue4UiSndRequest.h"
 
-ROE_S32 SendMsg4UiReq(ROE_S32 msgQueId, ROE_S32 msgType, void * arg, ROE_S32 argSize, StringData_st * pStrData);
+ROE_S32 SendMsg4UiReq(ROE_S32 msgQueId,
+                      ROE_S32 msgType,
+                      const void * arg,
+                      ROE_S32 argSize,
+                      const StringData_st * pStrData);
 
 #endif

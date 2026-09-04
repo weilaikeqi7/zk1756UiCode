@@ -12,20 +12,22 @@
 #define UI_MAX(x, y) ((x) > (y) ? (x) : (y))
 #define UI_MAX_EXTEND_STRING_NUM UI_MAX(UI_MAX_MEDIA_FILE_NUM_ONE_PAGE, UI_RETICLE_NUM)
 
-#pragma pack(push, 1)
-
+/* Host-only descriptors. Their pointers are used while building a message
+ * and are never copied to the wire. */
 typedef struct {
     ROE_U8 stringNum;
-    ROE_S8 * pStringList[UI_MAX_EXTEND_STRING_NUM];
+    const ROE_S8 * pStringList[UI_MAX_EXTEND_STRING_NUM];
 } StringData_st;
 
 typedef struct {
     ROE_U8 version;
     ROE_U8 concreteType;
-    void * pFormatParam;
+    const void * pFormatParam;
     ROE_S32 formatParamSize;
     StringData_st strData;
 } ParamOfMsg4Ui_st;
+
+#pragma pack(push, 1)
 
 /* 3.1 注册/注销 */
 typedef struct {

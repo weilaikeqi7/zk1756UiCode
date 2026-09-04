@@ -16,6 +16,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # 可选：交叉编译时避免 try_run
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
+# Do not pin the LVGL configuration path. Remove values left by an older
+# CLion profile so os_desktop.cmake can use the project-root lv_conf.h.
+unset(LV_BUILD_CONF_PATH CACHE)
+unset(LV_BUILD_CONF_DIR CACHE)
+
 add_subdirectory(freetype)
 
 if(WIN32)
@@ -27,8 +32,6 @@ set(LV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CONFIG_LV_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
 set(CONFIG_LV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CONFIG_LV_USE_THORVG_INTERNAL OFF CACHE BOOL "" FORCE)
-# Clear a stale cache value and let LVGL discover the project-root lv_conf.h.
-set(LV_BUILD_CONF_PATH "" CACHE PATH "LVGL configuration path" FORCE)
 add_subdirectory(lvgl)
 
 # LVGL's desktop helper collects every source below lvgl/src. Keep the source
@@ -90,7 +93,8 @@ foreach(LVGL_SOURCE IN LISTS LVGL_SOURCES)
 endforeach()
 
 set_property(TARGET lvgl PROPERTY SOURCES "${LVGL_FILTERED_SOURCES}")
-target_sources(lvgl PRIVATE "${PROJECT_SOURCE_DIR}/lv_conf.h")
+# lv_conf.h is a configuration header, not a translation unit. Keep it out of
+# the target source list so CLion and clangd do not treat it as compilable code.
 list(LENGTH LVGL_SOURCES LVGL_SOURCE_COUNT)
 list(LENGTH LVGL_FILTERED_SOURCES LVGL_FILTERED_SOURCE_COUNT)
 message(STATUS "LVGL sources: ${LVGL_FILTERED_SOURCE_COUNT}/${LVGL_SOURCE_COUNT}")
@@ -117,7 +121,6 @@ endif()
 
 target_compile_definitions(lvgl
         PUBLIC
-        LV_CONF_INCLUDE_SIMPLE=1
         FT2_BUILD_LIBRARY
 )
 

@@ -3,6 +3,7 @@
 //
 
 #include "ipcMsgQue4UiRcvRes.h"
+#include "lvgl/lvgl.h"
 #include "handleRcvRes.h"
 #include "mainpage_event_handle.h"
 

@@ -5,6 +5,7 @@
 #include "ipcMsgQue4UiRcvRes.h"
 #include "ipc_message_dispatch.h"
 #include "handleRcvRes.h"
+#include "lvgl/lvgl.h"
 
 typedef IpcMessageHandler FtHandleReqRes_st;
 
@@ -181,7 +182,7 @@ static const FtHandleReqRes_st f_Holder[MSG_4_REQ_RES_PERIPHERAL_PANTILT_BUTT - 
     handleParsePanTiltMovingSpeedControlMsg,
 };
 
-ROE_S32 ParseResMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
+ROE_S32 ParseResMsg(ROE_SL msgType, const RoeIpcMsgQueRawData_st * rawData)
 {
     if(!rawData) return ROE_FAILURE;
 
@@ -215,8 +216,12 @@ ROE_S32 ParseResMsg(ROE_SL msgType, RoeIpcMsgQueRawData_st * rawData)
         {MSG_4_REQ_RES_PERIPHERAL_PANTILT_OFFSET, MSG_4_REQ_RES_PERIPHERAL_PANTILT_BUTT, f_Holder},
     };
 
-    return ipc_dispatch_message(msgType,
-                                rawData->data,
-                                handlerRanges,
-                                sizeof(handlerRanges) / sizeof(handlerRanges[0]));
+    ROE_S32 result = ipc_dispatch_message(msgType,
+                                          (ROE_U8 *)rawData->data,
+                                          handlerRanges,
+                                          sizeof(handlerRanges) / sizeof(handlerRanges[0]));
+    if(result != ROE_SUCCESS) {
+        LV_LOG_ERROR("[IPC][RESPONSE] no handler or handler failed type:%ld", msgType);
+    }
+    return result;
 }

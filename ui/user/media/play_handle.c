@@ -3,6 +3,7 @@
 //
 
 #include "play_handle.h"
+#include "lvgl/lvgl.h"
 #include <math.h>
 #include <string.h>
 #include "play_handle_internal.h"

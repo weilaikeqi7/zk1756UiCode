@@ -7,6 +7,7 @@
 // 3. 3.66 查询/新增/删除/修改统一围绕“协议距离标签索引”工作。
 
 #include "ipcMsgQue4UiRcvRes.h"
+#include "lvgl/lvgl.h"
 #include "handleRcvRes.h"
 #include "reticle_model.h"
 #include "reticle_distance_mgr.h"

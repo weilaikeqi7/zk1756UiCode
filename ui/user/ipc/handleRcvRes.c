@@ -3,6 +3,7 @@
 //
 
 #include "ipcMsgQue4UiRcvRes.h"
+#include "lvgl/lvgl.h"
 #include "handleRcvRes.h"
 #include "play_handle.h"
 #include <stdio.h>

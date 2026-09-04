@@ -2,9 +2,9 @@
 
 ROE_S32 SendMsg4UiReq(ROE_S32 msgQueId,
                        ROE_S32 msgType,
-                       void * arg,
+                       const void * arg,
                        ROE_S32 argSize,
-                       StringData_st * pStrData)
+                       const StringData_st * pStrData)
 {
     (void)msgQueId;
     (void)msgType;
