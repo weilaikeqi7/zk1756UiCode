@@ -18,6 +18,16 @@
 
 static lv_timer_t * self_timer = NULL;
 
+static void set_magnetic_label(lv_obj_t * component, const char * text)
+{
+    if(component == NULL || text == NULL) return;
+
+    lv_obj_t * label = ui_comp_get_child(component, UI_COMP_NUM_PANELNUM_LABEL);
+    if(label != NULL) {
+        lv_label_set_text(label, text);
+    }
+}
+
 static void
 self_timer_cb(lv_timer_t * timer)
 {
@@ -45,12 +55,19 @@ ROE_S32 handleMagneticDeclinationNotify(ROE_U8 * msgData)
     magnetic.num3 = (int)absVal % 10;
     magnetic.num4 = (int)(absVal * 10) % 10;
     magnetic.num5 = (int)(absVal * 100) % 10;
-    lv_label_set_text_fmt(ui_comp_get_child(ui_num1, UI_COMP_NUM_PANELNUM_LABEL), "%c", magnetic.symbol);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_num2, UI_COMP_NUM_PANELNUM_LABEL), "%d", magnetic.num1);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_num3, UI_COMP_NUM_PANELNUM_LABEL), "%d", magnetic.num2);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_num4, UI_COMP_NUM_PANELNUM_LABEL), "%d", magnetic.num3);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_num5, UI_COMP_NUM_PANELNUM_LABEL), "%d", magnetic.num4);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_num6, UI_COMP_NUM_PANELNUM_LABEL), "%d", magnetic.num5);
+    char text[8];
+    lv_snprintf(text, sizeof(text), "%c", magnetic.symbol);
+    set_magnetic_label(ui_num1, text);
+    lv_snprintf(text, sizeof(text), "%d", magnetic.num1);
+    set_magnetic_label(ui_num2, text);
+    lv_snprintf(text, sizeof(text), "%d", magnetic.num2);
+    set_magnetic_label(ui_num3, text);
+    lv_snprintf(text, sizeof(text), "%d", magnetic.num3);
+    set_magnetic_label(ui_num4, text);
+    lv_snprintf(text, sizeof(text), "%d", magnetic.num4);
+    set_magnetic_label(ui_num5, text);
+    lv_snprintf(text, sizeof(text), "%d", magnetic.num5);
+    set_magnetic_label(ui_num6, text);
     return ROE_SUCCESS;
 }
 
@@ -101,16 +118,20 @@ ROE_S32 handlePeripheralSelfTest(ROE_U8 * msgData)
             }
             self_timer = lv_timer_create(self_timer_cb, 1000, NULL);
         } else {
-            lv_obj_remove_flag(ui_self_button_label, LV_OBJ_FLAG_HIDDEN);
+            if(ui_self_button_label != NULL) {
+                lv_obj_remove_flag(ui_self_button_label, LV_OBJ_FLAG_HIDDEN);
+            }
             if(lv_screen_active() != ui_self) {
                 lv_screen_load(ui_self);
             }
             popup_stack_push(&g_popup_stack, &g_popup_self);
         }
-        if(selfCheck->selfItem[2] == 1) {
-            lv_obj_set_style_image_recolor_opa(ui_imgsd, LV_OPA_100, LV_PART_MAIN);
-        } else {
-            lv_obj_set_style_image_recolor_opa(ui_imgsd, LV_OPA_0, LV_PART_MAIN);
+        if(ui_imgsd != NULL) {
+            if(selfCheck->selfItem[2] == 1) {
+                lv_obj_set_style_image_recolor_opa(ui_imgsd, LV_OPA_100, LV_PART_MAIN);
+            } else {
+                lv_obj_set_style_image_recolor_opa(ui_imgsd, LV_OPA_0, LV_PART_MAIN);
+            }
         }
     }
     return ROE_SUCCESS;
@@ -273,12 +294,16 @@ ROE_S32 handleReticleOverallInfoNotify(ROE_U8 * msgData)
     cfg->gun_count = reticleInfo->weaponTypeCount ? reticleInfo->weaponTypeCount : 1;
     cfg->style_count = reticleInfo->reticleTypeCount ? reticleInfo->reticleTypeCount : 1;
     cfg->color_count = reticleInfo->colorCount ? reticleInfo->colorCount : 1;
+    if(cfg->gun_count > RETICLE_GUN_COUNT) cfg->gun_count = RETICLE_GUN_COUNT;
     cfg->visible = !!reticleInfo->displaySwitch;
     cfg->rotate = !!reticleInfo->rotateSwitch;
     cfg->ballistic = !!reticleInfo->ballisticSwitch;
     ui_set_rowswitch_checked(ui_rowballistic, cfg->ballistic);
     cfg->cur_gun = (reticleInfo->currentWeaponIndex > 0) ? (uint8_t)(reticleInfo->currentWeaponIndex - 1) : 0;
-    lv_label_set_text_fmt(ui_imggun, "G%d", cfg->cur_gun + 1);
+    if(cfg->cur_gun >= RETICLE_GUN_COUNT) cfg->cur_gun = 0;
+    if(ui_imggun != NULL) {
+        lv_label_set_text_fmt(ui_imggun, "G%d", cfg->cur_gun + 1);
+    }
     reticle_gun_cfg_t * gc = &cfg->guns[cfg->cur_gun];
     if(reticleInfo->defaultDistanceIndex > 0)
         gc->default_idx = (uint8_t)(reticleInfo->defaultDistanceIndex - 1);
@@ -292,7 +317,9 @@ ROE_S32 handleReticleOverallInfoNotify(ROE_U8 * msgData)
 
     gc->items[gc->default_idx].tag_idx = gc->default_idx;
     gc->items[gc->default_idx].dist = reticleInfo->defaultDistance;
-    lv_label_set_text_fmt(ui_labeldistance, "%d", gc->items[gc->default_idx].dist);
+    if(ui_labeldistance != NULL) {
+        lv_label_set_text_fmt(ui_labeldistance, "%d", gc->items[gc->default_idx].dist);
+    }
     /* 2.18 只更新概览模型，不在通知后立刻查询 3.62/3.66。 */
     return ROE_SUCCESS;
 }
@@ -351,10 +378,12 @@ ROE_S32 handleInfraredBadPixelNumNotify(ROE_U8 * msgData)
     if(msgData == NULL || ui_bad_pixel_item1 == NULL) return ROE_FAILURE;
     NotifyBadPixelCount_st * badPixelNum = (NotifyBadPixelCount_st *)msgData;
     g_app.bad_point.bpnum = badPixelNum->badPixelCount;
-    lv_label_set_text_fmt(
-        ui_comp_get_child(ui_bad_pixel_item1, UI_COMP_MCITEM_MCP2P1L2),
-        "%u",
-        g_app.bad_point.bpnum);
+    lv_obj_t * count_label = ui_comp_get_child(ui_bad_pixel_item1, UI_COMP_MCITEM_MCP2P1L2);
+    if(count_label == NULL) {
+        LV_LOG_WARN("[INFRARED][NTF] bad-pixel count control is not initialized");
+        return ROE_FAILURE;
+    }
+    lv_label_set_text_fmt(count_label, "%u", g_app.bad_point.bpnum);
     LV_LOG_USER("bpnum:%d", g_app.bad_point.bpnum);
     return ROE_SUCCESS;
 }
@@ -402,17 +431,21 @@ ROE_S32 handleReticleInfoUpdatingNotify(ROE_U8 * msgData)
     NotifyReticleUpdate_st * reticleUpdate = (NotifyReticleUpdate_st *)msgData;
     DividingPlates_st * dividingPlatesinfo[UI_MAX_DIVIDING_PLATES_NUM];
 
-    ROE_S8 conut = reticleUpdate->num;
+    ROE_S8 plate_count = reticleUpdate->num;
     ROE_U8 * dataPtr = reticleUpdate->dividingPlatesData;
     const char * imageName[3] = {"/run/reticleUi0.bmp", "/run/reticleUi1.bmp", "/run/reticleUi2.bmp"};
     char name[256];
     char logName[256];
 
-    if(conut > UI_MAX_DIVIDING_PLATES_NUM) {
-        conut = UI_MAX_DIVIDING_PLATES_NUM;
+    if(plate_count < 0) {
+        LV_LOG_WARN("[RETICLE][NTF] invalid dividing plate count:%d", plate_count);
+        return ROE_FAILURE;
+    }
+    if(plate_count > UI_MAX_DIVIDING_PLATES_NUM) {
+        plate_count = UI_MAX_DIVIDING_PLATES_NUM;
     }
 
-    for(ROE_S8 i = 0; i < conut; i++) {
+    for(ROE_S8 i = 0; i < plate_count; i++) {
         dividingPlatesinfo[i] = (DividingPlates_st *)dataPtr;
         dataPtr += sizeof(DividingPlates_st) + dividingPlatesinfo[i]->nameLen;
 
@@ -448,6 +481,11 @@ ROE_S32 handleReticleInfoUpdatingNotify(ROE_U8 * msgData)
         /* Keep the latest state while the playback page is active. */
         g_app.reticle_state[i] = dividingPlatesinfo[i]->state;
         if(g_app.playPageFlag != 0) {
+            continue;
+        }
+
+        if(ui_dividing_contimage[i] == NULL || ui_dividing_image[i] == NULL) {
+            LV_LOG_WARN("[RETICLE][NTF] dividing plate controls are not initialized index:%d", i);
             continue;
         }
 

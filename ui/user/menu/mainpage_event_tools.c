@@ -79,7 +79,7 @@ void ui_event_rowdeadpixel(lv_event_t * e)
             } else {
                 lv_obj_set_state(obj, LV_STATE_USER_1, true);
             }
-            show_menu_page3_itme3_itme1();
+            show_menu_page3_item3_item1();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -194,7 +194,6 @@ void ui_event_rowsetting(lv_event_t * e)
             if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
                 lv_obj_add_flag(ui_contpage3, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(ui_lbltitle, LV_OBJ_FLAG_HIDDEN);
-                lv_group_remove_all_objs(keypad_group);
                 show_menu_page1();
             }
             break;

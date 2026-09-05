@@ -7,6 +7,38 @@
 static reticle_cfg_t s_cfg;
 static bool s_dirty = false;
 
+static void normalize_cfg(reticle_cfg_t * cfg)
+{
+    if(cfg == NULL) return;
+
+    if(cfg->gun_count == 0U || cfg->gun_count > RETICLE_GUN_COUNT) {
+        cfg->gun_count = RETICLE_GUN_COUNT;
+    }
+    if(cfg->style_count == 0U) cfg->style_count = 1U;
+    if(cfg->color_count == 0U) cfg->color_count = 1U;
+    if(cfg->cur_gun >= RETICLE_GUN_COUNT) cfg->cur_gun = 0U;
+    if(cfg->default_gun >= RETICLE_GUN_COUNT) cfg->default_gun = 0U;
+
+    for(uint8_t i = 0; i < RETICLE_GUN_COUNT; i++) {
+        reticle_gun_cfg_t * gun = &cfg->guns[i];
+        if(gun->style == 0U) gun->style = 1U;
+        if(gun->color == 0U) gun->color = 1U;
+        if(gun->count > RETICLE_MAX_DISTANCE_ITEMS) {
+            gun->count = RETICLE_MAX_DISTANCE_ITEMS;
+        }
+        if(gun->count == 0U) {
+            gun->default_idx = 0U;
+        } else if(gun->default_idx >= gun->count) {
+            gun->default_idx = 0U;
+        }
+        for(uint8_t item = 0; item < gun->count; item++) {
+            if(gun->items[item].tag_idx >= RETICLE_MAX_DISTANCE_ITEMS) {
+                gun->items[item].tag_idx = item;
+            }
+        }
+    }
+}
+
 // 给每个枪型设置默认值：
 // - 全局 visible/rotate 默认关闭 (false)
 // - style=S1, color=C1
@@ -44,6 +76,7 @@ void reticle_model_init(void) {
     reticle_cfg_t tmp;
     if (reticle_model_nv_load(&tmp)) {
         s_cfg = tmp;
+        normalize_cfg(&s_cfg);
     } else {
         set_defaults(&s_cfg);
     }

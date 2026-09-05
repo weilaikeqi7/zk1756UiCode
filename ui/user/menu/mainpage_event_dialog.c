@@ -32,12 +32,12 @@ void ui_event_resetOK(lv_event_t * e)
             }
             break;
         case LV_KEY_ENTER:
-            hidden_menu_page3_itme6_item4();
+            hidden_menu_page3_item6_item4();
             SendMsg4UiRestoreFactoryReq(global_parameters.sendMsgQueId);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item4();
+            hidden_menu_page3_item6_item4();
             break;
         default:
             break;
@@ -70,11 +70,11 @@ void ui_event_resetCANCEL(lv_event_t * e)
             }
             break;
         case LV_KEY_ENTER:
-            hidden_menu_page3_itme6_item4();
+            hidden_menu_page3_item6_item4();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item4();
+            hidden_menu_page3_item6_item4();
             break;
         default:
             break;
@@ -107,11 +107,11 @@ void ui_event_infoOK(lv_event_t * e)
             }
             break;
         case LV_KEY_ENTER:
-            hidden_menu_page3_itme6_item5();
+            hidden_menu_page3_item6_item5();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item5();
+            hidden_menu_page3_item6_item5();
             break;
         default:
             break;
@@ -139,12 +139,12 @@ void ui_event_DialogFormattingSdOk(lv_event_t * e)
             }
             break;
         case LV_KEY_ENTER:
-            hidden_menu_page3_itme6_item6();
+            hidden_menu_page3_item6_item6();
             SendMsg4UiFormatDiskReq(global_parameters.sendMsgQueId);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item6();
+            hidden_menu_page3_item6_item6();
             break;
         default:
             break;
@@ -172,11 +172,11 @@ void ui_event_DialogFormattingSdCancel(lv_event_t * e)
             }
             break;
         case LV_KEY_ENTER:
-            hidden_menu_page3_itme6_item6();
+            hidden_menu_page3_item6_item6();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item6();
+            hidden_menu_page3_item6_item6();
             break;
         default:
             break;

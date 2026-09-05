@@ -22,21 +22,34 @@ static uint8_t s_primary = 0;
 /* 更新距离标签文本 */
 static void set_item_text(lv_obj_t * item, int dist)
 {
-    lv_label_set_text_fmt(ui_comp_get_child(item, UI_COMP_DISTANCELABEL_CONTPILL_ITEMLABEL), "%d", dist);
+    if(item == NULL) return;
+
+    lv_obj_t * label = ui_comp_get_child(item, UI_COMP_DISTANCELABEL_CONTPILL_ITEMLABEL);
+    if(label != NULL) {
+        lv_label_set_text_fmt(label, "%d", dist);
+    }
 }
 
 /* 所有距离条目共用同一个 dots 图标；默认距离额外叠加 USER_2 样式。 */
 static void set_item_primary_icon(lv_obj_t * item)
 {
+    if(item == NULL) return;
+
     lv_obj_t * icon = ui_comp_get_child(item, UI_COMP_DISTANCELABEL_IMGICON);
-    lv_obj_remove_flag(icon, LV_OBJ_FLAG_HIDDEN);
+    if(icon != NULL) {
+        lv_obj_remove_flag(icon, LV_OBJ_FLAG_HIDDEN);
+    }
 }
 
 /* 创建一个距离条目对象 */
 static lv_obj_t * create_item_obj(void)
 {
+    if(ui_contpagereticle == NULL) return NULL;
+
     lv_obj_t * item = ui_distancelabel_create(ui_contpagereticle);
-    lv_obj_add_flag(item, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+    if(item != NULL) {
+        lv_obj_add_flag(item, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+    }
     return item;
 }
 
@@ -52,9 +65,13 @@ static uint32_t get_distance_base_index(void)
 /* 按当前 s_entry/s_obj 顺序，把对象重新摆到正确位置 */
 static void move_all_obj_to_match_order(void)
 {
-    uint32_t base = get_distance_base_index();
-    for(uint8_t i = 0; i < s_cnt; i++) {
-        lv_obj_move_to_index(s_obj[i], (uint32_t)(base + i));
+    if(ui_contpagereticle == NULL) return;
+
+   uint32_t base = get_distance_base_index();
+   for(uint8_t i = 0; i < s_cnt; i++) {
+        if(s_obj[i] != NULL) {
+            lv_obj_move_to_index(s_obj[i], (uint32_t)(base + i));
+        }
     }
 }
 
@@ -102,6 +119,7 @@ void reticle_distance_mgr_set_visible_range(uint8_t start, uint8_t count)
 {
     /* 只显示当前页对应的距离条目，其他页隐藏。 */
     for(uint8_t i = 0; i < s_cnt; i++) {
+        if(s_obj[i] == NULL) continue;
         bool in_range = (i >= start) && (i < (uint8_t)(start + count));
         if(in_range)
             lv_obj_clear_flag(s_obj[i], LV_OBJ_FLAG_HIDDEN);

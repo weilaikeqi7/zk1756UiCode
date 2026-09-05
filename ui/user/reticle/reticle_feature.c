@@ -1,6 +1,7 @@
 // reticle_feature.c
 // 分划板主流程：分页、焦点、菜单显示/隐藏、协议请求发送
 #include "reticle_feature_internal.h"
+#include "ui_focus_manager.h"
 
 /* ===================== 状态/dirty ===================== */
 bool s_opened = false;
@@ -170,7 +171,7 @@ void reticle_feature_focus_distance_level2(uint8_t idx)
     if(cnt == 0) {
         s_dist_page = 0;
         focus_level2_reticle();
-        lv_group_focus_obj(ui_reticlerow7);
+        ui_focus_group_focus(ui_reticlerow7);
         return;
     }
 
@@ -181,7 +182,7 @@ void reticle_feature_focus_distance_level2(uint8_t idx)
 
     focus_level2_reticle();
     lv_obj_t * obj = reticle_distance_mgr_obj(idx);
-    if(obj) lv_group_focus_obj(obj);
+    ui_focus_group_focus(obj);
 }
 
 void reticle_feature_focus_selected_distance_level2(void)
@@ -257,21 +258,18 @@ void hide_all_submenus(void)
 
 void focus_page2_main_only(void)
 {
-    lv_group_remove_all_objs(keypad_group);
-    lv_group_add_obj(keypad_group, ui_rowwifi);
-    lv_group_add_obj(keypad_group, ui_rowtilt);
-    lv_group_add_obj(keypad_group, ui_rowcompass);
-    lv_group_add_obj(keypad_group, ui_rowreticle);
-    lv_group_add_obj(keypad_group, ui_rowballistic);
-    lv_group_add_obj(keypad_group, ui_rowmic);
-    lv_group_add_obj(keypad_group, ui_rowrav);
-    lv_group_focus_obj(ui_rowreticle);
+    lv_obj_t * objects[] = {
+        ui_rowwifi, ui_rowtilt, ui_rowcompass, ui_rowreticle,
+        ui_rowballistic, ui_rowmic, ui_rowrav,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_rowreticle);
 }
 
 void focus_level2_reticle(void)
 {
     /* 注意：该函数只负责重建 group，不强制设置焦点（由调用方决定） */
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     /* 需求变更：显示开关(Show) 与底下选项无关。
      * 即使 Show=OFF，也允许操作下面所有选项。
@@ -289,14 +287,13 @@ void focus_level2_reticle(void)
     if(s_dist_page == 0) {
         level2_set_fixed_rows_hidden(false);
 
-        lv_group_add_obj(keypad_group, ui_reticlerow1);
-        lv_group_add_obj(keypad_group, ui_reticlerow2);
-        lv_group_add_obj(keypad_group, ui_reticlerow3);
-        lv_group_add_obj(keypad_group, ui_reticlerow4);
-        lv_group_add_obj(keypad_group, ui_reticlerow5);
-        lv_group_add_obj(keypad_group, ui_reticlerow6);
-        lv_group_add_obj(keypad_group, ui_reticlerow7);
-        lv_group_add_obj(keypad_group, ui_reticlerow8);
+        lv_obj_t * fixed_rows[] = {
+            ui_reticlerow1, ui_reticlerow2, ui_reticlerow3, ui_reticlerow4,
+            ui_reticlerow5, ui_reticlerow6, ui_reticlerow7, ui_reticlerow8,
+        };
+        for(uint32_t i = 0; i < sizeof(fixed_rows) / sizeof(fixed_rows[0]); i++) {
+            ui_focus_group_add(fixed_rows[i]);
+        }
     } else {
         level2_set_fixed_rows_hidden(true);
     }
@@ -304,7 +301,7 @@ void focus_level2_reticle(void)
     /* 仅显示本页距离条目（隐藏其余距离） */
     reticle_distance_mgr_set_visible_range(start, show_n);
     for(uint8_t i = 0; i < show_n; i++) {
-        lv_group_add_obj(keypad_group, reticle_distance_mgr_obj((uint8_t)(start + i)));
+        ui_focus_group_add(reticle_distance_mgr_obj((uint8_t)(start + i)));
     }
 
     /* 切页/重载后二级距离区域回到顶部，避免最后一条偶发被滚出可视区。 */
@@ -314,31 +311,36 @@ void focus_level2_reticle(void)
 
 void focus_level3_distance(void)
 {
-    lv_group_remove_all_objs(keypad_group);
-    lv_group_add_obj(keypad_group, ui_distancerow1); // Calibration Setting
-    lv_group_add_obj(keypad_group, ui_distancerow2); // Set Primacy Distance
-    lv_group_add_obj(keypad_group, ui_distancerow3); // Modify Distance
-    lv_group_add_obj(keypad_group, ui_distancerow4); // Delete Distance
+    lv_obj_t * objects[] = {ui_distancerow1, ui_distancerow2, ui_distancerow3, ui_distancerow4};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void focus_level4_calibration(void)
 {
-    lv_group_remove_all_objs(keypad_group);
-    lv_group_add_obj(keypad_group, ui_calibrationrow1); // X
-    lv_group_add_obj(keypad_group, ui_calibrationrow2); // Y
-    lv_group_add_obj(keypad_group, ui_calibrationrow3); // Zero Clear/Reset (合并)
-    lv_group_add_obj(keypad_group, ui_calibrationrow4); // Zoom
-    lv_group_add_obj(keypad_group, ui_calibrationrow5); // Freeze
+    lv_obj_t * objects[] = {
+        ui_calibrationrow1, ui_calibrationrow2, ui_calibrationrow3,
+        ui_calibrationrow4, ui_calibrationrow5,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void ui_set_rowlabel_value(lv_obj_t * rowlabel, const char * fmt, int v)
 {
-    lv_label_set_text_fmt(ui_comp_get_child(rowlabel, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1), fmt, v);
+    if(rowlabel == NULL || fmt == NULL) return;
+
+    lv_obj_t * label = ui_comp_get_child(rowlabel, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1);
+    if(label != NULL) {
+        lv_label_set_text_fmt(label, fmt, v);
+    }
 }
 
 void ui_set_rowswitch_checked(lv_obj_t * rowswitch, bool checked)
 {
+    if(rowswitch == NULL) return;
+
     lv_obj_t * sw = ui_comp_get_child(rowswitch, UI_COMP_ROWSWITCH_CONTPILL_SWITCH);
+    if(sw == NULL) return;
+
     if(checked) {
         lv_obj_add_state(sw, LV_STATE_CHECKED);
         lv_obj_send_event(sw, LV_EVENT_VALUE_CHANGED, NULL);
@@ -553,10 +555,10 @@ void reticle_feature_reload_from_model(void)
         focus_level4_calibration();
         set_selected_distance_editing(true);
         if(obj_is_level4_row(focused)) {
-            lv_group_focus_obj(focused);
+            ui_focus_group_focus(focused);
             if(focused_had_user1) lv_obj_add_state(focused, LV_STATE_USER_1);
         } else
-            lv_group_focus_obj(ui_calibrationrow1);
+            ui_focus_group_focus(ui_calibrationrow1);
         return;
     }
 
@@ -567,10 +569,10 @@ void reticle_feature_reload_from_model(void)
         focus_level3_distance();
         set_selected_distance_editing(true);
         if(obj_is_level3_row(focused)) {
-            lv_group_focus_obj(focused);
+            ui_focus_group_focus(focused);
             if(focused_had_user1) lv_obj_add_state(focused, LV_STATE_USER_1);
         } else
-            lv_group_focus_obj(ui_distancerow1);
+            ui_focus_group_focus(ui_distancerow1);
         return;
     }
 
@@ -587,10 +589,10 @@ void reticle_feature_reload_from_model(void)
         focus_level2_reticle();
 
         if(obj_is_level2_fixed_row(focused)) {
-            lv_group_focus_obj(focused);
+            ui_focus_group_focus(focused);
             if(focused_had_user1) lv_obj_add_state(focused, LV_STATE_USER_1);
         } else
-            lv_group_focus_obj(ui_reticlerow1);
+            ui_focus_group_focus(ui_reticlerow1);
     }
 }
 

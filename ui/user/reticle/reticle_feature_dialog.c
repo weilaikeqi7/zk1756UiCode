@@ -28,31 +28,38 @@ static void dialog_owner_mark_close(void)
 
 lv_obj_t * dialog_ok(lv_obj_t * dlg)
 {
+    if(dlg == NULL) return NULL;
     return ui_comp_get_child(dlg, UI_COMP_DIALOGEG_DIALOGOK);
 }
 
 lv_obj_t * dialog_cancel(lv_obj_t * dlg)
 {
+    if(dlg == NULL) return NULL;
     return ui_comp_get_child(dlg, UI_COMP_DIALOGEG_DIALOGCANCEL);
 }
 
 lv_obj_t * dialog_text_label(lv_obj_t * dlg)
 {
+    if(dlg == NULL) return NULL;
     return ui_comp_get_child(dlg, UI_COMP_DIALOGEG_DIALOGTEXT_LABEL);
 }
 
 lv_obj_t * dialog_ok_label(lv_obj_t * dlg)
 {
+    if(dlg == NULL) return NULL;
     return ui_comp_get_child(dlg, UI_COMP_DIALOGEG_DIALOGOK_LABEL);
 }
 
 lv_obj_t * dialog_cancel_label(lv_obj_t * dlg)
 {
+    if(dlg == NULL) return NULL;
     return ui_comp_get_child(dlg, UI_COMP_DIALOGEG_DIALOGCANCEL_LABEL);
 }
 
 void dialog_close(lv_obj_t * dlg)
 {
+    if(dlg == NULL) return;
+
     lv_obj_add_flag(dlg, LV_OBJ_FLAG_HIDDEN);
     s_dlg_kind = DLG_NONE;
 
@@ -75,13 +82,18 @@ void dialog_close(lv_obj_t * dlg)
             focus_page2_main_only();
         }
 
-        lv_group_focus_obj(s_restore_focus);
+        ui_focus_group_focus(s_restore_focus);
         s_restore_focus = NULL;
     }
 }
 
 void dialog_open(lv_obj_t * dlg, dlg_kind_t kind, lv_obj_t * restore_focus)
 {
+    if(dlg == NULL) {
+        LV_LOG_ERROR("cannot open a null reticle dialog");
+        return;
+    }
+
     s_dlg_kind = kind;
     s_restore_focus = restore_focus;
 
@@ -91,10 +103,9 @@ void dialog_open(lv_obj_t * dlg, dlg_kind_t kind, lv_obj_t * restore_focus)
     lv_obj_remove_flag(dlg, LV_OBJ_FLAG_HIDDEN);
 
     // 焦点组切换到弹框按钮
-    lv_group_remove_all_objs(keypad_group);
-    lv_group_add_obj(keypad_group, dialog_ok(dlg));
-    lv_group_add_obj(keypad_group, dialog_cancel(dlg));
-    lv_group_focus_obj(dialog_ok(dlg));
+    lv_obj_t * objects[] = {dialog_ok(dlg), dialog_cancel(dlg)};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(objects[0]);
 }
 
 void ensure_zero_dialog(void)
@@ -103,13 +114,20 @@ void ensure_zero_dialog(void)
 
     // 把 dialog 放在 MainPage 上层（不依赖 SquareLine 生成对象）
     s_dlg_zero = ui_dialogeg_create(ui_MainPage);
+    if(s_dlg_zero == NULL) {
+        LV_LOG_ERROR("failed to create zero dialog");
+        return;
+    }
     lv_obj_center(s_dlg_zero);
     lv_obj_add_flag(s_dlg_zero, LV_OBJ_FLAG_HIDDEN);
 
     // 设置默认文案（可按需改中文/英文）
-    lv_label_set_text(dialog_text_label(s_dlg_zero), "Zero Action?");
-    lv_label_set_text(dialog_ok_label(s_dlg_zero), "Clear");
-    lv_label_set_text(dialog_cancel_label(s_dlg_zero), "Reset");
+    lv_obj_t * text = dialog_text_label(s_dlg_zero);
+    lv_obj_t * ok = dialog_ok_label(s_dlg_zero);
+    lv_obj_t * cancel = dialog_cancel_label(s_dlg_zero);
+    if(text != NULL) lv_label_set_text(text, "Zero Action?");
+    if(ok != NULL) lv_label_set_text(ok, "Clear");
+    if(cancel != NULL) lv_label_set_text(cancel, "Reset");
 }
 
 void show_level2(void)
@@ -134,7 +152,7 @@ void show_level2(void)
         reticle_feature_set_active_distance_tag(gc->default_idx);
         reticle_distance_mgr_set_selected_by_tag(gc->default_idx);
     }
-    lv_group_focus_obj(ui_reticlerow1);
+    ui_focus_group_focus(ui_reticlerow1);
 }
 
 void show_level3(void)
@@ -147,7 +165,7 @@ void show_level3(void)
     // 进入三级菜单：围绕当前活动距离标签工作
     reticle_feature_sync_selected_to_active_tag();
     set_selected_distance_editing(true);
-    lv_group_focus_obj(ui_distancerow1);
+    ui_focus_group_focus(ui_distancerow1);
 }
 
 void show_level4(void)
@@ -169,7 +187,7 @@ void show_level4(void)
     set_selected_distance_editing(true);
 
     focus_level4_calibration();
-    lv_group_focus_obj(ui_calibrationrow1);
+    ui_focus_group_focus(ui_calibrationrow1);
 }
 
 void set_selected_distance_editing(bool en)
@@ -201,12 +219,14 @@ void ev_dialog_button(lv_event_t * e)
     else
         return;
 
+    if(dlg == NULL) return;
+
     if(key == LV_KEY_UP) {
-        lv_group_focus_next(keypad_group);
+        ui_focus_group_next();
         return;
     }
     if(key == LV_KEY_DOWN) {
-        lv_group_focus_prev(keypad_group);
+        ui_focus_group_prev();
         return;
     }
 
@@ -253,4 +273,3 @@ void ev_dialog_button(lv_event_t * e)
         return;
     }
 }
-

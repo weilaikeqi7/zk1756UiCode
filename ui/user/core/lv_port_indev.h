@@ -34,6 +34,10 @@ extern "C" {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
+/* The application focus manager uses the keypad group owned by this port. */
+extern lv_indev_t * indev_keypad;
+extern lv_group_t * keypad_group;
+
 void lv_port_indev_init(void);
 
 void lv_port_indev_deinit(void);

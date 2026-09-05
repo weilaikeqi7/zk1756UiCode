@@ -85,7 +85,7 @@ void ui_event_rowitemyear(lv_event_t * e)
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item1();
+            hidden_menu_page3_item6_item1();
             break;
         default:
             break;
@@ -144,7 +144,7 @@ void ui_event_rowitemmonth(lv_event_t * e)
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item1();
+            hidden_menu_page3_item6_item1();
             break;
         default:
             break;
@@ -197,7 +197,7 @@ void ui_event_rowitemday(lv_event_t * e)
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item1();
+            hidden_menu_page3_item6_item1();
             break;
         default:
             break;
@@ -231,11 +231,11 @@ void ui_event_rowitemback(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             set_system();
-            hidden_menu_page3_itme6_item1();
+            hidden_menu_page3_item6_item1();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item1();
+            hidden_menu_page3_item6_item1();
             break;
         default:
             break;
@@ -286,7 +286,7 @@ void ui_event_rowitemhour(lv_event_t * e)
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item2();
+            hidden_menu_page3_item6_item2();
             break;
         default:
             break;
@@ -337,7 +337,7 @@ void ui_event_rowitemmin(lv_event_t * e)
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item2();
+            hidden_menu_page3_item6_item2();
             break;
         default:
             break;
@@ -371,18 +371,17 @@ void ui_event_rowitemtimeback(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             set_system();
-            hidden_menu_page3_itme6_item2();
+            hidden_menu_page3_item6_item2();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme6_item2();
+            hidden_menu_page3_item6_item2();
             break;
         default:
             break;
         }
     }
 }
-
 
 
 

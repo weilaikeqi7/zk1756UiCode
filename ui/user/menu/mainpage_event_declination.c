@@ -76,7 +76,7 @@ void ui_event_rowitem3(lv_event_t * e)
             } else {
                 lv_obj_set_state(obj, LV_STATE_USER_1, true);
             }
-            show_menu_page3_item2_tiem1();
+            show_menu_page3_item2_item1();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -197,7 +197,7 @@ void ui_event_bad_pixel(lv_event_t * e)
             } else {
                 lv_obj_set_state(obj, LV_STATE_USER_1, true);
             }
-            show_menu_page3_itme3_itme1();
+            show_menu_page3_item3_item1();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -300,7 +300,7 @@ void ui_event_pixel_item2(lv_event_t * e)
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme3_itme1();
+            hidden_menu_page3_item3_item1();
             break;
         default:
             break;
@@ -333,11 +333,11 @@ void ui_event_pixel_item3(lv_event_t * e)
             } else {
                 lv_obj_set_state(obj, LV_STATE_USER_1, true);
             }
-            show_menu_page3_item3_itme1_itme3();
+            show_menu_page3_item3_item1_item3();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme3_itme1();
+            hidden_menu_page3_item3_item1();
             break;
         default:
             break;
@@ -362,10 +362,10 @@ void ui_event_DialogPixelClearOk(lv_event_t * e)
         case LV_KEY_ENTER:
             infraredBadPixelOperate.opType = 0;
             SendMsg4UiInfraredBadPixelOperateReq(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
-            hidden_menu_page3_item3_itme1_itme3();
+            hidden_menu_page3_item3_item1_item3();
             break;
         case LV_KEY_ESC:
-            hidden_menu_page3_item3_itme1_itme3();
+            hidden_menu_page3_item3_item1_item3();
             break;
         default:
             break;
@@ -388,10 +388,10 @@ void ui_event_DialogPixelClearCancel(lv_event_t * e)
             lv_group_focus_prev(keypad_group);
             break;
         case LV_KEY_ENTER:
-            hidden_menu_page3_item3_itme1_itme3();
+            hidden_menu_page3_item3_item1_item3();
             break;
         case LV_KEY_ESC:
-            hidden_menu_page3_item3_itme1_itme3();
+            hidden_menu_page3_item3_item1_item3();
             break;
         default:
             break;
@@ -418,7 +418,7 @@ void ui_event_pixel_item4(lv_event_t * e)
             SendMsg4UiInfraredBadPixelOperateReq(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
             break;
         case LV_KEY_ESC:
-            hidden_menu_page3_itme3_itme1();
+            hidden_menu_page3_item3_item1();
             break;
         default:
             break;
@@ -446,7 +446,7 @@ void ui_event_pixel_item5(lv_event_t * e)
             SendMsg4UiInfraredBadPixelOperateReq(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
             break;
         case LV_KEY_ESC:
-            hidden_menu_page3_itme3_itme1();
+            hidden_menu_page3_item3_item1();
             break;
         default:
             break;
@@ -479,11 +479,11 @@ void ui_event_pixel_item6(lv_event_t * e)
             }
             break;
         case LV_KEY_ENTER:
-            hidden_menu_page3_itme3_itme1();
+            hidden_menu_page3_item3_item1();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
-            hidden_menu_page3_itme3_itme1();
+            hidden_menu_page3_item3_item1();
             break;
         default:
             break;
@@ -540,11 +540,11 @@ void ui_event_CompassStart(lv_event_t * e)
                                   "Start");
                 lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGTEXT_LABEL),
                                   "Rotate 360° around the three \naxes(X, Y, Z) for three times each.");
-                hidden_menu_page3_item2_tiem1();
+                hidden_menu_page3_item2_item1();
             }
             break;
         case LV_KEY_ESC:
-            hidden_menu_page3_item2_tiem1();
+            hidden_menu_page3_item2_item1();
             break;
         default:
             break;
@@ -581,13 +581,13 @@ void ui_event_CompassCancel(lv_event_t * e)
                               "Start");
             lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGTEXT_LABEL),
                               "Rotate 360° around the three \naxes(X, Y, Z) for three times each.");
-            hidden_menu_page3_item2_tiem1();
+            hidden_menu_page3_item2_item1();
             state1 = 0;
             state2 = 0;
             break;
         }
         case LV_KEY_ESC:
-            hidden_menu_page3_item2_tiem1();
+            hidden_menu_page3_item2_item1();
             break;
         default:
             break;

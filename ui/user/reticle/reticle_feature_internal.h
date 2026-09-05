@@ -6,6 +6,7 @@
 #include "user/reticle/reticle_distance_mgr.h"
 #include "user/reticle/reticle_feature.h"
 #include "user/reticle/reticle_model.h"
+#include "user/core/ui_focus_manager.h"
 #include "ui.h"
 
 /* 保存对话框来源 */

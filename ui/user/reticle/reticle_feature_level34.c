@@ -28,11 +28,11 @@ void ev_level3(lv_event_t * e)
     uint32_t key = lv_indev_get_key(lv_indev_active());
     /* 需求：UP 向后(下一个)，DOWN 向前(上一个) */
     if(key == LV_KEY_UP) {
-        lv_group_focus_next(keypad_group);
+        ui_focus_group_next();
         return;
     }
     if(key == LV_KEY_DOWN) {
-        lv_group_focus_prev(keypad_group);
+        ui_focus_group_prev();
         return;
     }
 
@@ -45,9 +45,9 @@ void ev_level3(lv_event_t * e)
         set_selected_distance_editing(false);
         focus_level2_reticle();
         if(reticle_distance_mgr_count() > 0)
-            lv_group_focus_obj(reticle_distance_mgr_obj(reticle_distance_mgr_get_selected()));
+            ui_focus_group_focus(reticle_distance_mgr_obj(reticle_distance_mgr_get_selected()));
         else
-            lv_group_focus_obj(ui_reticlerow7);
+            ui_focus_group_focus(ui_reticlerow7);
         return;
     }
 
@@ -166,18 +166,18 @@ void ev_level4(lv_event_t * e)
 
         focus_level3_distance();
         set_selected_distance_editing(true);
-        lv_group_focus_obj(ui_distancerow1);
+        ui_focus_group_focus(ui_distancerow1);
         return;
     }
 
     if(!editing) {
         /* 需求：UP 向后(下一个)，DOWN 向前(上一个) */
         if(key == LV_KEY_UP) {
-            lv_group_focus_next(keypad_group);
+            ui_focus_group_next();
             return;
         }
         if(key == LV_KEY_DOWN) {
-            lv_group_focus_prev(keypad_group);
+            ui_focus_group_prev();
             return;
         }
     }
@@ -240,4 +240,3 @@ void ev_level4(lv_event_t * e)
         }
     }
 }
-

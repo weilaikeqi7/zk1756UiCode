@@ -34,17 +34,14 @@ void datetime_timer_event(lv_timer_t * timer)
         return;
     }
 
+    lv_obj_t * date_label = ui_comp_get_child(ui_settingrow1, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1);
+    lv_obj_t * time_label = ui_comp_get_child(ui_settingrow2, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1);
+    if(date_label == NULL || time_label == NULL) return;
+
     lv_label_set_text_fmt(ui_labeldate, "%02d/%02d/%02d", datatime.year, datatime.month, datatime.day);
     lv_label_set_text_fmt(ui_labeltime, "%02d:%02d", datatime.hour, datatime.min);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_settingrow1, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1),
-                          "%04d/%02d/%02d",
-                          datatime.year,
-                          datatime.month,
-                          datatime.day);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_settingrow2, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1),
-                          "%02d:%02d",
-                          datatime.hour,
-                          datatime.min);
+    lv_label_set_text_fmt(date_label, "%04d/%02d/%02d", datatime.year, datatime.month, datatime.day);
+    lv_label_set_text_fmt(time_label, "%02d:%02d", datatime.hour, datatime.min);
 }
 
 void timer_init(void)

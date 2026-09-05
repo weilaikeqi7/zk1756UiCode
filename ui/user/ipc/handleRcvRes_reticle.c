@@ -14,6 +14,7 @@
 #include "reticle_distance_mgr.h"
 #include "reticle_feature.h"
 #include "play_handle.h"
+#include "ui_focus_manager.h"
 #include "lvgl.h"
 
 static void format_dist_array_u16(char * buf, size_t buf_size, ROE_U8 count, const ROE_U16 * dists)
@@ -53,6 +54,8 @@ static inline uint8_t proto_idx_to_ui(ROE_U8 idx1)
 
 static reticle_distance_entry_t * get_dist_entry(reticle_gun_cfg_t * gc, ROE_U8 proto_dist_idx)
 {
+    if(gc == NULL) return NULL;
+
     uint8_t idx = proto_idx_to_ui(proto_dist_idx);
     if(idx >= RETICLE_MAX_DISTANCE_ITEMS) return NULL;
     if(idx >= gc->count) gc->count = (uint8_t)(idx + 1);
@@ -65,6 +68,8 @@ static reticle_distance_entry_t * get_dist_entry(reticle_gun_cfg_t * gc, ROE_U8 
  * zero 信息只保留同一索引标签的旧值；当前操作标签的 zero 会在具体响应里再覆盖。 */
 static void sync_dist_list(reticle_gun_cfg_t * gc, ROE_U8 count, const ROE_U16 * dists)
 {
+    if(gc == NULL || (count > 0U && dists == NULL)) return;
+
     /* 协议里的 shootDistances[] 顺序按“标签索引”返回，不是 UI 排序后的显示顺序。
      * 模型层必须按标签索引(0..count-1)保存；显示排序交给 distance_mgr。 */
     if(count > RETICLE_MAX_DISTANCE_ITEMS) count = RETICLE_MAX_DISTANCE_ITEMS;
@@ -157,8 +162,15 @@ ROE_S32 handleParseWeaponMarkConfigOperateMsg(ROE_U8 * msgData)
     if(result->videoChannel != 0) return ROE_SUCCESS;
 
     reticle_cfg_t * cfg = reticle_model_cfg();
+    if(cfg == NULL) return ROE_FAILURE;
     cfg->default_gun = proto_idx_to_ui(result->defaultWeaponIndex);
     cfg->cur_gun = proto_idx_to_ui(result->weaponIndex);
+    if(cfg->default_gun >= RETICLE_GUN_COUNT || cfg->cur_gun >= RETICLE_GUN_COUNT) {
+        LV_LOG_WARN("[RETICLE][RSP][3.62] invalid weapon index default:%u current:%u",
+                    (unsigned)result->defaultWeaponIndex,
+                    (unsigned)result->weaponIndex);
+        return ROE_FAILURE;
+    }
 
     reticle_gun_cfg_t * gc = &cfg->guns[cfg->cur_gun];
     gc->style = result->reticleTypeIndex;
@@ -341,7 +353,7 @@ ROE_S32 handleParseWeaponOperateShootDistanceMsg(ROE_U8 * msgData)
         reticle_feature_reload_from_model();
         reticle_feature_mark_user_dirty();
         focus_level2_reticle();
-        lv_group_focus_obj(ui_reticlerow7);
+        ui_focus_group_focus(ui_reticlerow7);
         return ROE_SUCCESS;
     }
 

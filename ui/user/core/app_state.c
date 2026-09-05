@@ -1,7 +1,6 @@
 #include "app_state.h"
 
-
-app_state_t g_app = {
+static const app_state_t g_app_default_state = {
     .mag_state = {
         .symbol = '+',
         .num1 = 0,
@@ -59,6 +58,9 @@ app_state_t g_app = {
     },
 };
 
+app_state_t g_app;
+
 void app_state_init_defaults(void)
 {
+    g_app = g_app_default_state;
 }

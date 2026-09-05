@@ -48,7 +48,7 @@ void restore_to_level2(void * user)
     set_selected_distance_editing(false);
     focus_level2_reticle();
     // 需求：Add Distance 确认/取消后，焦点仍停留在“添加距离”这一行
-    lv_group_focus_obj(ui_reticlerow7);
+    ui_focus_group_focus(ui_reticlerow7);
 }
 
 void on_add_distance_ok(int v, void * user)
@@ -93,7 +93,7 @@ void on_modify_cancel(void * user)
 {
     (void)user;
     focus_level3_distance();
-    lv_group_focus_obj(ui_distancerow3);
+    ui_focus_group_focus(ui_distancerow3);
 }
 
 void ev_level2_common_nav(lv_event_t * e)
@@ -131,7 +131,7 @@ void ev_level2_common_nav(lv_event_t * e)
                     if(key == LV_KEY_UP && last_page_last && focused == last_page_last) {
                         s_dist_page = 0;
                         focus_level2_reticle();
-                        lv_group_focus_obj(ui_reticlerow1);
+                        ui_focus_group_focus(ui_reticlerow1);
                         return;
                     }
 
@@ -140,7 +140,7 @@ void ev_level2_common_nav(lv_event_t * e)
                         s_dist_page = (uint8_t)(pages - 1);
                         focus_level2_reticle();
                         /* 进入最后一页后，聚焦最后一条距离 */
-                        lv_group_focus_obj(last_page_last);
+                            ui_focus_group_focus(last_page_last);
                         return;
                     }
                 }
@@ -153,7 +153,7 @@ void ev_level2_common_nav(lv_event_t * e)
 
                         uint8_t nstart = 0, nshow = 0;
                         dist_page_range(s_dist_page, cnt, &nstart, &nshow);
-                        if(nshow > 0) lv_group_focus_obj(reticle_distance_mgr_obj(nstart));
+                        if(nshow > 0) ui_focus_group_focus(reticle_distance_mgr_obj(nstart));
                         return;
                     }
                 }
@@ -167,10 +167,10 @@ void ev_level2_common_nav(lv_event_t * e)
                         uint8_t pstart = 0, pshow = 0;
                         dist_page_range(s_dist_page, cnt, &pstart, &pshow);
                         if(pshow > 0)
-                            lv_group_focus_obj(reticle_distance_mgr_obj((uint8_t)(pstart + pshow - 1)));
+                            ui_focus_group_focus(reticle_distance_mgr_obj((uint8_t)(pstart + pshow - 1)));
                         else {
                             /* 回到第一页但没有距离时，落在 Save */
-                            if(s_dist_page == 0) lv_group_focus_obj(ui_reticlerow8);
+                            if(s_dist_page == 0) ui_focus_group_focus(ui_reticlerow8);
                         }
                         return;
                     }
@@ -180,9 +180,9 @@ void ev_level2_common_nav(lv_event_t * e)
 
         /* 默认焦点移动 */
         if(key == LV_KEY_UP)
-            lv_group_focus_next(keypad_group);
+                ui_focus_group_next();
         else
-            lv_group_focus_prev(keypad_group);
+                ui_focus_group_prev();
         return;
     }
 

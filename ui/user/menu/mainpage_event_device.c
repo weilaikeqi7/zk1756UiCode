@@ -35,9 +35,8 @@ void ui_event_rowwifi(lv_event_t * e)
             if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
                 lv_obj_add_flag(ui_contpage2, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(ui_lbltitle, LV_OBJ_FLAG_HIDDEN);
-                lv_group_remove_all_objs(keypad_group);
                 show_menu_page1();
-                lv_group_focus_obj(ui_rowpip);
+                ui_focus_group_focus(ui_rowpip);
             }
             break;
         case LV_KEY_ENTER:

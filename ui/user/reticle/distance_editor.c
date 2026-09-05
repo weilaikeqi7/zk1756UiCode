@@ -4,8 +4,8 @@
 
 #include "distance_editor.h"
 #include "ui.h"
-
-extern lv_group_t * keypad_group;
+#include "ui_focus_manager.h"
+#include "lv_port_indev.h"
 
 static bool s_inited = false;
 static bool s_opened = false;
@@ -27,6 +27,12 @@ static distance_editor_restore_cb_t s_restore_cb = NULL;
 static void * s_restore_user = NULL;
 
 static int s_d1 = 0, s_d2 = 0, s_d3 = 0, s_d4 = 0;
+
+static lv_obj_t * distance_child(int child_id)
+{
+    if(ui_editdistance == NULL) return NULL;
+    return ui_comp_get_child(ui_editdistance, child_id);
+}
 
 static int clamp_0_9999(int v)
 {
@@ -51,37 +57,52 @@ static int get_value_from_digits(void)
 
 static void refresh_digit_labels(void)
 {
-    lv_label_set_text_fmt(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_PANELNUM_LABEL), "%d", s_d1);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_PANELNUM_LABEL), "%d", s_d2);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_PANELNUM_LABEL), "%d", s_d3);
-    lv_label_set_text_fmt(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_PANELNUM_LABEL), "%d", s_d4);
+    if(ui_editdistance == NULL) return;
+
+    const uint8_t values[] = {s_d1, s_d2, s_d3, s_d4};
+    const int label_ids[] = {
+        UI_COMP_DISTANCE_VALUE1_PANELNUM_LABEL,
+        UI_COMP_DISTANCE_VALUE2_PANELNUM_LABEL,
+        UI_COMP_DISTANCE_VALUE3_PANELNUM_LABEL,
+        UI_COMP_DISTANCE_VALUE4_PANELNUM_LABEL,
+    };
+    for(uint32_t i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+        lv_obj_t * label = ui_comp_get_child(ui_editdistance, label_ids[i]);
+        if(label != NULL) lv_label_set_text_fmt(label, "%d", values[i]);
+    }
 }
 
 static void hide_all_arrows(void)
 {
-    lv_obj_add_flag(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_IMAGEUP), LV_OBJ_FLAG_HIDDEN);
-    lv_obj_add_flag(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_IMAGEDOWN), LV_OBJ_FLAG_HIDDEN);
-    lv_obj_add_flag(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_IMAGEUP), LV_OBJ_FLAG_HIDDEN);
-    lv_obj_add_flag(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_IMAGEDOWN), LV_OBJ_FLAG_HIDDEN);
-    lv_obj_add_flag(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_IMAGEUP), LV_OBJ_FLAG_HIDDEN);
-    lv_obj_add_flag(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_IMAGEDOWN), LV_OBJ_FLAG_HIDDEN);
-    lv_obj_add_flag(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_IMAGEUP), LV_OBJ_FLAG_HIDDEN);
-    lv_obj_add_flag(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_IMAGEDOWN), LV_OBJ_FLAG_HIDDEN);
+    if(ui_editdistance == NULL) return;
+
+    const int arrow_ids[] = {
+        UI_COMP_DISTANCE_VALUE1_IMAGEUP, UI_COMP_DISTANCE_VALUE1_IMAGEDOWN,
+        UI_COMP_DISTANCE_VALUE2_IMAGEUP, UI_COMP_DISTANCE_VALUE2_IMAGEDOWN,
+        UI_COMP_DISTANCE_VALUE3_IMAGEUP, UI_COMP_DISTANCE_VALUE3_IMAGEDOWN,
+        UI_COMP_DISTANCE_VALUE4_IMAGEUP, UI_COMP_DISTANCE_VALUE4_IMAGEDOWN,
+    };
+    for(uint32_t i = 0; i < sizeof(arrow_ids) / sizeof(arrow_ids[0]); i++) {
+        lv_obj_t * arrow = ui_comp_get_child(ui_editdistance, arrow_ids[i]);
+        if(arrow != NULL) lv_obj_add_flag(arrow, LV_OBJ_FLAG_HIDDEN);
+    }
 }
 
 /** 弹窗打开后，把 group 的焦点对象切换到弹窗内部 */
 static void focus_to_popup(void)
 {
-    lv_group_remove_all_objs(keypad_group);
+    if(ui_editdistance == NULL) return;
 
-    lv_group_add_obj(keypad_group, ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_PANELNUM));
-    lv_group_add_obj(keypad_group, ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_PANELNUM));
-    lv_group_add_obj(keypad_group, ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_PANELNUM));
-    lv_group_add_obj(keypad_group, ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_PANELNUM));
-    lv_group_add_obj(keypad_group, ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_DISTANCEOK));
-    lv_group_add_obj(keypad_group, ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_DISTANCECANCEL));
-
-    lv_group_focus_obj(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_PANELNUM));
+    lv_obj_t * objects[] = {
+        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_PANELNUM),
+        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_PANELNUM),
+        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_PANELNUM),
+        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_PANELNUM),
+        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_DISTANCEOK),
+        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_DISTANCECANCEL),
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(objects[0]);
 }
 
 static void close_internal(bool call_cancel)
@@ -89,7 +110,9 @@ static void close_internal(bool call_cancel)
     if(!s_opened) return;
     s_opened = false;
 
-    lv_obj_add_flag(ui_editdistance, LV_OBJ_FLAG_HIDDEN);
+    if(ui_editdistance != NULL) {
+        lv_obj_add_flag(ui_editdistance, LV_OBJ_FLAG_HIDDEN);
+    }
 
     /* 关闭弹窗时恢复触发控件的 USER_1 高亮 */
     if(s_owner_obj) {
@@ -129,11 +152,12 @@ static void digit_key_handler(lv_obj_t * panelnum, lv_obj_t * img_up, lv_obj_t *
     if(lv_event_get_code(e) != LV_EVENT_KEY) return;
 
     uint32_t key = lv_indev_get_key(lv_indev_active());
+    if(panelnum == NULL || digit == NULL) return;
     bool editing = lv_obj_has_state(panelnum, LV_STATE_USER_1);
 
     switch(key) {
     case LV_KEY_UP:
-        if(!editing) lv_group_focus_next(keypad_group);
+        if(!editing) ui_focus_group_next();
         else {
             (*digit) = (*digit + 1) % 10;
             refresh_digit_labels();
@@ -141,7 +165,7 @@ static void digit_key_handler(lv_obj_t * panelnum, lv_obj_t * img_up, lv_obj_t *
         break;
 
     case LV_KEY_DOWN:
-        if(!editing) lv_group_focus_prev(keypad_group);
+        if(!editing) ui_focus_group_prev();
         else {
             (*digit) = (*digit + 9) % 10;
             refresh_digit_labels();
@@ -151,12 +175,12 @@ static void digit_key_handler(lv_obj_t * panelnum, lv_obj_t * img_up, lv_obj_t *
     case LV_KEY_ENTER:
         if(editing) {
             lv_obj_clear_state(panelnum, LV_STATE_USER_1);
-            lv_obj_add_flag(img_up, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_add_flag(img_down, LV_OBJ_FLAG_HIDDEN);
+            if(img_up != NULL) lv_obj_add_flag(img_up, LV_OBJ_FLAG_HIDDEN);
+            if(img_down != NULL) lv_obj_add_flag(img_down, LV_OBJ_FLAG_HIDDEN);
         } else {
             lv_obj_add_state(panelnum, LV_STATE_USER_1);
-            lv_obj_remove_flag(img_up, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_remove_flag(img_down, LV_OBJ_FLAG_HIDDEN);
+            if(img_up != NULL) lv_obj_remove_flag(img_up, LV_OBJ_FLAG_HIDDEN);
+            if(img_down != NULL) lv_obj_remove_flag(img_down, LV_OBJ_FLAG_HIDDEN);
         }
         break;
 
@@ -172,9 +196,9 @@ static void digit_key_handler(lv_obj_t * panelnum, lv_obj_t * img_up, lv_obj_t *
 static void ev_digit1(lv_event_t * e)
 {
     digit_key_handler(
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_PANELNUM),
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_IMAGEUP),
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_IMAGEDOWN),
+        distance_child(UI_COMP_DISTANCE_VALUE1_PANELNUM),
+        distance_child(UI_COMP_DISTANCE_VALUE1_IMAGEUP),
+        distance_child(UI_COMP_DISTANCE_VALUE1_IMAGEDOWN),
         &s_d1,
         e
         );
@@ -183,9 +207,9 @@ static void ev_digit1(lv_event_t * e)
 static void ev_digit2(lv_event_t * e)
 {
     digit_key_handler(
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_PANELNUM),
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_IMAGEUP),
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_IMAGEDOWN),
+        distance_child(UI_COMP_DISTANCE_VALUE2_PANELNUM),
+        distance_child(UI_COMP_DISTANCE_VALUE2_IMAGEUP),
+        distance_child(UI_COMP_DISTANCE_VALUE2_IMAGEDOWN),
         &s_d2,
         e
         );
@@ -194,9 +218,9 @@ static void ev_digit2(lv_event_t * e)
 static void ev_digit3(lv_event_t * e)
 {
     digit_key_handler(
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_PANELNUM),
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_IMAGEUP),
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_IMAGEDOWN),
+        distance_child(UI_COMP_DISTANCE_VALUE3_PANELNUM),
+        distance_child(UI_COMP_DISTANCE_VALUE3_IMAGEUP),
+        distance_child(UI_COMP_DISTANCE_VALUE3_IMAGEDOWN),
         &s_d3,
         e
         );
@@ -205,9 +229,9 @@ static void ev_digit3(lv_event_t * e)
 static void ev_digit4(lv_event_t * e)
 {
     digit_key_handler(
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_PANELNUM),
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_IMAGEUP),
-        ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_IMAGEDOWN),
+        distance_child(UI_COMP_DISTANCE_VALUE4_PANELNUM),
+        distance_child(UI_COMP_DISTANCE_VALUE4_IMAGEUP),
+        distance_child(UI_COMP_DISTANCE_VALUE4_IMAGEDOWN),
         &s_d4,
         e
         );
@@ -220,8 +244,8 @@ static void ev_ok(lv_event_t * e)
 
     if(key == LV_KEY_ENTER) ok_internal();
     else if(key == LV_KEY_ESC) close_internal(true);
-    else if(key == LV_KEY_UP) lv_group_focus_next(keypad_group);
-    else if(key == LV_KEY_DOWN) lv_group_focus_prev(keypad_group);
+    else if(key == LV_KEY_UP) ui_focus_group_next();
+    else if(key == LV_KEY_DOWN) ui_focus_group_prev();
 }
 
 static void ev_cancel(lv_event_t * e)
@@ -230,39 +254,34 @@ static void ev_cancel(lv_event_t * e)
     uint32_t key = lv_indev_get_key(lv_indev_active());
 
     if(key == LV_KEY_ENTER || key == LV_KEY_ESC) close_internal(true);
-    else if(key == LV_KEY_UP) lv_group_focus_next(keypad_group);
-    else if(key == LV_KEY_DOWN) lv_group_focus_prev(keypad_group);
+    else if(key == LV_KEY_UP) ui_focus_group_next();
+    else if(key == LV_KEY_DOWN) ui_focus_group_prev();
 }
 
 void distance_editor_init(void)
 {
     if(s_inited) return;
-    s_inited = true;
 
+    if(ui_editdistance == NULL) {
+        LV_LOG_ERROR("distance editor root object is unavailable");
+        return;
+    }
+    s_inited = true;
     lv_obj_add_flag(ui_editdistance, LV_OBJ_FLAG_HIDDEN);
 
-    lv_obj_add_event_cb(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_PANELNUM),
-                        ev_digit1,
-                        LV_EVENT_ALL,
-                        NULL);
-    lv_obj_add_event_cb(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_PANELNUM),
-                        ev_digit2,
-                        LV_EVENT_ALL,
-                        NULL);
-    lv_obj_add_event_cb(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_PANELNUM),
-                        ev_digit3,
-                        LV_EVENT_ALL,
-                        NULL);
-    lv_obj_add_event_cb(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_PANELNUM),
-                        ev_digit4,
-                        LV_EVENT_ALL,
-                        NULL);
+    lv_obj_t * digit1 = distance_child(UI_COMP_DISTANCE_VALUE1_PANELNUM);
+    lv_obj_t * digit2 = distance_child(UI_COMP_DISTANCE_VALUE2_PANELNUM);
+    lv_obj_t * digit3 = distance_child(UI_COMP_DISTANCE_VALUE3_PANELNUM);
+    lv_obj_t * digit4 = distance_child(UI_COMP_DISTANCE_VALUE4_PANELNUM);
+    lv_obj_t * ok = distance_child(UI_COMP_DISTANCE_DISTANCEOK);
+    lv_obj_t * cancel = distance_child(UI_COMP_DISTANCE_DISTANCECANCEL);
 
-    lv_obj_add_event_cb(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_DISTANCEOK), ev_ok, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_DISTANCECANCEL),
-                        ev_cancel,
-                        LV_EVENT_ALL,
-                        NULL);
+    if(digit1 != NULL) lv_obj_add_event_cb(digit1, ev_digit1, LV_EVENT_ALL, NULL);
+    if(digit2 != NULL) lv_obj_add_event_cb(digit2, ev_digit2, LV_EVENT_ALL, NULL);
+    if(digit3 != NULL) lv_obj_add_event_cb(digit3, ev_digit3, LV_EVENT_ALL, NULL);
+    if(digit4 != NULL) lv_obj_add_event_cb(digit4, ev_digit4, LV_EVENT_ALL, NULL);
+    if(ok != NULL) lv_obj_add_event_cb(ok, ev_ok, LV_EVENT_ALL, NULL);
+    if(cancel != NULL) lv_obj_add_event_cb(cancel, ev_cancel, LV_EVENT_ALL, NULL);
 
     hide_all_arrows();
 }
@@ -278,6 +297,7 @@ void distance_editor_open_ex(int initial_value,
                              void * restore_user)
 {
     distance_editor_init();
+    if(!s_inited) return;
 
     s_ok_cb = ok_cb;
     s_ok_user = ok_user;
@@ -305,10 +325,14 @@ void distance_editor_open_ex(int initial_value,
     refresh_digit_labels();
 
     // 清除四位的编辑态
-    lv_obj_clear_state(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE1_PANELNUM), LV_STATE_USER_1);
-    lv_obj_clear_state(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE2_PANELNUM), LV_STATE_USER_1);
-    lv_obj_clear_state(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE3_PANELNUM), LV_STATE_USER_1);
-    lv_obj_clear_state(ui_comp_get_child(ui_editdistance, UI_COMP_DISTANCE_VALUE4_PANELNUM), LV_STATE_USER_1);
+    if(distance_child(UI_COMP_DISTANCE_VALUE1_PANELNUM) != NULL)
+        lv_obj_clear_state(distance_child(UI_COMP_DISTANCE_VALUE1_PANELNUM), LV_STATE_USER_1);
+    if(distance_child(UI_COMP_DISTANCE_VALUE2_PANELNUM) != NULL)
+        lv_obj_clear_state(distance_child(UI_COMP_DISTANCE_VALUE2_PANELNUM), LV_STATE_USER_1);
+    if(distance_child(UI_COMP_DISTANCE_VALUE3_PANELNUM) != NULL)
+        lv_obj_clear_state(distance_child(UI_COMP_DISTANCE_VALUE3_PANELNUM), LV_STATE_USER_1);
+    if(distance_child(UI_COMP_DISTANCE_VALUE4_PANELNUM) != NULL)
+        lv_obj_clear_state(distance_child(UI_COMP_DISTANCE_VALUE4_PANELNUM), LV_STATE_USER_1);
     hide_all_arrows();
 
     lv_obj_remove_flag(ui_editdistance, LV_OBJ_FLAG_HIDDEN);

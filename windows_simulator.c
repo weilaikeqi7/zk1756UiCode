@@ -2,6 +2,7 @@
 #include "lvgl/src/drivers/sdl/lv_sdl_mouse.h"
 #include "lvgl/src/drivers/sdl/lv_sdl_window.h"
 #include "ui/ui.h"
+#include "ui/user/core/app_state.h"
 
 #include <stdint.h>
 
@@ -79,6 +80,7 @@ static void create_simulator_key_buttons(void)
 
 int main(void)
 {
+    app_state_init_defaults();
     lv_init();
 
     lv_display_t * display = lv_sdl_window_create(app_args.set_w_res, app_args.set_h_res);

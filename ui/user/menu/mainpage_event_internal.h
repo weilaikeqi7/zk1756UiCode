@@ -2,6 +2,8 @@
 #define ZKSL_75_6LC_MAINPAGE_EVENT_INTERNAL_H
 
 #include "mainpage_event_handle.h"
+#include "user/core/ui_focus_manager.h"
+#include "menu_handle.h"
 
 void ui_apply_user_common_config(void);
 
@@ -184,9 +186,5 @@ void ui_event_CompassCancel(lv_event_t * e);
 void ui_event_DialogPixelClearOk(lv_event_t * e);
 
 void ui_event_DialogPixelClearCancel(lv_event_t * e);
-
-void show_menu_page3_itme6_item6(void);
-
-void hidden_menu_page3_itme6_item6(void);
 
 #endif

@@ -44,6 +44,7 @@ set(UI_CORE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/popup_stack.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/timer_handle.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_attitude_scale.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_focus_manager.c
 )
 
 set(UI_IPC_SEND_SOURCES
@@ -106,40 +107,72 @@ else()
     set(UI_PLATFORM_SOURCES ${UI_IPC_LINUX_SOURCES})
 endif()
 
-set(UI_SYSTEM_SOURCES
+set(UI_MENU_NAVIGATION_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_handle.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_mainrows.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_tools.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_usercfg.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_usercfg_events.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_image.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_image_adjust.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_image_mode.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_device.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_datetime.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_declination.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_declination_digits.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_declination_settings.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_dialog.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/menu_handle.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/menu_handle_page3.c
 )
 
-set(UI_MEDIA_SOURCES
+set(UI_MENU_VIDEO_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_tools.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_image.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_image_adjust.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_image_mode.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_device.c
+)
+
+set(UI_MENU_USER_CONFIG_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_usercfg.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_usercfg_events.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_datetime.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_declination.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_declination_digits.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_declination_settings.c
+)
+
+set(UI_MENU_DIALOG_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/menu/mainpage_event_dialog.c
+)
+
+set(UI_MENU_SOURCES
+        ${UI_MENU_NAVIGATION_SOURCES}
+        ${UI_MENU_VIDEO_SOURCES}
+        ${UI_MENU_USER_CONFIG_SOURCES}
+        ${UI_MENU_DIALOG_SOURCES}
+)
+
+set(UI_MEDIA_CORE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/media/play_handle.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/media/play_handle_events.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/media/play_handle_nav.c
 )
 
-set(UI_RETICLE_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/distance_editor.c
+set(UI_MEDIA_EVENT_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/media/play_handle_events.c
+)
+
+set(UI_MEDIA_SOURCES
+        ${UI_MEDIA_CORE_SOURCES}
+        ${UI_MEDIA_EVENT_SOURCES}
+)
+
+set(UI_RETICLE_MODEL_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_model.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_distance_mgr.c
+)
+
+set(UI_RETICLE_UI_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/distance_editor.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_distance_mgr_ui.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_feature.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_feature_dialog.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_feature_level2.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_feature_level34.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/reticle/reticle_model.c
+)
+
+set(UI_RETICLE_SOURCES
+        ${UI_RETICLE_MODEL_SOURCES}
+        ${UI_RETICLE_UI_SOURCES}
 )
 
 set(UI_CORE_HEADERS
@@ -151,6 +184,7 @@ set(UI_CORE_HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/timer_handle.h
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/types.h
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_attitude_scale.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_focus_manager.h
 )
 
 set(UI_IPC_HEADERS
@@ -201,7 +235,7 @@ target_sources(ui_app
         ${UI_CORE_SOURCES}
         ${UI_IPC_SEND_SOURCES}
         ${UI_PLATFORM_SOURCES}
-        ${UI_SYSTEM_SOURCES}
+        ${UI_MENU_SOURCES}
         ${UI_MEDIA_SOURCES}
         ${UI_RETICLE_SOURCES}
         ${UI_CORE_HEADERS}
@@ -267,9 +301,16 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES
         ${UI_IPC_NOTIFY_SOURCES}
         ${UI_IPC_RESPONSE_SOURCES}
         ${UI_PLATFORM_SOURCES}
-        ${UI_SYSTEM_SOURCES}
+        ${UI_MENU_NAVIGATION_SOURCES}
+        ${UI_MENU_VIDEO_SOURCES}
+        ${UI_MENU_USER_CONFIG_SOURCES}
+        ${UI_MENU_DIALOG_SOURCES}
         ${UI_MEDIA_SOURCES}
+        ${UI_MEDIA_CORE_SOURCES}
+        ${UI_MEDIA_EVENT_SOURCES}
         ${UI_RETICLE_SOURCES}
+        ${UI_RETICLE_MODEL_SOURCES}
+        ${UI_RETICLE_UI_SOURCES}
         ${UI_CORE_HEADERS}
         ${UI_IPC_HEADERS}
         ${UI_RUNTIME_HEADERS}

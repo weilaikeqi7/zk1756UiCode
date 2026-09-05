@@ -166,26 +166,31 @@ void ui_event_play_or_del(lv_event_t * e)
         case LV_KEY_DOWN:
             play_list_focus_relative(-1);
             break;
-        case LV_KEY_ENTER:
+        case LV_KEY_ENTER: {
+            if(playlist_state.current_index >= (sizeof(ui_PlayList) / sizeof(ui_PlayList[0])) ||
+               ui_PlayList[playlist_state.current_index] == NULL) {
+                LV_LOG_WARN("[MEDIA][UI] selected playlist item is unavailable index:%u",
+                            (unsigned)playlist_state.current_index);
+                break;
+            }
+
+            lv_obj_t * name_label = ui_comp_get_child(
+                ui_PlayList[playlist_state.current_index], UI_COMP_LISTITEM_1);
+            if(name_label == NULL || lv_label_get_text(name_label) == NULL) {
+                LV_LOG_WARN("[MEDIA][UI] selected playlist item name is unavailable");
+                break;
+            }
+
+            char tempBuff[256];
+            lv_snprintf(tempBuff, sizeof(tempBuff), "%s", lv_label_get_text(name_label));
             if(playlist_state.current_item_mode == PLAY_MODE) {
-                char tempBuff[256];
-                snprintf(tempBuff,
-                         sizeof(tempBuff),
-                         "%s",
-                         lv_label_get_text(
-                             ui_comp_get_child(ui_PlayList[playlist_state.current_index], UI_COMP_LISTITEM_1)));
                 SendMsg4UiPlayMediaFileReq(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
             } else {
-                char tempBuff[256];
-                snprintf(tempBuff,
-                         sizeof(tempBuff),
-                         "%s",
-                         lv_label_get_text(
-                             ui_comp_get_child(ui_PlayList[playlist_state.current_index], UI_COMP_LISTITEM_1)));
                 SendMsg4UiDelMediaFileReq(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
                 cur_focus_index = FOCUS_DEL;
             }
             break;
+        }
         default:
             break;
         }

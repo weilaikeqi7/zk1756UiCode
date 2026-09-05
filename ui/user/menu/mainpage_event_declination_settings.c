@@ -126,7 +126,7 @@ void ui_event_settingrow1(lv_event_t * e)
             } else {
                 lv_obj_set_state(obj, LV_STATE_USER_1, true);
             }
-            show_menu_page3_itme6_item1();
+            show_menu_page3_item6_item1();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -167,7 +167,7 @@ void ui_event_settingrow2(lv_event_t * e)
             } else {
                 lv_obj_set_state(obj, LV_STATE_USER_1, true);
             }
-            show_menu_page3_itme6_item2();
+            show_menu_page3_item6_item2();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -261,7 +261,7 @@ void ui_event_settingrow4(lv_event_t * e)
             } else {
                 lv_obj_set_state(obj, LV_STATE_USER_1, true);
             }
-            show_menu_page3_itme6_item4();
+            show_menu_page3_item6_item4();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -344,7 +344,7 @@ void ui_event_settingrow6(lv_event_t * e)
             } else {
                 lv_obj_set_state(obj, LV_STATE_USER_1, true);
             }
-            show_menu_page3_itme6_item6();
+            show_menu_page3_item6_item6();
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);

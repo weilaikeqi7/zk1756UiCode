@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include "lvgl/lvgl.h"
 #include "ui/ui.h"
+#include "ui/user/core/app_state.h"
 #include <getopt.h>
 #include "ui/user/runtime/ui_runtime.h"
 
@@ -134,6 +135,7 @@ int main(int argc, char * argv[])
     }
 
     lv_init();
+    app_state_init_defaults();
     lv_linux_disp_init();
     ui_init();
     if(ui_runtime_run_linux(&global_parameters) != ROE_SUCCESS) {

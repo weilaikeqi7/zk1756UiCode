@@ -9,6 +9,7 @@
 #include "play_handle.h"
 #include "play_handle_internal.h"
 #include "mainpage_event_handle.h"
+#include "ui_focus_manager.h"
 
 ROE_S32 handleParseGetMediaFileListMsg(ROE_U8 * msgData)
 {
@@ -56,7 +57,7 @@ ROE_S32 handleParseDelMediaFileMsg(ROE_U8 * msgData)
     if(result->result == 0U) {
         ReqGetMediaFileList_st getMediaFileList;
         ROE_U32 startIndex = 0;
-        if(playlist_state.current_items == 13) {
+        if(playlist_state.current_items == PLAYLIST_MEDIA_FIRST_INDEX + PLAYLIST_ACTION_ITEM_COUNT) {
             if(playlist_state.current_page_index > 1) {
                 playlist_state.current_page_index--;
             }
@@ -81,8 +82,12 @@ ROE_S32 handleParsePlayMediaFileMsg(ROE_U8 * msgData)
     RspPlayMediaFile_st * result = (RspPlayMediaFile_st *)msgData;
     /* 处理媒体文件播放结果 */
     if(result->result == 0U) {
-        lv_group_remove_all_objs(keypad_group);
-        lv_group_add_obj(keypad_group, ui_PlayBar);
+        if(keypad_group == NULL || ui_PlayBar == NULL) {
+            LV_LOG_ERROR("[MEDIA][UI][DROP] playback controls are not initialized");
+            return ROE_FAILURE;
+        }
+        ui_focus_group_clear();
+        ui_focus_group_add(ui_PlayBar);
         lv_screen_load(ui_PlayBar);
     }
     else {
@@ -108,9 +113,13 @@ ROE_S32 handleParseExitMediaPlayStatusMsg(ROE_U8 * msgData)
     RspExitMediaPlay_st * result = (RspExitMediaPlay_st *)msgData;
     /* 处理退出媒体文件播放结果 */
     if(result->result == 0U) {
-        lv_group_remove_all_objs(keypad_group);
+        if(keypad_group == NULL || ui_ScrFileMgr == NULL) {
+            LV_LOG_ERROR("[MEDIA][UI][DROP] file-manager controls are not initialized");
+            return ROE_FAILURE;
+        }
+        ui_focus_group_clear();
         for(uint32_t i = 0; i < playlist_state.current_items; i++) {
-            lv_group_add_obj(keypad_group, ui_PlayList[i]);
+            ui_focus_group_add(ui_PlayList[i]);
         }
         play_list_focus_index(playlist_state.current_index);
         lv_screen_load(ui_ScrFileMgr);

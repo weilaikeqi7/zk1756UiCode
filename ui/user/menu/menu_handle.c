@@ -7,6 +7,7 @@
 #include "user/reticle/distance_editor.h"
 #include "ipcMsgQue4UiSndRequest.h"
 #include "reticle_feature.h"
+#include "ui_focus_manager.h"
 static lv_obj_t * ui_focus_temp[30];
 
 void show_menu_page1(void)
@@ -24,10 +25,10 @@ void show_menu_page1(void)
     ui_focus_temp[5] = ui_rowexpansion;
     ui_focus_temp[6] = ui_rowpip;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 7; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -35,7 +36,7 @@ void hidden_menu_page1(void)
 {
     lv_obj_add_flag(ui_contpage1, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(ui_lbltitle, LV_OBJ_FLAG_HIDDEN);
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
     if(g_app.video.tilt == ON)
         lv_obj_remove_flag(ui_controll, LV_OBJ_FLAG_HIDDEN);
     SendMsg4UiExitMenuReq(global_parameters.sendMsgQueId);
@@ -51,10 +52,10 @@ void show_menu_page1_item1(void)
     ui_focus_temp[3] = ui_menu1row4;
     ui_focus_temp[4] = ui_menu1row5;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 5; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -71,10 +72,10 @@ void hidden_menu_page1_item1(void)
     ui_focus_temp[5] = ui_rowexpansion;
     ui_focus_temp[6] = ui_rowpip;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 7; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -92,10 +93,10 @@ void show_menu_page1_item2(void)
     ui_focus_temp[7] = ui_rowitem28;
     ui_focus_temp[8] = ui_rowitem29;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 9; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -112,13 +113,13 @@ void hidden_menu_page1_item2(void)
     ui_focus_temp[5] = ui_rowexpansion;
     ui_focus_temp[6] = ui_rowpip;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 7; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 
-    lv_group_focus_obj(ui_focus_temp[1]);
+    ui_focus_group_focus(ui_focus_temp[1]);
 }
 
 void show_menu_page2(void)
@@ -136,10 +137,10 @@ void show_menu_page2(void)
     ui_focus_temp[5] = ui_rowmic;
     ui_focus_temp[6] = ui_rowrav;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 7; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -147,7 +148,7 @@ void hidden_menu_page2(void)
 {
     lv_obj_add_flag(ui_contpage2, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(ui_lbltitle, LV_OBJ_FLAG_HIDDEN);
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
     if(g_app.video.tilt == ON)
         lv_obj_remove_flag(ui_controll, LV_OBJ_FLAG_HIDDEN);
     SendMsg4UiExitMenuReq(global_parameters.sendMsgQueId);
@@ -167,10 +168,10 @@ void show_menu_page3(void)
     ui_focus_temp[4] = ui_rowdeletefile;
     ui_focus_temp[5] = ui_rowsetting;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 6; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -178,7 +179,7 @@ void hidden_menu_page3(void)
 {
     lv_obj_add_flag(ui_contpage3, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(ui_lbltitle, LV_OBJ_FLAG_HIDDEN);
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
     if(g_app.video.tilt == ON)
         lv_obj_remove_flag(ui_controll, LV_OBJ_FLAG_HIDDEN);
     SendMsg4UiExitMenuReq(global_parameters.sendMsgQueId);
@@ -192,10 +193,10 @@ void show_menu_page3_item1(void)
     ui_focus_temp[1] = ui_rowitem1;
     ui_focus_temp[2] = ui_rowitem2;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 3; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -211,10 +212,10 @@ void hidden_menu_page3_item1(void)
     ui_focus_temp[4] = ui_rowdeletefile;
     ui_focus_temp[5] = ui_rowsetting;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 6; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -226,10 +227,10 @@ void show_menu_page3_item2(void)
     ui_focus_temp[1] = ui_rowitem4;
     ui_focus_temp[2] = ui_rowitem5;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 3; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -245,12 +246,12 @@ void hidden_menu_page3_item2(void)
     ui_focus_temp[4] = ui_rowdeletefile;
     ui_focus_temp[5] = ui_rowsetting;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 6; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
-    lv_group_focus_obj(ui_focus_temp[1]);
+    ui_focus_group_focus(ui_focus_temp[1]);
 }
 
 void show_menu_page3_item3(void)
@@ -260,10 +261,10 @@ void show_menu_page3_item3(void)
     ui_focus_temp[0] = ui_bad_pixel;
     ui_focus_temp[1] = ui_pixel_return;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 2; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
 }
 
@@ -279,12 +280,12 @@ void hidden_menu_page3_item3(void)
     ui_focus_temp[4] = ui_rowdeletefile;
     ui_focus_temp[5] = ui_rowsetting;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 6; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
-    lv_group_focus_obj(ui_focus_temp[2]);
+    ui_focus_group_focus(ui_focus_temp[2]);
 }
 
 void hidden_all_menu(void)
@@ -362,6 +363,6 @@ void hidden_all_menu(void)
     lv_obj_set_state(ui_rowitemday, LV_STATE_USER_1, false);
     lv_obj_set_state(ui_rowitemhour, LV_STATE_USER_1, false);
     lv_obj_set_state(ui_rowitemmin, LV_STATE_USER_1, false);
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
     SendMsg4UiExitMenuReq(global_parameters.sendMsgQueId);
 }

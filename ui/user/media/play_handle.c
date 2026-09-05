@@ -7,6 +7,7 @@
 #include <math.h>
 #include <string.h>
 #include "play_handle_internal.h"
+#include "ui_focus_manager.h"
 
 FindDateTime findDateTime;
 PlayListState playlist_state;
@@ -14,12 +15,30 @@ int cur_focus_index = 0;
 
 lv_obj_t * ui_focus_temp[30];
 
+static void clear_media_list_items(uint32_t media_count)
+{
+    ui_focus_group_clear();
+
+    if(media_count > UI_MAX_MEDIA_FILE_NUM_ONE_PAGE) {
+        media_count = UI_MAX_MEDIA_FILE_NUM_ONE_PAGE;
+    }
+    for(uint32_t i = PLAYLIST_MEDIA_FIRST_INDEX;
+        i < PLAYLIST_MEDIA_FIRST_INDEX + media_count;
+        i++) {
+        if(ui_PlayList[i] != NULL) {
+            lv_obj_delete(ui_PlayList[i]);
+            ui_PlayList[i] = NULL;
+        }
+    }
+    playlist_state.current_play_list = 0;
+}
+
 void play_list_focus_index(uint32_t index)
 {
     if(keypad_group == NULL || index >= playlist_state.current_items || ui_PlayList[index] == NULL) return;
 
     playlist_state.current_index = index;
-    lv_group_focus_obj(ui_PlayList[index]);
+    ui_focus_group_focus(ui_PlayList[index]);
 }
 
 void play_list_focus_relative(int step)
@@ -115,14 +134,15 @@ void show_play_page(void)
     lv_obj_set_style_border_color(ui_PlayList[8], lv_color_hex(0x708383), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_PlayList[8], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_PlayList[9 + playlist_state.current_play_list] = ui_BTN4;
-    ui_PlayList[9 + playlist_state.current_play_list + 1] = ui_BTN5;
-    ui_PlayList[9 + playlist_state.current_play_list + 2] = ui_BTN6;
+    ui_PlayList[PLAYLIST_MEDIA_FIRST_INDEX + playlist_state.current_play_list] = ui_BTN4;
+    ui_PlayList[PLAYLIST_MEDIA_FIRST_INDEX + playlist_state.current_play_list + 1] = ui_BTN5;
+    ui_PlayList[PLAYLIST_MEDIA_FIRST_INDEX + playlist_state.current_play_list + 2] = ui_BTN6;
 
-    playlist_state.current_items = 9 + playlist_state.current_play_list + 3;
-    lv_group_remove_all_objs(keypad_group);
+    playlist_state.current_items = PLAYLIST_MEDIA_FIRST_INDEX + playlist_state.current_play_list +
+                                   PLAYLIST_ACTION_ITEM_COUNT;
+    ui_focus_group_clear();
     for(uint32_t i = 0; i < playlist_state.current_items; i++) {
-        lv_group_add_obj(keypad_group, ui_PlayList[i]);
+        ui_focus_group_add(ui_PlayList[i]);
     }
 
     cur_focus_index = FOCUS_ALL;
@@ -146,12 +166,12 @@ void hidden_play_page(void)
     ui_focus_temp[4] = ui_rowdeletefile;
     ui_focus_temp[5] = ui_rowsetting;
 
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
 
     for(int i = 0; i < 6; i++) {
-        lv_group_add_obj(keypad_group, ui_focus_temp[i]);
+        ui_focus_group_add(ui_focus_temp[i]);
     }
-    lv_group_focus_obj(ui_focus_temp[4]);
+    ui_focus_group_focus(ui_focus_temp[4]);
     g_app.playPageFlag = 0;
     for(uint32_t i = 0; i < UI_MAX_DIVIDING_PLATES_NUM; i++) {
         if(g_app.reticle_state[i] == 1) {
@@ -194,36 +214,37 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
         LV_LOG_WARN("[MEDIA][UI][DROP] invalid file count:%u", (unsigned)fileList->fileCount);
         return;
     }
-    if(playlist_state.current_play_list > 0) {
-        for(uint32_t i = 9; i < playlist_state.current_play_list + 9; i++) {
-            lv_obj_delete(ui_PlayList[i]);
-            ui_PlayList[i] = NULL;
-        }
-        playlist_state.current_play_list = 0;
-    }
-    LV_LOG_USER("fileList->fileCount:%d, fileList->totalCount:%d", fileList->fileCount, fileList->totalCount);
-    for(int i = 9; i < fileList->fileCount + 9; i++) {
-        if(fileInfo[i - 9] == NULL) {
-            LV_LOG_WARN("[MEDIA][UI][DROP] null file info index:%d", i - 9);
+    for(ROE_U8 i = 0; i < fileList->fileCount; i++) {
+        if(fileInfo[i] == NULL) {
+            LV_LOG_WARN("[MEDIA][UI][DROP] null file info index:%u", (unsigned)i);
             return;
         }
+    }
+
+    clear_media_list_items(playlist_state.current_play_list);
+    LV_LOG_USER("fileList->fileCount:%d, fileList->totalCount:%d", fileList->fileCount, fileList->totalCount);
+    for(uint32_t i = PLAYLIST_MEDIA_FIRST_INDEX;
+        i < (uint32_t)fileList->fileCount + PLAYLIST_MEDIA_FIRST_INDEX;
+        i++) {
         char fileName[256] = {0};
-        ROE_SIZE nameLen = fileInfo[i - 9]->nameLen;
+        ROE_SIZE nameLen = fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->nameLen;
         if(nameLen >= sizeof(fileName)) {
             nameLen = sizeof(fileName) - 1U;
         }
-        memcpy(fileName, fileInfo[i - 9]->name, nameLen);
+        memcpy(fileName, fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->name, nameLen);
         fileName[nameLen] = '\0';
         LV_LOG_USER("%d %lld %d %d %s",
-                    fileInfo[i - 9]->type,
-                    fileInfo[i - 9]->size,
-                    fileInfo[i - 9]->duration,
-                    fileInfo[i - 9]->createTime,
+                    fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->type,
+                    fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->size,
+                    fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->duration,
+                    fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->createTime,
                     fileName);
         char buf[256] = {0};
         ui_PlayList[i] = ui_listItem_create(ui_List_Container);
         if(ui_PlayList[i] == NULL) {
-            LV_LOG_ERROR("[MEDIA][UI][DROP] create playlist item failed index:%d", i - 9);
+            LV_LOG_ERROR("[MEDIA][UI][DROP] create playlist item failed index:%u",
+                         (unsigned)(i - PLAYLIST_MEDIA_FIRST_INDEX));
+            clear_media_list_items((uint32_t)(i - PLAYLIST_MEDIA_FIRST_INDEX + 1));
             return;
         }
         lv_obj_t * nameLabel = ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_1);
@@ -231,11 +252,13 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
         lv_obj_t * durationLabel = ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_3);
         lv_obj_t * dateLabel = ui_comp_get_child(ui_PlayList[i], UI_COMP_LISTITEM_4);
         if(nameLabel == NULL || sizeLabel == NULL || durationLabel == NULL || dateLabel == NULL) {
-            LV_LOG_ERROR("[MEDIA][UI][DROP] playlist item children missing index:%d", i - 9);
+            LV_LOG_ERROR("[MEDIA][UI][DROP] playlist item children missing index:%u",
+                         (unsigned)(i - PLAYLIST_MEDIA_FIRST_INDEX));
+            clear_media_list_items((uint32_t)(i - PLAYLIST_MEDIA_FIRST_INDEX + 1));
             return;
         }
         lv_label_set_text(nameLabel, fileName);
-        int64_t bytes = fileInfo[i - 9]->size;
+        int64_t bytes = fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->size;
         const char * units[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
         int uint_index = 0;
         double value = (double)bytes;
@@ -244,11 +267,13 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
             uint_index++;
         }
         lv_label_set_text_fmt(sizeLabel, "%.2f%s", value, units[uint_index]);
-        uint32_t hours = fileInfo[i - 9]->duration / 3600;
-        uint32_t mins = (fileInfo[i - 9]->duration % 3600) / 60;
-        uint32_t secs = fileInfo[i - 9]->duration % 60;
+        int32_t duration = fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->duration;
+        if(duration < 0) duration = 0;
+        uint32_t hours = (uint32_t)duration / 3600U;
+        uint32_t mins = ((uint32_t)duration % 3600U) / 60U;
+        uint32_t secs = (uint32_t)duration % 60U;
         lv_label_set_text_fmt(durationLabel, "%02d:%02d:%02d", hours, mins, secs);
-        time_t fileTime = fileInfo[i - 9]->createTime;
+        time_t fileTime = fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->createTime;
         struct tm * pTmInfo = localtime(&fileTime);
         if(pTmInfo != NULL) {
             strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", pTmInfo);
@@ -283,39 +308,36 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
                                   playlist_state.total_page_index);
         }
     }
-    ui_PlayList[fileList->fileCount + 9] = ui_BTN4;
-    ui_PlayList[fileList->fileCount + 9 + 1] = ui_BTN5;
-    ui_PlayList[fileList->fileCount + 9 + 2] = ui_BTN6;
+    ui_PlayList[fileList->fileCount + PLAYLIST_MEDIA_FIRST_INDEX] = ui_BTN4;
+    ui_PlayList[fileList->fileCount + PLAYLIST_MEDIA_FIRST_INDEX + 1] = ui_BTN5;
+    ui_PlayList[fileList->fileCount + PLAYLIST_MEDIA_FIRST_INDEX + 2] = ui_BTN6;
 
     playlist_state.current_play_list = fileList->fileCount;
-    playlist_state.current_items = 9 + playlist_state.current_play_list + 3;
+    playlist_state.current_items = PLAYLIST_MEDIA_FIRST_INDEX + playlist_state.current_play_list + PLAYLIST_ACTION_ITEM_COUNT;
     playlist_state.current_index = 0;
-    lv_group_remove_all_objs(keypad_group);
+    ui_focus_group_clear();
     for(uint32_t i = 0; i < playlist_state.current_items; i++) {
-        if(ui_PlayList[i] != NULL) lv_group_add_obj(keypad_group, ui_PlayList[i]);
+        ui_focus_group_add(ui_PlayList[i]);
     }
     LV_LOG_USER("playlist_state.current_items:%d", playlist_state.current_items);
-    for(uint32_t i = 9; i < playlist_state.current_items - 3; i++) {
+    for(uint32_t i = PLAYLIST_MEDIA_FIRST_INDEX;
+        i < playlist_state.current_items - PLAYLIST_ACTION_ITEM_COUNT;
+        i++) {
         if(ui_PlayList[i] != NULL) {
             lv_obj_add_event_cb(ui_PlayList[i], ui_event_play_or_del, LV_EVENT_ALL, NULL);
         }
     }
 
     if(cur_focus_index == FOCUS_ALL) {
-        playlist_state.current_index = 0;
-        lv_group_focus_obj(ui_PlayList[0]);
+        play_list_focus_index(0);
     } else if(cur_focus_index == FOCUS_FIND) {
-        playlist_state.current_index = 6;
-        lv_group_focus_obj(ui_PlayList[6]);
+        play_list_focus_index(6);
     } else if(cur_focus_index == FOCUS_PREV) {
-        playlist_state.current_index = fileList->fileCount + 9 + 1;
-        lv_group_focus_obj(ui_PlayList[fileList->fileCount + 9 + 1]);
+        play_list_focus_index(fileList->fileCount + PLAYLIST_MEDIA_FIRST_INDEX + 1);
     } else if(cur_focus_index == FOCUS_NEXT) {
-        playlist_state.current_index = fileList->fileCount + 9 + 2;
-        lv_group_focus_obj(ui_PlayList[fileList->fileCount + 9 + 2]);
+        play_list_focus_index(fileList->fileCount + PLAYLIST_MEDIA_FIRST_INDEX + 2);
     } else if(cur_focus_index == FOCUS_DEL) {
-        playlist_state.current_index = 9;
-        lv_group_focus_obj(ui_PlayList[9]);
+        play_list_focus_index(PLAYLIST_MEDIA_FIRST_INDEX);
     }
 }
 

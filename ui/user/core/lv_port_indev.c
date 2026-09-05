@@ -11,6 +11,8 @@
  *********************/
 #include "lv_port_indev.h"
 
+#include <string.h>
+
 /*********************
  *      DEFINES
  *********************/
@@ -34,6 +36,7 @@ static uint32_t keypad_get_key(void);
  **********************/
 
 lv_indev_t * indev_keypad;
+static uint32_t g_last_key;
 
 /**********************
  *      MACROS
@@ -46,6 +49,12 @@ lv_group_t * keypad_group;
 
 void lv_port_indev_init(void)
 {
+    if(indev_keypad != NULL || keypad_group != NULL) {
+        lv_port_indev_deinit();
+    }
+    memset(g_my_keypad_btn_points, 0, sizeof(g_my_keypad_btn_points));
+    g_last_key = 0;
+
     /*------------------
      * Keypad
      * -----------------*/
@@ -77,6 +86,9 @@ void lv_port_indev_deinit(void)
         lv_group_delete(keypad_group);
         keypad_group = NULL;
     }
+
+    memset(g_my_keypad_btn_points, 0, sizeof(g_my_keypad_btn_points));
+    g_last_key = 0;
 }
 
 void lv_port_indev_simulate_key(uint8_t key_index)
@@ -84,7 +96,8 @@ void lv_port_indev_simulate_key(uint8_t key_index)
     if(key_index < 4U) {
         g_my_keypad_btn_points[key_index] = 1U;
         if(indev_keypad != NULL) {
-            lv_timer_ready(lv_indev_get_read_timer(indev_keypad));
+            lv_timer_t * read_timer = lv_indev_get_read_timer(indev_keypad);
+            if(read_timer != NULL) lv_timer_ready(read_timer);
         }
     }
 }
@@ -106,7 +119,7 @@ static void keypad_init(void)
 /*Will be called by the library to read the mouse*/
 static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t * data)
 {
-    static uint32_t last_key = 0;
+    (void)indev_drv;
 
     /*Get whether the a key is pressed and save the pressed key*/
     uint32_t act_key = keypad_get_key();
@@ -131,12 +144,12 @@ static void keypad_read(lv_indev_t * indev_drv, lv_indev_data_t * data)
             break;
         }
 
-        last_key = act_key;
+        g_last_key = act_key;
     } else {
         data->state = LV_INDEV_STATE_RELEASED;
     }
 
-    data->key = last_key;
+    data->key = g_last_key;
 }
 
 /*Get the currently being pressed key.  0 if no key is pressed*/

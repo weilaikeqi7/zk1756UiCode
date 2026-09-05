@@ -3,6 +3,9 @@
 
 #include "play_handle.h"
 
+#define PLAYLIST_MEDIA_FIRST_INDEX 9U
+#define PLAYLIST_ACTION_ITEM_COUNT 3U
+
 extern int cur_focus_index;
 extern lv_obj_t * ui_focus_temp[30];
 

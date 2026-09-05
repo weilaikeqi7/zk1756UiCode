@@ -30,9 +30,8 @@ void ui_event_rowlrf(lv_event_t * e)
             if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
                 lv_obj_add_flag(ui_contpage1, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(ui_lbltitle, LV_OBJ_FLAG_HIDDEN);
-                lv_group_remove_all_objs(keypad_group);
                 show_menu_page3();
-                lv_group_focus_obj(ui_rowsetting);
+                ui_focus_group_focus(ui_rowsetting);
             }
             break;
         case LV_KEY_ENTER:
@@ -173,9 +172,8 @@ void ui_event_rowstandby(lv_event_t * e)
             if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
                 lv_obj_add_flag(ui_contpage3, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(ui_lbltitle, LV_OBJ_FLAG_HIDDEN);
-                lv_group_remove_all_objs(keypad_group);
                 show_menu_page2();
-                lv_group_focus_obj(ui_rowrav);
+                ui_focus_group_focus(ui_rowrav);
             }
             break;
         case LV_KEY_ENTER:
