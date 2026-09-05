@@ -7,8 +7,8 @@
 #include "mainpage_event_internal.h"
 #include <stdlib.h>
 #include <string.h>
-#include "handleNotify.h"
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_notification_handler.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_model.h"
 
 void ui_rowswitch_set_checked(lv_obj_t * row, ROE_U8 checked)
@@ -53,7 +53,7 @@ void send_user_common_config_partial(ROE_S8 showDateTime,
                                      ROE_S8 distanceUnit,
                                      ROE_U8 saveFlag)
 {
-    ReqSetUserCommonConfig_st req;
+    UiRequestSetUserCommonConfig req;
 
     req.saveFlag = saveFlag;
     req.showDateTime = showDateTime;
@@ -62,7 +62,7 @@ void send_user_common_config_partial(ROE_S8 showDateTime,
     req.distanceUnit = distanceUnit;
     req.batteryLevel = -1;
 
-    SendMsg4UiSetUserCommonConfigReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendSetUserCommonConfigRequest(global_parameters.sendMsgQueId, &req);
 }
 
 void send_user_media_config_partial(ROE_S8 burstCount,
@@ -72,7 +72,7 @@ void send_user_media_config_partial(ROE_S8 burstCount,
                                     ROE_S8 micSwitch,
                                     ROE_U8 saveFlag)
 {
-    ReqSetUserMediaConfig_st req;
+    UiRequestSetUserMediaConfig req;
 
     req.saveFlag = saveFlag;
     req.burstCount = burstCount;
@@ -81,7 +81,7 @@ void send_user_media_config_partial(ROE_S8 burstCount,
     req.recoilPreRecordDuration = recoilPreRecordDuration;
     req.micSwitch = micSwitch;
 
-    SendMsg4UiSetUserMediaConfigReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendSetUserMediaConfigRequest(global_parameters.sendMsgQueId, &req);
 }
 
 void ui_apply_user_common_config(void)

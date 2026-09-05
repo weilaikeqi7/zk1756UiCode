@@ -391,65 +391,65 @@ void load_gun_cfg_to_ui(void)
 
 void send_reticle_common_req(int show, int rotate, int brightness, int ballistic, int saveFlag)
 {
-    ReqSetReticleCommonConfig_st req = {
+    UiRequestSetReticleCommonConfig req = {
         .saveFlag = (ROE_U8)saveFlag,
         .showReticle = (ROE_S8)show,
         .rotateReticle = (ROE_S8)rotate,
         .brightnessBall = (ROE_S8)brightness,
         .ballisticSolve = (ROE_S8)ballistic,
     };
-    SendMsg4UiSetReticuleCommonConfigReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendSetReticleCommonConfigRequest(global_parameters.sendMsgQueId, &req);
 }
 
 /* 查询当前枪型完整配置（3.62）。
  * 进入分划板菜单时先发这个请求，等响应回来后再刷新二级菜单。 */
 void send_query_current_gun(void)
 {
-    ReqWeaponMarkConfigOperate_st req = {
+    UiRequestWeaponMarkConfigOperate req = {
         .videoChannel = 0,
         .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
         .opType = 0,
     };
     reticle_feature_note_weapon_mark_op(req.opType);
-    SendMsg4UiWeaponMarkConfigOperateReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendWeaponMarkConfigOperateRequest(global_parameters.sendMsgQueId, &req);
 }
 
 /* 查询当前活动距离标签详情（3.66 opType=0）。
  * 只用于进入三级前拿当前标签的校准数据，不用于重建整表。 */
 void send_query_selected_distance(void)
 {
-    ReqWeaponOperateShootDist_st req = {
+    UiRequestWeaponOperateShootDistance req = {
         .videoChannel = 0,
         .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
-        .distIndex = ui_idx_to_proto(s_active_dist_tag_idx),
-        .distValue = 0,
+        .distanceIndex = ui_idx_to_proto(s_active_dist_tag_idx),
+        .distanceValue = 0,
         .opType = 0,
         .syncMoveReticle = 0,
     };
     reticle_feature_note_dist_op(req.opType);
-    SendMsg4UiWeaponOperateShootDistReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendWeaponOperateShootDistanceRequest(global_parameters.sendMsgQueId, &req);
 }
 
 void send_move_req(ROE_S8 moveDir)
 {
-    ReqWeaponSetShootPosition_st req = {
+    UiRequestWeaponSetShootPosition req = {
         .videoChannel = 0,
         .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
-        .distIndex = ui_idx_to_proto(s_active_dist_tag_idx),
+        .distanceIndex = ui_idx_to_proto(s_active_dist_tag_idx),
         .moveDir = moveDir,
     };
-    SendMsg4UiWeaponSetShootPositionReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendWeaponSetShootPositionRequest(global_parameters.sendMsgQueId, &req);
 }
 
 void send_zero_req(ROE_U8 zeroType)
 {
-    ReqWeaponSetShootZero_st req = {
+    UiRequestWeaponSetShootZero req = {
         .videoChannel = 0,
         .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
-        .distIndex = ui_idx_to_proto(s_active_dist_tag_idx),
+        .distanceIndex = ui_idx_to_proto(s_active_dist_tag_idx),
         .zeroType = zeroType,
     };
-    SendMsg4UiWeaponSetShootZeroReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendWeaponSetShootZeroRequest(global_parameters.sendMsgQueId, &req);
 }
 
 void reticle_feature_init(void)

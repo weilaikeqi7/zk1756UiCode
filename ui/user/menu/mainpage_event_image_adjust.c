@@ -6,17 +6,17 @@
 #include "mainpage_event_handle.h"
 #include "mainpage_event_internal.h"
 #include <string.h>
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "mainpage_event_usercfg_internal.h"
 #include "reticle_model.h"
 
-static ReqAdjustInfraredPseudoColor_st infraredPseudoColor;
+static UiRequestAdjustInfraredPseudoColor infraredPseudoColor;
 
 void ui_event_rowbrightness(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_user_data(e);
-    ReqAdjustInfraredBrightness_st infaredBrightness;
+    UiRequestAdjustInfraredBrightness infaredBrightness;
     if(event_code == LV_EVENT_FOCUSED) {
         lv_label_set_text(ui_lbltitle, "Brightness");
     }
@@ -40,7 +40,7 @@ void ui_event_rowbrightness(lv_event_t * e)
                     "%d",
                     Brightness);
                 infaredBrightness.brightness = (uint8_t)(Brightness * 10);
-                SendMsg4UiInfraredBrightnessReq(global_parameters.sendMsgQueId, &infaredBrightness);
+                UiIpcSendInfraredBrightnessRequest(global_parameters.sendMsgQueId, &infaredBrightness);
             }
             break;
         case LV_KEY_DOWN:
@@ -56,7 +56,7 @@ void ui_event_rowbrightness(lv_event_t * e)
                     "%d",
                     Brightness);
                 infaredBrightness.brightness = (uint8_t)(Brightness * 10);
-                SendMsg4UiInfraredBrightnessReq(global_parameters.sendMsgQueId, &infaredBrightness);
+                UiIpcSendInfraredBrightnessRequest(global_parameters.sendMsgQueId, &infaredBrightness);
             }
             break;
         case LV_KEY_ENTER:
@@ -80,7 +80,7 @@ void ui_event_rowcontrast(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_user_data(e);
-    ReqAdjustInfraredContrast_st infraredContrast;
+    UiRequestAdjustInfraredContrast infraredContrast;
 
     if(event_code == LV_EVENT_FOCUSED) {
         lv_label_set_text(ui_lbltitle, "Contrast");
@@ -105,7 +105,7 @@ void ui_event_rowcontrast(lv_event_t * e)
                     "%d",
                     Contrast);
                 infraredContrast.contrast = (uint8_t)(Contrast * 10);
-                SendMsg4UiInfraredContrastReq(global_parameters.sendMsgQueId, &infraredContrast);
+                UiIpcSendInfraredContrastRequest(global_parameters.sendMsgQueId, &infraredContrast);
             }
             break;
         case LV_KEY_DOWN:
@@ -121,7 +121,7 @@ void ui_event_rowcontrast(lv_event_t * e)
                     "%d",
                     Contrast);
                 infraredContrast.contrast = (uint8_t)(Contrast * 10);
-                SendMsg4UiInfraredContrastReq(global_parameters.sendMsgQueId, &infraredContrast);
+                UiIpcSendInfraredContrastRequest(global_parameters.sendMsgQueId, &infraredContrast);
             }
             break;
         case LV_KEY_ENTER:
@@ -145,7 +145,7 @@ void ui_event_rowsharpness(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_user_data(e);
-    ReqInfraredEnhanceImage_st infraredEnhanceImage;
+    UiRequestInfraredEnhanceImage infraredEnhanceImage;
 
     if(event_code == LV_EVENT_FOCUSED) {
         lv_label_set_text(ui_lbltitle, "Sharpness");
@@ -170,7 +170,7 @@ void ui_event_rowsharpness(lv_event_t * e)
                     "%d",
                     Sharpness);
                 infraredEnhanceImage.strength = (uint8_t)(Sharpness * 10);
-                SendMsg4UiInfraredEnhanceImageReq(global_parameters.sendMsgQueId, &infraredEnhanceImage);
+                UiIpcSendInfraredEnhanceImageRequest(global_parameters.sendMsgQueId, &infraredEnhanceImage);
             }
             break;
         case LV_KEY_DOWN:
@@ -186,7 +186,7 @@ void ui_event_rowsharpness(lv_event_t * e)
                     "%d",
                     Sharpness);
                 infraredEnhanceImage.strength = (uint8_t)(Sharpness * 10);
-                SendMsg4UiInfraredEnhanceImageReq(global_parameters.sendMsgQueId, &infraredEnhanceImage);
+                UiIpcSendInfraredEnhanceImageRequest(global_parameters.sendMsgQueId, &infraredEnhanceImage);
             }
             break;
         case LV_KEY_ENTER:
@@ -232,10 +232,10 @@ void ui_event_rowexpansion(lv_event_t * e)
         case LV_KEY_ENTER: {
             ROE_U8 next_on =
                 lv_obj_has_state(ui_comp_get_child(obj, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED) ? 0 : 1;
-            ReqAdjustExtendDisplaySwitch_st sw;
+            UiRequestAdjustExtendDisplaySwitch sw;
             ui_rowswitch_set_checked(obj, next_on);
             sw.sw = next_on;
-            SendMsg4UiExtendDisplaySwitchReq(global_parameters.sendMsgQueId, &sw);
+            UiIpcSendExtendDisplaySwitchRequest(global_parameters.sendMsgQueId, &sw);
             break;
         }
         case LV_KEY_ESC:
@@ -252,7 +252,7 @@ void ui_event_rowpip(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_user_data(e);
-    ReqAdjustPipSwitch_st pipSwitch;
+    UiRequestAdjustPipSwitch pipSwitch;
     if(event_code == LV_EVENT_FOCUSED) {
         lv_label_set_text(ui_lbltitle, "PIP");
     }
@@ -279,7 +279,7 @@ void ui_event_rowpip(lv_event_t * e)
                     LV_EVENT_VALUE_CHANGED,
                     NULL);
                 pipSwitch.sw = 0;
-                SendMsg4UiPipSwitchReq(global_parameters.sendMsgQueId, &pipSwitch);
+                UiIpcSendPipSwitchRequest(global_parameters.sendMsgQueId, &pipSwitch);
             } else {
                 lv_obj_set_state(ui_comp_get_child(obj, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED, true);
                 lv_obj_send_event(
@@ -287,7 +287,7 @@ void ui_event_rowpip(lv_event_t * e)
                     LV_EVENT_VALUE_CHANGED,
                     NULL);
                 pipSwitch.sw = 1;
-                SendMsg4UiPipSwitchReq(global_parameters.sendMsgQueId, &pipSwitch);
+                UiIpcSendPipSwitchRequest(global_parameters.sendMsgQueId, &pipSwitch);
             }
             break;
         case LV_KEY_ESC:

@@ -7,6 +7,7 @@
 #include "user/reticle/reticle_feature.h"
 #include "user/reticle/reticle_model.h"
 #include "user/core/ui_focus_manager.h"
+#include "user/ipc/ui_ipc_request_sender.h"
 #include "ui.h"
 
 /* 保存对话框来源 */

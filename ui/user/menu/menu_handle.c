@@ -5,7 +5,7 @@
 #include "menu_handle.h"
 
 #include "user/reticle/distance_editor.h"
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_feature.h"
 #include "ui_focus_manager.h"
 static lv_obj_t * ui_focus_temp[30];
@@ -39,7 +39,7 @@ void hidden_menu_page1(void)
     ui_focus_group_clear();
     if(g_app.video.tilt == ON)
         lv_obj_remove_flag(ui_controll, LV_OBJ_FLAG_HIDDEN);
-    SendMsg4UiExitMenuReq(global_parameters.sendMsgQueId);
+    UiIpcSendExitMenuRequest(global_parameters.sendMsgQueId);
 }
 
 void show_menu_page1_item1(void)
@@ -151,7 +151,7 @@ void hidden_menu_page2(void)
     ui_focus_group_clear();
     if(g_app.video.tilt == ON)
         lv_obj_remove_flag(ui_controll, LV_OBJ_FLAG_HIDDEN);
-    SendMsg4UiExitMenuReq(global_parameters.sendMsgQueId);
+    UiIpcSendExitMenuRequest(global_parameters.sendMsgQueId);
 }
 
 void show_menu_page3(void)
@@ -182,7 +182,7 @@ void hidden_menu_page3(void)
     ui_focus_group_clear();
     if(g_app.video.tilt == ON)
         lv_obj_remove_flag(ui_controll, LV_OBJ_FLAG_HIDDEN);
-    SendMsg4UiExitMenuReq(global_parameters.sendMsgQueId);
+    UiIpcSendExitMenuRequest(global_parameters.sendMsgQueId);
 }
 
 void show_menu_page3_item1(void)
@@ -364,5 +364,5 @@ void hidden_all_menu(void)
     lv_obj_set_state(ui_rowitemhour, LV_STATE_USER_1, false);
     lv_obj_set_state(ui_rowitemmin, LV_STATE_USER_1, false);
     ui_focus_group_clear();
-    SendMsg4UiExitMenuReq(global_parameters.sendMsgQueId);
+    UiIpcSendExitMenuRequest(global_parameters.sendMsgQueId);
 }

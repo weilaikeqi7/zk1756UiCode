@@ -30,7 +30,8 @@ extern "C" {
 #include "user/core/types.h"
 #include <time.h>
 #include "user/core/ui_attitude_scale.h"
-#include "user/ipc/msg.h"
+#include "user/ipc/ui_ipc_protocol.h"
+#include "user/ipc/ui_ipc_message.h"
 #include "user/core/popup_stack.h"
 #include <semaphore.h>
 ///////////////////// SCREENS ////////////////////

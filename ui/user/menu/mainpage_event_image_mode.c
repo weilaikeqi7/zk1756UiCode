@@ -4,10 +4,10 @@
 
 #include "mainpage_event_handle.h"
 #include "mainpage_event_internal.h"
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_model.h"
 
-static ReqAdjustInfraredPseudoColor_st infraredPseudoColor;
+static UiRequestAdjustInfraredPseudoColor infraredPseudoColor;
 
 void ui_event_menu1row5(lv_event_t * e)
 {
@@ -73,7 +73,7 @@ void ui_event_rowitem21(lv_event_t * e)
         case LV_KEY_ENTER:
             hidden_menu_page1_item2();
             infraredPseudoColor.mode = 0;
-            SendMsg4UiInfraredPseudoColorReq(global_parameters.sendMsgQueId, &infraredPseudoColor);
+            UiIpcSendInfraredPseudoColorRequest(global_parameters.sendMsgQueId, &infraredPseudoColor);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -112,7 +112,7 @@ void ui_event_rowitem22(lv_event_t * e)
         case LV_KEY_ENTER:
             hidden_menu_page1_item2();
             infraredPseudoColor.mode = 1;
-            SendMsg4UiInfraredPseudoColorReq(global_parameters.sendMsgQueId, &infraredPseudoColor);
+            UiIpcSendInfraredPseudoColorRequest(global_parameters.sendMsgQueId, &infraredPseudoColor);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -151,7 +151,7 @@ void ui_event_rowitem23(lv_event_t * e)
         case LV_KEY_ENTER:
             hidden_menu_page1_item2();
             infraredPseudoColor.mode = 2;
-            SendMsg4UiInfraredPseudoColorReq(global_parameters.sendMsgQueId, &infraredPseudoColor);
+            UiIpcSendInfraredPseudoColorRequest(global_parameters.sendMsgQueId, &infraredPseudoColor);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -190,7 +190,7 @@ void ui_event_rowitem24(lv_event_t * e)
         case LV_KEY_ENTER:
             hidden_menu_page1_item2();
             infraredPseudoColor.mode = 3;
-            SendMsg4UiInfraredPseudoColorReq(global_parameters.sendMsgQueId, &infraredPseudoColor);
+            UiIpcSendInfraredPseudoColorRequest(global_parameters.sendMsgQueId, &infraredPseudoColor);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -229,7 +229,7 @@ void ui_event_rowitem25(lv_event_t * e)
         case LV_KEY_ENTER:
             hidden_menu_page1_item2();
             infraredPseudoColor.mode = 4;
-            SendMsg4UiInfraredPseudoColorReq(global_parameters.sendMsgQueId, &infraredPseudoColor);
+            UiIpcSendInfraredPseudoColorRequest(global_parameters.sendMsgQueId, &infraredPseudoColor);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -268,7 +268,7 @@ void ui_event_rowitem26(lv_event_t * e)
         case LV_KEY_ENTER:
             hidden_menu_page1_item2();
             infraredPseudoColor.mode = 5;
-            SendMsg4UiInfraredPseudoColorReq(global_parameters.sendMsgQueId, &infraredPseudoColor);
+            UiIpcSendInfraredPseudoColorRequest(global_parameters.sendMsgQueId, &infraredPseudoColor);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -307,7 +307,7 @@ void ui_event_rowitem27(lv_event_t * e)
         case LV_KEY_ENTER:
             hidden_menu_page1_item2();
             infraredPseudoColor.mode = 6;
-            SendMsg4UiInfraredPseudoColorReq(global_parameters.sendMsgQueId, &infraredPseudoColor);
+            UiIpcSendInfraredPseudoColorRequest(global_parameters.sendMsgQueId, &infraredPseudoColor);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -346,7 +346,7 @@ void ui_event_rowitem28(lv_event_t * e)
         case LV_KEY_ENTER:
             hidden_menu_page1_item2();
             infraredPseudoColor.mode = 7;
-            SendMsg4UiInfraredPseudoColorReq(global_parameters.sendMsgQueId, &infraredPseudoColor);
+            UiIpcSendInfraredPseudoColorRequest(global_parameters.sendMsgQueId, &infraredPseudoColor);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);

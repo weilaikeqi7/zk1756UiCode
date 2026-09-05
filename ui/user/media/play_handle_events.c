@@ -18,12 +18,12 @@ void ui_event_PlayList_1(lv_event_t * e)
             play_list_focus_relative(-1);
             break;
         case LV_KEY_ENTER: {
-            ReqGetMediaFileList_st getMediaFileList;
+            UiRequestGetMediaFileList getMediaFileList;
             playlist_state.req_type = 1;
             playlist_state.current_page_index = 1;
             playlist_state.find_type = 2;
             play_media_list_request_init(&getMediaFileList, 0);
-            SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
+            UiIpcSendGetMediaFileListRequest(global_parameters.sendMsgQueId, &getMediaFileList);
             cur_focus_index = FOCUS_ALL;
             break;
         }
@@ -250,12 +250,12 @@ void ui_event_PlayList_6(lv_event_t * e)
             play_list_focus_relative(-1);
             break;
         case LV_KEY_ENTER: {
-            ReqGetMediaFileList_st getMediaFileList;
+            UiRequestGetMediaFileList getMediaFileList;
             playlist_state.req_type = 1;
             playlist_state.current_page_index = 1;
             playlist_state.find_type = 1;
             play_media_list_request_init(&getMediaFileList, 0);
-            SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
+            UiIpcSendGetMediaFileListRequest(global_parameters.sendMsgQueId, &getMediaFileList);
             cur_focus_index = FOCUS_FIND;
             break;
         }

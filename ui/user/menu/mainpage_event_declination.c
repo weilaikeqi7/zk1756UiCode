@@ -4,10 +4,10 @@
 
 #include "mainpage_event_handle.h"
 #include "mainpage_event_internal.h"
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_model.h"
 
-static ReqInfraredBadPixelOperate_st infraredBadPixelOperate;
+static UiRequestInfraredBadPixelOperate infraredBadPixelOperate;
 
 void ui_event_rowitem2(lv_event_t * e)
 {
@@ -267,9 +267,9 @@ void ui_event_pixel_item2(lv_event_t * e)
                     ui_comp_get_child(obj, UI_COMP_MCITEM_MCP2P1L2),
                     "%u",
                     g_app.bad_point.threshold);
-                ReqInfraredSetBadPixelThreshold_st threshold_st;
-                threshold_st.threshold = g_app.bad_point.threshold;
-                SendMsg4UiInfraredSetBadPixelThresholdReq(global_parameters.sendMsgQueId, &threshold_st);
+                UiRequestInfraredSetBadPixelThreshold thresholdRequest;
+                thresholdRequest.threshold = g_app.bad_point.threshold;
+                UiIpcSendInfraredSetBadPixelThresholdRequest(global_parameters.sendMsgQueId, &thresholdRequest);
             }
             break;
         case LV_KEY_DOWN:
@@ -286,9 +286,9 @@ void ui_event_pixel_item2(lv_event_t * e)
                     ui_comp_get_child(obj, UI_COMP_MCITEM_MCP2P1L2),
                     "%u",
                     g_app.bad_point.threshold);
-                ReqInfraredSetBadPixelThreshold_st threshold_st;
-                threshold_st.threshold = g_app.bad_point.threshold;
-                SendMsg4UiInfraredSetBadPixelThresholdReq(global_parameters.sendMsgQueId, &threshold_st);
+                UiRequestInfraredSetBadPixelThreshold thresholdRequest;
+                thresholdRequest.threshold = g_app.bad_point.threshold;
+                UiIpcSendInfraredSetBadPixelThresholdRequest(global_parameters.sendMsgQueId, &thresholdRequest);
             }
             break;
         case LV_KEY_ENTER:
@@ -361,7 +361,7 @@ void ui_event_DialogPixelClearOk(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             infraredBadPixelOperate.opType = 0;
-            SendMsg4UiInfraredBadPixelOperateReq(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
+            UiIpcSendInfraredBadPixelOperateRequest(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
             hidden_menu_page3_item3_item1_item3();
             break;
         case LV_KEY_ESC:
@@ -415,7 +415,7 @@ void ui_event_pixel_item4(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             infraredBadPixelOperate.opType = 1;
-            SendMsg4UiInfraredBadPixelOperateReq(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
+            UiIpcSendInfraredBadPixelOperateRequest(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
             break;
         case LV_KEY_ESC:
             hidden_menu_page3_item3_item1();
@@ -443,7 +443,7 @@ void ui_event_pixel_item5(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             infraredBadPixelOperate.opType = 2;
-            SendMsg4UiInfraredBadPixelOperateReq(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
+            UiIpcSendInfraredBadPixelOperateRequest(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
             break;
         case LV_KEY_ESC:
             hidden_menu_page3_item3_item1();
@@ -517,25 +517,25 @@ void ui_event_CompassStart(lv_event_t * e)
         case LV_KEY_ENTER:
             if(state1 == 1 && state2 == 0) {
                 state1 = 0;
-                ReqStopCompassCalibration_st compassCalibration;
-                compassCalibration.ifsave = 0;
-                SendMsg4UiStopCompassCalibrationReq(global_parameters.sendMsgQueId, &compassCalibration);
+                UiRequestStopCompassCalibration compassCalibration;
+                compassCalibration.saveFlag = 0;
+                UiIpcSendStopCompassCalibrationRequest(global_parameters.sendMsgQueId, &compassCalibration);
                 lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGTEXT_LABEL),
                                   "Confirm saving the result?");
                 lv_label_set_text(ui_comp_get_child(obj, UI_COMP_ROWITEM_LABEL), "Ok");
                 state2 = 1;
             } else if(state1 == 0 && state2 == 0) {
                 state1 = 1;
-                ReqStartCompassCalibration_st compassCalibration;
+                UiRequestStartCompassCalibration compassCalibration;
                 compassCalibration.method = 0;
                 compassCalibration.number = -1;
-                SendMsg4UiStartCompassCalibrationReq(global_parameters.sendMsgQueId, &compassCalibration);
+                UiIpcSendStartCompassCalibrationRequest(global_parameters.sendMsgQueId, &compassCalibration);
                 lv_label_set_text(ui_comp_get_child(obj, UI_COMP_ROWITEM_LABEL), "Stop");
             } else if(state1 == 0 && state2 == 1) {
                 state2 = 0;
-                ReqStopCompassCalibration_st compassCalibration;
-                compassCalibration.ifsave = 1;
-                SendMsg4UiStopCompassCalibrationReq(global_parameters.sendMsgQueId, &compassCalibration);
+                UiRequestStopCompassCalibration compassCalibration;
+                compassCalibration.saveFlag = 1;
+                UiIpcSendStopCompassCalibrationRequest(global_parameters.sendMsgQueId, &compassCalibration);
                 lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGOK_LABEL),
                                   "Start");
                 lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGTEXT_LABEL),
@@ -573,9 +573,9 @@ void ui_event_CompassCancel(lv_event_t * e)
             break;
         case LV_KEY_ENTER: {
             if(state1 == 1) {
-                ReqStopCompassCalibration_st compassCalibration;
-                compassCalibration.ifsave = 0;
-                SendMsg4UiStopCompassCalibrationReq(global_parameters.sendMsgQueId, &compassCalibration);
+                UiRequestStopCompassCalibration compassCalibration;
+                compassCalibration.saveFlag = 0;
+                UiIpcSendStopCompassCalibrationRequest(global_parameters.sendMsgQueId, &compassCalibration);
             }
             lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGOK_LABEL),
                               "Start");

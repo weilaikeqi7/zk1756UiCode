@@ -62,12 +62,12 @@ void play_list_focus_relative(int step)
     }
 }
 
-void play_media_list_request_init(ReqGetMediaFileList_st * request, ROE_U32 startIndex)
+void play_media_list_request_init(UiRequestGetMediaFileList * request, ROE_U32 startIndex)
 {
     if(request == NULL) return;
 
     memset(request, 0, sizeof(*request));
-    request->reqFileType = -1;
+    request->requestedFileType = -1;
     request->year = 2024;
     request->month = 0;
     request->day = 0;
@@ -75,7 +75,7 @@ void play_media_list_request_init(ReqGetMediaFileList_st * request, ROE_U32 star
     request->minute = -1;
     request->second = -1;
     request->startIndex = startIndex;
-    request->reqCount = UI_MAX_MEDIA_FILE_NUM_ONE_PAGE;
+    request->requestCount = UI_MAX_MEDIA_FILE_NUM_ONE_PAGE;
 
     if(playlist_state.find_type != 1) return;
 
@@ -93,7 +93,7 @@ void play_media_list_request_init(ReqGetMediaFileList_st * request, ROE_U32 star
 
 void show_play_page(void)
 {
-    ReqGetMediaFileList_st getMediaFileList;
+    UiRequestGetMediaFileList getMediaFileList;
     time_t rawtime;
     struct tm * timeinfo;
 
@@ -108,7 +108,7 @@ void show_play_page(void)
     playlist_state.current_page_index = 1;
     playlist_state.find_type = 2;
     play_media_list_request_init(&getMediaFileList, 0);
-    SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
+    UiIpcSendGetMediaFileListRequest(global_parameters.sendMsgQueId, &getMediaFileList);
 
     time(&rawtime);
     timeinfo = localtime(&rawtime);
@@ -203,7 +203,7 @@ int8_t get_days_in_month(int year, int month)
     }
 }
 
-void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fileInfo)
+void play_list_display(UiResponseGetMediaFileList * fileList, UiMediaFileInfo ** fileInfo)
 {
     if(fileList == NULL || fileInfo == NULL || ui_List_Container == NULL || keypad_group == NULL ||
        ui_BTN4 == NULL || ui_BTN5 == NULL || ui_BTN6 == NULL) {
@@ -227,12 +227,12 @@ void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fi
         i < (uint32_t)fileList->fileCount + PLAYLIST_MEDIA_FIRST_INDEX;
         i++) {
         char fileName[256] = {0};
-        ROE_SIZE nameLen = fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->nameLen;
-        if(nameLen >= sizeof(fileName)) {
-            nameLen = sizeof(fileName) - 1U;
+        ROE_SIZE nameLength = fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->nameLength;
+        if(nameLength >= sizeof(fileName)) {
+            nameLength = sizeof(fileName) - 1U;
         }
-        memcpy(fileName, fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->name, nameLen);
-        fileName[nameLen] = '\0';
+        memcpy(fileName, fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->name, nameLength);
+        fileName[nameLength] = '\0';
         LV_LOG_USER("%d %lld %d %d %s",
                     fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->type,
                     fileInfo[i - PLAYLIST_MEDIA_FIRST_INDEX]->size,

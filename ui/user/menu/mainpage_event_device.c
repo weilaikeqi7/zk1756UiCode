@@ -6,7 +6,7 @@
 #include "mainpage_event_handle.h"
 #include "mainpage_event_internal.h"
 #include <string.h>
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_model.h"
 
 
@@ -14,7 +14,7 @@ void ui_event_rowwifi(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_user_data(e);
-    ReqAdjustWifiSwitch_st wifi_switch;
+    UiRequestAdjustWifiSwitch wifi_switch;
 
     if(event_code == LV_EVENT_FOCUSED) {
         lv_label_set_text(ui_lbltitle, "Wi-Fi");
@@ -42,10 +42,10 @@ void ui_event_rowwifi(lv_event_t * e)
         case LV_KEY_ENTER:
             if(lv_obj_has_state(ui_comp_get_child(obj, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED)) {
                 wifi_switch.sw = OFF;
-                SendMsg4UiWifiSwitchReq(global_parameters.sendMsgQueId, &wifi_switch);
+                UiIpcSendWifiSwitchRequest(global_parameters.sendMsgQueId, &wifi_switch);
             } else {
                 wifi_switch.sw = ON;
-                SendMsg4UiWifiSwitchReq(global_parameters.sendMsgQueId, &wifi_switch);
+                UiIpcSendWifiSwitchRequest(global_parameters.sendMsgQueId, &wifi_switch);
             }
             break;
         case LV_KEY_ESC:

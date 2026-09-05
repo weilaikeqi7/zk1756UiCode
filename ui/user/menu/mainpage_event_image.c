@@ -6,7 +6,7 @@
 #include "mainpage_event_handle.h"
 #include "mainpage_event_internal.h"
 #include <string.h>
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_model.h"
 
 void ui_event_rowimagemode(lv_event_t * e)
@@ -56,7 +56,7 @@ void ui_event_menu1row1(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_user_data(e);
-    ReqAdjustRangefinderSwitch_st rangefinderSwitch;
+    UiRequestRangeFinderOperate rangeFinderOperation;
 
     if(event_code == LV_EVENT_FOCUSED) {
         lv_label_set_text(ui_lbltitle2, "Switch");
@@ -79,13 +79,13 @@ void ui_event_menu1row1(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             if(lv_obj_has_state(ui_comp_get_child(obj, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED)) {
-                rangefinderSwitch.sw = OFF;
-                rangefinderSwitch.range_sw = -1;
-                SendMsg4UiRangeFinderSwitchReq(global_parameters.sendMsgQueId, &rangefinderSwitch);
+                rangeFinderOperation.sw = OFF;
+                rangeFinderOperation.rangeSwitch = -1;
+                UiIpcSendRangeFinderOperateRequest(global_parameters.sendMsgQueId, &rangeFinderOperation);
             } else {
-                rangefinderSwitch.sw = ON;
-                rangefinderSwitch.range_sw = -1;
-                SendMsg4UiRangeFinderSwitchReq(global_parameters.sendMsgQueId, &rangefinderSwitch);
+                rangeFinderOperation.sw = ON;
+                rangeFinderOperation.rangeSwitch = -1;
+                UiIpcSendRangeFinderOperateRequest(global_parameters.sendMsgQueId, &rangeFinderOperation);
             }
             break;
         case LV_KEY_ESC:
@@ -125,16 +125,16 @@ void ui_event_menu1row2(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             if(g_rangefinder_switch == ON) {
-                ReqAdjustRangeFrequency_st rangeFrequency;
-                ReqAdjustRangeDuration_st rangeDuration;
-                ReqAdjustRangefinderSwitch_st rangefinderSwitch;
+                UiRequestAdjustRangeFrequency rangeFrequency;
+                UiRequestAdjustRangeDuration rangeDuration;
+                UiRequestRangeFinderOperate rangeFinderOperation;
                 rangeFrequency.freq = 0;
                 rangeDuration.duration = 0;
-                rangefinderSwitch.sw = -1;
-                rangefinderSwitch.range_sw = 1;
-                SendMsg4UiRangeFrequencyReq(global_parameters.sendMsgQueId, &rangeFrequency);
-                SendMsg4UiRangeDurationReq(global_parameters.sendMsgQueId, &rangeDuration);
-                SendMsg4UiRangeFinderSwitchReq(global_parameters.sendMsgQueId, &rangefinderSwitch);
+                rangeFinderOperation.sw = -1;
+                rangeFinderOperation.rangeSwitch = 1;
+                UiIpcSendRangeFrequencyRequest(global_parameters.sendMsgQueId, &rangeFrequency);
+                UiIpcSendAdjustRangeDurationRequest(global_parameters.sendMsgQueId, &rangeDuration);
+                UiIpcSendRangeFinderOperateRequest(global_parameters.sendMsgQueId, &rangeFinderOperation);
             }
             break;
         case LV_KEY_ESC:
@@ -151,7 +151,7 @@ void ui_event_menu1row3(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_user_data(e);
-    ReqAdjustRangefinderSwitch_st rangefinderSwitch;
+    UiRequestRangeFinderOperate rangeFinderOperation;
 
     if(event_code == LV_EVENT_FOCUSED) {
         lv_label_set_text(ui_lbltitle2, "Continuous Measure");
@@ -175,8 +175,8 @@ void ui_event_menu1row3(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             if(g_rangefinder_switch == ON) {
-                ReqAdjustRangeFrequency_st rangeFrequency;
-                ReqAdjustRangeDuration_st rangeDuration;
+                UiRequestAdjustRangeFrequency rangeFrequency;
+                UiRequestAdjustRangeDuration rangeDuration;
                 if(lv_obj_has_state(ui_comp_get_child(obj, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED)) {
                     lv_obj_set_state(
                         ui_comp_get_child(obj, UI_COMP_ROWSWITCH_CONTPILL_SWITCH),
@@ -186,9 +186,9 @@ void ui_event_menu1row3(lv_event_t * e)
                         ui_comp_get_child(obj, UI_COMP_ROWSWITCH_CONTPILL_SWITCH),
                         LV_EVENT_VALUE_CHANGED,
                         NULL);
-                    rangefinderSwitch.sw = -1;
-                    rangefinderSwitch.range_sw = 0;
-                    SendMsg4UiRangeFinderSwitchReq(global_parameters.sendMsgQueId, &rangefinderSwitch);
+                    rangeFinderOperation.sw = -1;
+                    rangeFinderOperation.rangeSwitch = 0;
+                    UiIpcSendRangeFinderOperateRequest(global_parameters.sendMsgQueId, &rangeFinderOperation);
                 } else {
                     lv_obj_set_state(ui_comp_get_child(obj, UI_COMP_ROWSWITCH_CONTPILL_SWITCH), LV_STATE_CHECKED, true);
                     lv_obj_send_event(
@@ -197,11 +197,11 @@ void ui_event_menu1row3(lv_event_t * e)
                         NULL);
                     rangeFrequency.freq = 1;
                     rangeDuration.duration = -1;
-                    SendMsg4UiRangeFrequencyReq(global_parameters.sendMsgQueId, &rangeFrequency);
-                    SendMsg4UiRangeDurationReq(global_parameters.sendMsgQueId, &rangeDuration);
-                    rangefinderSwitch.sw = -1;
-                    rangefinderSwitch.range_sw = 1;
-                    SendMsg4UiRangeFinderSwitchReq(global_parameters.sendMsgQueId, &rangefinderSwitch);
+                    UiIpcSendRangeFrequencyRequest(global_parameters.sendMsgQueId, &rangeFrequency);
+                    UiIpcSendAdjustRangeDurationRequest(global_parameters.sendMsgQueId, &rangeDuration);
+                    rangeFinderOperation.sw = -1;
+                    rangeFinderOperation.rangeSwitch = 1;
+                    UiIpcSendRangeFinderOperateRequest(global_parameters.sendMsgQueId, &rangeFinderOperation);
                 }
             }
             break;

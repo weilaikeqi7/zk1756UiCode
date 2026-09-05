@@ -6,7 +6,7 @@
 #include "mainpage_event_internal.h"
 #include "reticle_model.h"
 
-static ReqSetCompassDeclination_st setCompassDeclination;
+static UiRequestSetCompassDeclination setCompassDeclination;
 
 void ui_event_num1(lv_event_t * e)
 {
@@ -42,7 +42,7 @@ void ui_event_num1(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_DOWN:
@@ -64,7 +64,7 @@ void ui_event_num1(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_ENTER:
@@ -126,7 +126,7 @@ void ui_event_num2(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_DOWN:
@@ -151,7 +151,7 @@ void ui_event_num2(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_ENTER:
@@ -213,7 +213,7 @@ void ui_event_num3(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_DOWN:
@@ -238,7 +238,7 @@ void ui_event_num3(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_ENTER:
@@ -300,7 +300,7 @@ void ui_event_num4(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_DOWN:
@@ -325,7 +325,7 @@ void ui_event_num4(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_ENTER:
@@ -387,7 +387,7 @@ void ui_event_num5(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_DOWN:
@@ -412,7 +412,7 @@ void ui_event_num5(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_ENTER:
@@ -474,7 +474,7 @@ void ui_event_num6(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_DOWN:
@@ -499,7 +499,7 @@ void ui_event_num6(lv_event_t * e)
                 }
                 magnetic.value = v;
                 setCompassDeclination.declination = magnetic.value;
-                SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
+                UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
             }
             break;
         case LV_KEY_ENTER:

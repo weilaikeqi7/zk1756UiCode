@@ -80,7 +80,7 @@ void ui_event_PlayList_back(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             hidden_play_page();
-            SendMsg4UiExitPlaybackListReq(global_parameters.sendMsgQueId);
+            UiIpcSendExitPlaybackListRequest(global_parameters.sendMsgQueId);
             break;
         case LV_KEY_ESC:
             break;
@@ -106,10 +106,10 @@ void ui_event_PlayList_prev(lv_event_t * e)
         case LV_KEY_ENTER:
             playlist_state.req_type = 2;
             if(playlist_state.current_page_index > 1) {
-                ReqGetMediaFileList_st getMediaFileList;
+                UiRequestGetMediaFileList getMediaFileList;
                 ROE_U32 start_index = (ROE_U32)(playlist_state.current_page_index - 2) * UI_MAX_MEDIA_FILE_NUM_ONE_PAGE;
                 play_media_list_request_init(&getMediaFileList, start_index);
-                SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
+                UiIpcSendGetMediaFileListRequest(global_parameters.sendMsgQueId, &getMediaFileList);
                 cur_focus_index = FOCUS_PREV;
             }
             break;
@@ -137,10 +137,10 @@ void ui_event_PlayList_next(lv_event_t * e)
         case LV_KEY_ENTER:
             playlist_state.req_type = 3;
             if(playlist_state.current_page_index < (int32_t)playlist_state.total_page_index) {
-                ReqGetMediaFileList_st getMediaFileList;
+                UiRequestGetMediaFileList getMediaFileList;
                 ROE_U32 start_index = (ROE_U32)playlist_state.current_page_index * UI_MAX_MEDIA_FILE_NUM_ONE_PAGE;
                 play_media_list_request_init(&getMediaFileList, start_index);
-                SendMsg4UiGetMediaFileListReq(global_parameters.sendMsgQueId, &getMediaFileList);
+                UiIpcSendGetMediaFileListRequest(global_parameters.sendMsgQueId, &getMediaFileList);
                 cur_focus_index = FOCUS_NEXT;
             }
             break;
@@ -184,9 +184,9 @@ void ui_event_play_or_del(lv_event_t * e)
             char tempBuff[256];
             lv_snprintf(tempBuff, sizeof(tempBuff), "%s", lv_label_get_text(name_label));
             if(playlist_state.current_item_mode == PLAY_MODE) {
-                SendMsg4UiPlayMediaFileReq(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
+                UiIpcSendPlayMediaFileRequest(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
             } else {
-                SendMsg4UiDelMediaFileReq(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
+                UiIpcSendDeleteMediaFileRequest(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
                 cur_focus_index = FOCUS_DEL;
             }
             break;
@@ -206,13 +206,13 @@ void ui_event_video_play(lv_event_t * e)
 
         switch(key) {
         case LV_KEY_UP:
-            SendMsg4UiPlayPriorOrNextMediaFileReq(global_parameters.sendMsgQueId, 1);
+            UiIpcSendPlayAdjacentMediaFileRequest(global_parameters.sendMsgQueId, 1);
             break;
         case LV_KEY_DOWN:
-            SendMsg4UiPlayPriorOrNextMediaFileReq(global_parameters.sendMsgQueId, 0);
+            UiIpcSendPlayAdjacentMediaFileRequest(global_parameters.sendMsgQueId, 0);
             break;
         case LV_KEY_ENTER:
-            SendMsg4UiExitMediaPlayReq(global_parameters.sendMsgQueId);
+            UiIpcSendStopMediaFilePlayRequest(global_parameters.sendMsgQueId);
             break;
         default:
             break;

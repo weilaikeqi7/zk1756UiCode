@@ -2,7 +2,7 @@
 #define ZKSL_75_6LC_APP_STATE_H
 
 #include "user/core/roeTypes.h"
-#include "user/ipc/ipcMsgQue4UiTypeCommon.h"
+#include "user/ipc/ui_ipc_protocol.h"
 
 typedef struct {
     const char * des[10];

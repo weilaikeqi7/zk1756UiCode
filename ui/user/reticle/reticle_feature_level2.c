@@ -55,16 +55,16 @@ void on_add_distance_ok(int v, void * user)
 {
     (void)user;
 
-    ReqWeaponOperateShootDist_st req = {
+    UiRequestWeaponOperateShootDistance req = {
         .videoChannel = 0,
         .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
-        .distIndex = 0,
-        .distValue = (ROE_U16)v,
+        .distanceIndex = 0,
+        .distanceValue = (ROE_U16)v,
         .opType = 1,
         .syncMoveReticle = 0,
     };
     reticle_feature_note_dist_op(req.opType);
-    SendMsg4UiWeaponOperateShootDistReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendWeaponOperateShootDistanceRequest(global_parameters.sendMsgQueId, &req);
     restore_to_level2(NULL);
 }
 
@@ -72,16 +72,16 @@ void on_modify_ok(int new_val, void * user)
 {
     (void)user;
 
-    ReqWeaponOperateShootDist_st req = {
+    UiRequestWeaponOperateShootDistance req = {
         .videoChannel = 0,
         .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
-        .distIndex = ui_idx_to_proto(reticle_feature_get_active_distance_tag()),
-        .distValue = (ROE_U16)new_val,
+        .distanceIndex = ui_idx_to_proto(reticle_feature_get_active_distance_tag()),
+        .distanceValue = (ROE_U16)new_val,
         .opType = 3,
         .syncMoveReticle = 0,
     };
     reticle_feature_note_dist_op(req.opType);
-    SendMsg4UiWeaponOperateShootDistReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendWeaponOperateShootDistanceRequest(global_parameters.sendMsgQueId, &req);
 
     lv_obj_add_flag(ui_contmenudistance, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(ui_contmenucalibration, LV_OBJ_FLAG_HIDDEN);
@@ -261,13 +261,13 @@ void ev_gun_type(lv_event_t * e)
         else
             g = (uint8_t)((g + total - 1) % total);
 
-        ReqWeaponMarkConfigOperate_st req = {
+        UiRequestWeaponMarkConfigOperate req = {
             .videoChannel = 0,
             .weaponIndex = ui_idx_to_proto(g),
             .opType = 1,
         };
         reticle_feature_note_weapon_mark_op(req.opType);
-        SendMsg4UiWeaponMarkConfigOperateReq(global_parameters.sendMsgQueId, &req);
+        UiIpcSendWeaponMarkConfigOperateRequest(global_parameters.sendMsgQueId, &req);
         return;
     }
 
@@ -303,12 +303,12 @@ void ev_style(lv_event_t * e)
         else
             sidx = (uint8_t)((sidx + maxc - 2) % maxc + 1);
 
-        ReqWeaponSetReticleStyle_st req = {
+        UiRequestWeaponSetReticleStyle req = {
             .videoChannel = 0,
             .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
             .reticleTypeIndex = sidx,
         };
-        SendMsg4UiWeaponSetReticleStyleReq(global_parameters.sendMsgQueId, &req);
+        UiIpcSendWeaponSetReticleStyleRequest(global_parameters.sendMsgQueId, &req);
         return;
     }
 
@@ -345,12 +345,12 @@ void ev_color(lv_event_t * e)
         else
             cidx = (uint8_t)((cidx + maxc - 2) % maxc + 1);
 
-        ReqWeaponSetReticleColor_st req = {
+        UiRequestWeaponSetReticleColor req = {
             .videoChannel = 0,
             .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
             .reticleColorIndex = cidx,
         };
-        SendMsg4UiWeaponSetReticleColorReq(global_parameters.sendMsgQueId, &req);
+        UiIpcSendWeaponSetReticleColorRequest(global_parameters.sendMsgQueId, &req);
         return;
     }
 
@@ -360,13 +360,13 @@ void ev_color(lv_event_t * e)
 // Reset：仅保留一条距离=100，且零位重置到中心点；同时 style/color 重置为 S1/C1（可按你产品修改）
 void do_reticle_reset(void)
 {
-    ReqWeaponMarkConfigOperate_st req = {
+    UiRequestWeaponMarkConfigOperate req = {
         .videoChannel = 0,
         .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
         .opType = 2,
     };
     reticle_feature_note_weapon_mark_op(req.opType);
-    SendMsg4UiWeaponMarkConfigOperateReq(global_parameters.sendMsgQueId, &req);
+    UiIpcSendWeaponMarkConfigOperateRequest(global_parameters.sendMsgQueId, &req);
 }
 
 void ev_reset(lv_event_t * e)

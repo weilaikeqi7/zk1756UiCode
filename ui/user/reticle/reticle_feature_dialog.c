@@ -242,7 +242,7 @@ void ev_dialog_button(lv_event_t * e)
     if(s_dlg_kind == DLG_SAVE_ROW) {
         if(is_ok) {
             s_save_pending = SAVE_PENDING_ROW;
-            SendMsg4UiWeaponSaveConfigReq(global_parameters.sendMsgQueId);
+            UiIpcSendWeaponSaveConfigRequest(global_parameters.sendMsgQueId);
         }
         dialog_close(dlg);
         return;
@@ -251,7 +251,7 @@ void ev_dialog_button(lv_event_t * e)
     if(s_dlg_kind == DLG_EXIT_PROMPT) {
         if(is_ok) {
             s_save_pending = SAVE_PENDING_EXIT;
-            SendMsg4UiWeaponSaveConfigReq(global_parameters.sendMsgQueId);
+            UiIpcSendWeaponSaveConfigRequest(global_parameters.sendMsgQueId);
             dialog_close(dlg);
             return;
         }

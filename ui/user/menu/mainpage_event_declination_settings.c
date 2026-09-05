@@ -4,12 +4,12 @@
 
 #include "mainpage_event_handle.h"
 #include "mainpage_event_internal.h"
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_model.h"
 
 void ui_event_rowitemOK(lv_event_t * e)
 {
-    ReqSetCompassDeclination_st setCompassDeclination;
+    UiRequestSetCompassDeclination setCompassDeclination;
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_user_data(e);
 
@@ -46,8 +46,8 @@ void ui_event_rowitemOK(lv_event_t * e)
             }
             magnetic.value = v;
             setCompassDeclination.declination = magnetic.value;
-            SendMsg4UiSetCompassDeclinationReq(global_parameters.sendMsgQueId, &setCompassDeclination);
-            SendMsg4UiSaveCompassConfigReq(global_parameters.sendMsgQueId);
+            UiIpcSendSetCompassDeclinationRequest(global_parameters.sendMsgQueId, &setCompassDeclination);
+            UiIpcSendSaveCompassConfigRequest(global_parameters.sendMsgQueId);
             break;
         case LV_KEY_ESC:
             hidden_menu_page3_item2_item2();
@@ -183,7 +183,7 @@ void ui_event_settingrow3(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * obj = lv_event_get_user_data(e);
-    ReqSaveLanguageConfig_st saveLanguageConfig;
+    UiRequestSaveLanguageConfig saveLanguageConfig;
 
     if(event_code == LV_EVENT_FOCUSED) {
         lv_label_set_text(ui_lbltitle3, "Langauge");
@@ -201,7 +201,7 @@ void ui_event_settingrow3(lv_event_t * e)
                 lv_label_set_text(ui_comp_get_child(obj, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1),
                                   Language.des[Language.index]);
                 saveLanguageConfig.langType = Language.index;
-                SendMsg4UiSaveLanguageConfig(global_parameters.sendMsgQueId, &saveLanguageConfig);
+                UiIpcSendSaveLanguageConfigRequest(global_parameters.sendMsgQueId, &saveLanguageConfig);
             }
             break;
         case LV_KEY_DOWN:
@@ -212,7 +212,7 @@ void ui_event_settingrow3(lv_event_t * e)
                 lv_label_set_text(ui_comp_get_child(obj, UI_COMP_ROWLABEL_CONTPILL1_ITEMLABEL1),
                                   Language.des[Language.index]);
                 saveLanguageConfig.langType = Language.index;
-                SendMsg4UiSaveLanguageConfig(global_parameters.sendMsgQueId, &saveLanguageConfig);
+                UiIpcSendSaveLanguageConfigRequest(global_parameters.sendMsgQueId, &saveLanguageConfig);
             }
             break;
         case LV_KEY_ENTER:
@@ -302,8 +302,8 @@ void ui_event_settingrow5(lv_event_t * e)
             } else {
                 lv_obj_set_state(obj, LV_STATE_USER_1, true);
             }
-            SendMsg4UiGetAppVersionReq(global_parameters.sendMsgQueId);
-            SendMsg4UiGetWifiInfoReq(global_parameters.sendMsgQueId);
+            UiIpcSendGetAppVersionRequest(global_parameters.sendMsgQueId);
+            UiIpcSendGetWifiInfoRequest(global_parameters.sendMsgQueId);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);

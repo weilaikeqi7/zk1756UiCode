@@ -4,7 +4,7 @@
 
 #include "mainpage_event_handle.h"
 #include "mainpage_event_internal.h"
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_model.h"
 
 void ui_event_resetOK(lv_event_t * e)
@@ -33,7 +33,7 @@ void ui_event_resetOK(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             hidden_menu_page3_item6_item4();
-            SendMsg4UiRestoreFactoryReq(global_parameters.sendMsgQueId);
+            UiIpcSendRestoreFactoryRequest(global_parameters.sendMsgQueId);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -140,7 +140,7 @@ void ui_event_DialogFormattingSdOk(lv_event_t * e)
             break;
         case LV_KEY_ENTER:
             hidden_menu_page3_item6_item6();
-            SendMsg4UiFormatDiskReq(global_parameters.sendMsgQueId);
+            UiIpcSendFormatDiskRequest(global_parameters.sendMsgQueId);
             break;
         case LV_KEY_ESC:
             lv_obj_set_state(obj, LV_STATE_USER_1, false);
@@ -199,16 +199,16 @@ void ui_event_powerOffOK(lv_event_t * e)
             lv_group_focus_prev(g_popup_poweroff.group);
             break;
         case LV_KEY_ENTER:
-            SendMsg4UiShutdownReq(global_parameters.sendMsgQueId);
+            UiIpcSendShutdownRequest(global_parameters.sendMsgQueId);
             popup_stack_pop(&g_popup_stack);
             if(popup_stack_depth(&g_popup_stack) == 0) {
-                SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+                UiIpcSendExitDialogBoxRequest(global_parameters.sendMsgQueId);
             }
             break;
         case LV_KEY_ESC:
             popup_stack_pop(&g_popup_stack);
             if(popup_stack_depth(&g_popup_stack) == 0) {
-                SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+                UiIpcSendExitDialogBoxRequest(global_parameters.sendMsgQueId);
             }
             break;
         default:
@@ -235,7 +235,7 @@ void ui_event_powerOffCancel(lv_event_t * e)
         case LV_KEY_ESC:
             popup_stack_pop(&g_popup_stack);
             if(popup_stack_depth(&g_popup_stack) == 0) {
-                SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+                UiIpcSendExitDialogBoxRequest(global_parameters.sendMsgQueId);
             }
             break;
         default:
@@ -253,7 +253,7 @@ void ui_event_self_button(lv_event_t * e)
         if(key == LV_KEY_ENTER || key == LV_KEY_ESC) {
             popup_stack_pop(&g_popup_stack);
             if(popup_stack_depth(&g_popup_stack) == 0) {
-                SendMsg4UiExitDialogBoxReq(global_parameters.sendMsgQueId);
+                UiIpcSendExitDialogBoxRequest(global_parameters.sendMsgQueId);
             }
             lv_disp_load_scr(ui_MainPage);
         }

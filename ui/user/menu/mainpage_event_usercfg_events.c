@@ -4,7 +4,7 @@
 
 #include "mainpage_event_handle.h"
 #include "mainpage_event_internal.h"
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_model.h"
 
 #include "mainpage_event_usercfg_internal.h"

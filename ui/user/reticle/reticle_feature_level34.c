@@ -65,12 +65,12 @@ void ev_level3(lv_event_t * e)
     }
 
     if(obj == ui_distancerow2) {
-        ReqWeaponSetDefaultShootDist_st req = {
+        UiRequestWeaponSetDefaultShootDistance req = {
             .videoChannel = 0,
             .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
-            .defaultDistIndex = ui_idx_to_proto(reticle_feature_get_active_distance_tag()),
+            .defaultDistanceIndex = ui_idx_to_proto(reticle_feature_get_active_distance_tag()),
         };
-        SendMsg4UiWeaponSetDefaltShootDistReq(global_parameters.sendMsgQueId, &req);
+        UiIpcSendWeaponSetDefaultShootDistanceRequest(global_parameters.sendMsgQueId, &req);
         return;
     }
 
@@ -91,16 +91,16 @@ void ev_level3(lv_event_t * e)
     }
 
     if(obj == ui_distancerow4) {
-        ReqWeaponOperateShootDist_st req = {
+        UiRequestWeaponOperateShootDistance req = {
             .videoChannel = 0,
             .weaponIndex = ui_idx_to_proto(reticle_model_get_cur_gun()),
-            .distIndex = ui_idx_to_proto(reticle_feature_get_active_distance_tag()),
-            .distValue = 0,
+            .distanceIndex = ui_idx_to_proto(reticle_feature_get_active_distance_tag()),
+            .distanceValue = 0,
             .opType = 2,
             .syncMoveReticle = 0,
         };
         reticle_feature_note_dist_op(req.opType);
-        SendMsg4UiWeaponOperateShootDistReq(global_parameters.sendMsgQueId, &req);
+        UiIpcSendWeaponOperateShootDistanceRequest(global_parameters.sendMsgQueId, &req);
 
         lv_obj_add_flag(ui_contmenudistance, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(ui_contmenucalibration, LV_OBJ_FLAG_HIDDEN);
@@ -205,8 +205,8 @@ void ev_level4(lv_event_t * e)
 
         // Freeze：切换开关
         if(obj == ui_calibrationrow5) {
-            ReqFreezeVideoInput_st req = {.freeze = g_freeze_switch ? 0 : 1};
-            SendMsg4UiFreezeVideoInputReq(global_parameters.sendMsgQueId, &req);
+            UiRequestFreezeVideoInput req = {.freeze = g_freeze_switch ? 0 : 1};
+            UiIpcSendFreezeVideoInputRequest(global_parameters.sendMsgQueId, &req);
             return;
         }
     }
@@ -227,14 +227,14 @@ void ev_level4(lv_event_t * e)
             return;
         }
         if(obj == ui_calibrationrow4) {
-            ReqAdjustVideoZoom_st req;
+            UiRequestAdjustVideoZoom req;
 
             if(key == LV_KEY_UP) {
                 req.direction = 1; /* 正向 */
-                SendMsg4UiVideoZoomReq(global_parameters.sendMsgQueId, &req);
+                UiIpcSendVideoZoomRequest(global_parameters.sendMsgQueId, &req);
             } else if(key == LV_KEY_DOWN) {
                 req.direction = 0; /* 反向 */
-                SendMsg4UiVideoZoomReq(global_parameters.sendMsgQueId, &req);
+                UiIpcSendVideoZoomRequest(global_parameters.sendMsgQueId, &req);
             }
             return;
         }

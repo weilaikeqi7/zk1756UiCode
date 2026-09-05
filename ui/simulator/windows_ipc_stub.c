@@ -1,10 +1,10 @@
-#include "ipc/ipcMsgQue4UiSndInternal.h"
+#include "user/ipc/ui_ipc_request_internal.h"
 
-ROE_S32 SendMsg4UiReq(ROE_S32 msgQueId,
+ROE_S32 UiIpcSendRequest(ROE_S32 msgQueId,
                        ROE_S32 msgType,
                        const void * arg,
                        ROE_S32 argSize,
-                       const StringData_st * pStrData)
+                       const UiIpcStringList * pStrData)
 {
     (void)msgQueId;
     (void)msgType;

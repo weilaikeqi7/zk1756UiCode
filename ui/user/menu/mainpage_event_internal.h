@@ -2,6 +2,7 @@
 #define ZKSL_75_6LC_MAINPAGE_EVENT_INTERNAL_H
 
 #include "mainpage_event_handle.h"
+#include "user/ipc/ui_ipc_request_sender.h"
 #include "user/core/ui_focus_manager.h"
 #include "menu_handle.h"
 

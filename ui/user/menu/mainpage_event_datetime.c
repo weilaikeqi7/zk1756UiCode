@@ -4,7 +4,7 @@
 
 #include "mainpage_event_handle.h"
 #include "mainpage_event_internal.h"
-#include "ipcMsgQue4UiSndRequest.h"
+#include "ui_ipc_request_sender.h"
 #include "reticle_model.h"
 
 /* 辅助函数：闰年 & 当月天数 */
@@ -23,14 +23,14 @@ int days_in_month(int y, int m)
 
 static void set_system(void)
 {
-    ReqSetSystemTime_st setSystemTime;
+    UiRequestSetSystemTime setSystemTime;
     setSystemTime.year = date.year;
     setSystemTime.month = date.month;
     setSystemTime.day = date.day;
     setSystemTime.hour = tim.hour;
     setSystemTime.minute = tim.min;
     setSystemTime.second = tim.sec;
-    SendMsg4UiTimeReq(global_parameters.sendMsgQueId, &setSystemTime);
+    UiIpcSendTimeRequest(global_parameters.sendMsgQueId, &setSystemTime);
 }
 
 void ui_event_rowitemyear(lv_event_t * e)

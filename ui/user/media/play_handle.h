@@ -5,8 +5,6 @@
 #ifndef ZKSL_75_6LC_PLAY_HANDLE_H
 #define ZKSL_75_6LC_PLAY_HANDLE_H
 
-#include "user/ipc/ipcMsgQue4UiRcvRes.h"
-#include "user/ipc/ipcMsgQue4UiSndRequest.h"
 #include "ui.h"
 
 enum mode { PLAY_MODE, DEL_MODE };
@@ -44,7 +42,6 @@ void ui_event_PlayList_next(lv_event_t * e);
 void show_play_page(void);
 void hidden_play_page(void);
 void play_event_init(void);
-void play_list_display(RspGetMediaFileList_st * fileList, MediaFileInfo_st ** fileInfo);
 int8_t get_days_in_month(int year, int month);
 extern PlayListState playlist_state;
 extern FindDateTime findDateTime;

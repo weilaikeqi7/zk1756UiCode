@@ -1,9 +1,9 @@
 #include "ui_runtime.h"
 
 #include "lvgl/lvgl.h"
-#include "ipc_event_queue.h"
-#include "ipc_receiver.h"
-#include "msg.h"
+#include "ui_ipc_event_queue.h"
+#include "ui_ipc_receiver.h"
+#include "ui_ipc_message.h"
 
 #include <pthread.h>
 #include <signal.h>
@@ -15,7 +15,7 @@ static void * ui_thread_main(void * arg)
     GlobalParameters * parameters = arg;
 
     while(!atomic_load(&parameters->g_quit)) {
-        process_pending_ipc_events();
+        ui_ipc_process_pending_events();
 
         uint32_t idleTime = lv_timer_handler();
         if(idleTime == 0U) idleTime = 1U;

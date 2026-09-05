@@ -5,7 +5,6 @@
 #ifndef ZKSL_75_6LC_EVENT_HANDLE_H
 #define ZKSL_75_6LC_EVENT_HANDLE_H
 
-#include "user/ipc/ipcMsgQue4UiSndRequest.h"
 #include "user/core/types.h"
 #include "ui.h"
 #include "user/core/roeTypes.h"
@@ -20,12 +19,6 @@ typedef app_item_t Item;
 typedef app_magnetic_t Magnetic;
 typedef app_date_t Date;
 typedef app_time_t Time;
-typedef app_zoom_t Zoom_st;
-typedef app_osd_t Osd_st;
-typedef app_device_switch_t DeviceSwitch_st;
-typedef app_user_common_config_t UserCommonConfig_st;
-typedef app_user_media_config_t UserMediaConfig_st;
-
 #pragma pack(pop)
 
 void add_event_of_menu(void);
