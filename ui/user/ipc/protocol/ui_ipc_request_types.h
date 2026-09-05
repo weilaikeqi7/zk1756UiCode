@@ -5,7 +5,7 @@
 #ifndef ZKSL_75_6LC_UI_IPC_REQUEST_TYPES_H
 #define ZKSL_75_6LC_UI_IPC_REQUEST_TYPES_H
 
-#include "user/ipc/ui_ipc_protocol.h"
+#include "user/ipc/protocol/ui_ipc_protocol.h"
 #include "user/core/roeTypes.h"
 
 /* Wire-format request payloads. Keep field order and widths aligned with

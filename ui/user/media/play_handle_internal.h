@@ -2,8 +2,8 @@
 #define ZKSL_75_6LC_PLAY_HANDLE_INTERNAL_H
 
 #include "play_handle.h"
-#include "user/ipc/ui_ipc_request_sender.h"
-#include "user/ipc/ui_ipc_response_types.h"
+#include "user/ipc/requests/ui_ipc_request_sender.h"
+#include "user/ipc/protocol/ui_ipc_response_types.h"
 
 #define PLAYLIST_MEDIA_FIRST_INDEX 9U
 #define PLAYLIST_ACTION_ITEM_COUNT 3U

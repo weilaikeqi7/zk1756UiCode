@@ -6,7 +6,7 @@
 #define ZKSL_75_6LC_UI_IPC_NOTIFICATION_TYPES_H
 
 #include "user/core/roeTypes.h"
-#include "user/ipc/ui_ipc_protocol.h"
+#include "user/ipc/protocol/ui_ipc_protocol.h"
 #include "ui_Self.h"
 
 /* Wire-format notification payloads. Keep field order and widths aligned

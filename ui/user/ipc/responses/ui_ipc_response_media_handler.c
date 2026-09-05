@@ -10,6 +10,11 @@
 #include "mainpage_event_handle.h"
 #include "ui_focus_manager.h"
 
+ROE_S32 UiIpcHandleResponseExitPlaybackList(ROE_U8 * msgData)
+{
+    UI_IPC_RETURN_RESPONSE(msgData, UiResponseExitPlaybackList);
+}
+
 ROE_S32 UiIpcHandleResponseGetMediaFileList(ROE_U8 * msgData)
 {
     if(msgData == NULL) return ROE_FAILURE;

@@ -47,46 +47,53 @@ set(UI_CORE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_focus_manager.c
 )
 
-set(UI_IPC_SEND_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_send_system.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_send_media.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_send_device.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_send_framework.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_send_user_config.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_send_reticle.c
+set(UI_IPC_REQUEST_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests/ui_ipc_request_system_video_network.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests/ui_ipc_request_media.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests/ui_ipc_request_video_peripheral_system.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests/ui_ipc_request_queries_operations.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests/ui_ipc_request_user_config.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests/ui_ipc_request_reticle.c
 )
 
 set(UI_IPC_QUEUE_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_event_queue.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/transport/ui_ipc_event_queue.c
 )
 
 set(UI_IPC_RUNTIME_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_receiver.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/transport/ui_ipc_receiver.c
         ${CMAKE_CURRENT_SOURCE_DIR}/user/runtime/ui_runtime.c
 )
 
 set(UI_IPC_VALIDATION_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_message_validator.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/validation/ui_ipc_message_validator.c
 )
 
 set(UI_IPC_DISPATCH_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_event_processor.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_notification_dispatch.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_dispatch.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/dispatch/ui_ipc_event_processor.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/dispatch/ui_ipc_notification_dispatch.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/dispatch/ui_ipc_response_dispatch.c
 )
 
 set(UI_IPC_NOTIFICATION_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_notification_handler.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_notification_video_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/notifications/ui_ipc_notification_system_device_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/notifications/ui_ipc_notification_video_media_handler.c
 )
 
 set(UI_IPC_RESPONSE_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_handler.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_media_handler.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_device_handler.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_framework_handler.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_user_config_handler.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_reticle_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_system_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_system_ui_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_video_input_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_video_output_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_compass_gnss_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_network_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_range_finder_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_pan_tilt_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_infrared_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_media_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_query_operation_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_user_config_handler.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_reticle_handler.c
 )
 
 set(UI_IPC_LINUX_SOURCES
@@ -96,7 +103,7 @@ set(UI_IPC_LINUX_SOURCES
         ${UI_IPC_DISPATCH_SOURCES}
         ${UI_IPC_NOTIFICATION_SOURCES}
         ${UI_IPC_RESPONSE_SOURCES}
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_request_sender.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests/ui_ipc_request_sender.c
 )
 
 if(WIN32)
@@ -187,22 +194,50 @@ set(UI_CORE_HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core/ui_focus_manager.h
 )
 
+set(UI_IPC_PROTOCOL_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/protocol/ui_ipc_protocol.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/protocol/ui_ipc_message.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/protocol/ui_ipc_request_types.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/protocol/ui_ipc_response_types.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/protocol/ui_ipc_notification_types.h
+)
+
+set(UI_IPC_TRANSPORT_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/transport/ui_ipc_event_queue.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/transport/ui_ipc_receiver.h
+)
+
+set(UI_IPC_VALIDATION_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/validation/ui_ipc_message_validator.h
+)
+
+set(UI_IPC_DISPATCH_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/dispatch/ui_ipc_dispatch.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/dispatch/ui_ipc_dispatch_internal.h
+)
+
+set(UI_IPC_REQUEST_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests/ui_ipc_request_internal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests/ui_ipc_request_sender.h
+)
+
+set(UI_IPC_NOTIFICATION_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/notifications/ui_ipc_notification_handler.h
+)
+
+set(UI_IPC_RESPONSE_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_handler.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses/ui_ipc_response_helpers.h
+)
+
 set(UI_IPC_HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_notification_handler.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_handler.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_event_queue.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_dispatch_internal.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_message_validator.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_dispatch.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_notification_types.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_types.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_request_internal.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_request_sender.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_request_types.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_protocol.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_response_helpers.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_message.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/ui_ipc_receiver.h
+        ${UI_IPC_PROTOCOL_HEADERS}
+        ${UI_IPC_TRANSPORT_HEADERS}
+        ${UI_IPC_VALIDATION_HEADERS}
+        ${UI_IPC_DISPATCH_HEADERS}
+        ${UI_IPC_REQUEST_HEADERS}
+        ${UI_IPC_NOTIFICATION_HEADERS}
+        ${UI_IPC_RESPONSE_HEADERS}
 )
 
 set(UI_RUNTIME_HEADERS
@@ -236,7 +271,7 @@ target_sources(ui_app
         PRIVATE
         ${UI_GENERATED_SOURCES}
         ${UI_CORE_SOURCES}
-        ${UI_IPC_SEND_SOURCES}
+        ${UI_IPC_REQUEST_SOURCES}
         ${UI_PLATFORM_SOURCES}
         ${UI_MENU_SOURCES}
         ${UI_MEDIA_SOURCES}
@@ -256,7 +291,13 @@ target_include_directories(ui_app
         ${CMAKE_CURRENT_SOURCE_DIR}/components
         ${CMAKE_CURRENT_SOURCE_DIR}/screens
         ${CMAKE_CURRENT_SOURCE_DIR}/user/core
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/protocol
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/transport
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/validation
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/dispatch
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/requests
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/notifications
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ipc/responses
         ${CMAKE_CURRENT_SOURCE_DIR}/user/runtime
         ${CMAKE_CURRENT_SOURCE_DIR}/user/menu
         ${CMAKE_CURRENT_SOURCE_DIR}/user/media
@@ -295,7 +336,7 @@ target_compile_options(ui_app
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES
         ${UI_GENERATED_SOURCES}
         ${UI_CORE_SOURCES}
-        ${UI_IPC_SEND_SOURCES}
+        ${UI_IPC_REQUEST_SOURCES}
         ${UI_IPC_QUEUE_SOURCES}
         ${UI_IPC_RUNTIME_SOURCES}
         ${UI_IPC_VALIDATION_SOURCES}

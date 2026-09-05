@@ -6,7 +6,7 @@
 #define ZKSL_75_6LC_UI_IPC_RESPONSE_TYPES_H
 
 #include "user/core/roeTypes.h"
-#include "user/ipc/ui_ipc_protocol.h"
+#include "user/ipc/protocol/ui_ipc_protocol.h"
 
 /* Wire-format response payloads. Keep field order and widths aligned with
  * the IPC protocol. */

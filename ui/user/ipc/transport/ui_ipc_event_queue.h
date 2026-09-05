@@ -1,7 +1,7 @@
 #ifndef ZKSL_75_6LC_UI_IPC_EVENT_QUEUE_H
 #define ZKSL_75_6LC_UI_IPC_EVENT_QUEUE_H
 
-#include "user/ipc/ui_ipc_message.h"
+#include "user/ipc/protocol/ui_ipc_message.h"
 
 #define UI_IPC_EVENT_QUEUE_CAPACITY 32
 

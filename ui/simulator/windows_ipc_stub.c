@@ -1,4 +1,4 @@
-#include "user/ipc/ui_ipc_request_internal.h"
+#include "user/ipc/requests/ui_ipc_request_internal.h"
 
 ROE_S32 UiIpcSendRequest(ROE_S32 msgQueId,
                        ROE_S32 msgType,
