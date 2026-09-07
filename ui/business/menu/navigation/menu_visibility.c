@@ -8,7 +8,6 @@
 #include "ui_ipc_request_sender.h"
 #include "reticle_feature.h"
 #include "ui_focus_manager.h"
-static lv_obj_t * ui_focus_temp[30];
 
 void show_menu_page1(void)
 {
@@ -17,19 +16,11 @@ void show_menu_page1(void)
     if(g_app.video.tilt == ON)
         lv_obj_add_flag(ui_controll, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_rowlrf;
-    ui_focus_temp[1] = ui_rowimagemode;
-    ui_focus_temp[2] = ui_rowbrightness;
-    ui_focus_temp[3] = ui_rowcontrast;
-    ui_focus_temp[4] = ui_rowsharpness;
-    ui_focus_temp[5] = ui_rowexpansion;
-    ui_focus_temp[6] = ui_rowpip;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 7; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_rowlrf, ui_rowimagemode, ui_rowbrightness, ui_rowcontrast,
+        ui_rowsharpness, ui_rowexpansion, ui_rowpip,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page1(void)
@@ -46,17 +37,8 @@ void show_menu_page1_item1(void)
 {
     lv_obj_remove_flag(ui_contmenu2, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_menu1row1;
-    ui_focus_temp[1] = ui_menu1row2;
-    ui_focus_temp[2] = ui_menu1row3;
-    ui_focus_temp[3] = ui_menu1row4;
-    ui_focus_temp[4] = ui_menu1row5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 5; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {ui_menu1row1, ui_menu1row2, ui_menu1row3, ui_menu1row4, ui_menu1row5};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page1_item1(void)
@@ -64,40 +46,22 @@ void hidden_menu_page1_item1(void)
     lv_obj_add_flag(ui_contmenu2, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_rowlrf, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_rowlrf;
-    ui_focus_temp[1] = ui_rowimagemode;
-    ui_focus_temp[2] = ui_rowbrightness;
-    ui_focus_temp[3] = ui_rowcontrast;
-    ui_focus_temp[4] = ui_rowsharpness;
-    ui_focus_temp[5] = ui_rowexpansion;
-    ui_focus_temp[6] = ui_rowpip;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 7; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_rowlrf, ui_rowimagemode, ui_rowbrightness, ui_rowcontrast,
+        ui_rowsharpness, ui_rowexpansion, ui_rowpip,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void show_menu_page1_item2(void)
 {
     lv_obj_remove_flag(ui_contitem2, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_rowitem21;
-    ui_focus_temp[1] = ui_rowitem22;
-    ui_focus_temp[2] = ui_rowitem23;
-    ui_focus_temp[3] = ui_rowitem24;
-    ui_focus_temp[4] = ui_rowitem25;
-    ui_focus_temp[5] = ui_rowitem26;
-    ui_focus_temp[6] = ui_rowitem27;
-    ui_focus_temp[7] = ui_rowitem28;
-    ui_focus_temp[8] = ui_rowitem29;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 9; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_rowitem21, ui_rowitem22, ui_rowitem23, ui_rowitem24, ui_rowitem25,
+        ui_rowitem26, ui_rowitem27, ui_rowitem28, ui_rowitem29,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page1_item2(void)
@@ -105,21 +69,13 @@ void hidden_menu_page1_item2(void)
     lv_obj_add_flag(ui_contitem2, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_rowimagemode, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_rowlrf;
-    ui_focus_temp[1] = ui_rowimagemode;
-    ui_focus_temp[2] = ui_rowbrightness;
-    ui_focus_temp[3] = ui_rowcontrast;
-    ui_focus_temp[4] = ui_rowsharpness;
-    ui_focus_temp[5] = ui_rowexpansion;
-    ui_focus_temp[6] = ui_rowpip;
+    lv_obj_t * objects[] = {
+        ui_rowlrf, ui_rowimagemode, ui_rowbrightness, ui_rowcontrast,
+        ui_rowsharpness, ui_rowexpansion, ui_rowpip,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 7; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-
-    ui_focus_group_focus(ui_focus_temp[1]);
+    ui_focus_group_focus(ui_rowimagemode);
 }
 
 void show_menu_page2(void)
@@ -129,19 +85,11 @@ void show_menu_page2(void)
     if(g_app.video.tilt == ON)
         lv_obj_add_flag(ui_controll, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_rowwifi;
-    ui_focus_temp[1] = ui_rowtilt;
-    ui_focus_temp[2] = ui_rowcompass;
-    ui_focus_temp[3] = ui_rowreticle;
-    ui_focus_temp[4] = ui_rowballistic;
-    ui_focus_temp[5] = ui_rowmic;
-    ui_focus_temp[6] = ui_rowrav;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 7; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_rowwifi, ui_rowtilt, ui_rowcompass, ui_rowreticle,
+        ui_rowballistic, ui_rowmic, ui_rowrav,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page2(void)
@@ -161,18 +109,11 @@ void show_menu_page3(void)
     if(g_app.video.tilt == ON)
         lv_obj_add_flag(ui_controll, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_rowstandby;
-    ui_focus_temp[1] = ui_rowcompasscalibration;
-    ui_focus_temp[2] = ui_rowdeadpixel;
-    ui_focus_temp[3] = ui_rowstatusbar;
-    ui_focus_temp[4] = ui_rowdeletefile;
-    ui_focus_temp[5] = ui_rowsetting;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_rowstandby, ui_rowcompasscalibration, ui_rowdeadpixel,
+        ui_rowstatusbar, ui_rowdeletefile, ui_rowsetting,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page3(void)
@@ -189,15 +130,8 @@ void show_menu_page3_item1(void)
 {
     lv_obj_remove_flag(ui_page3item1, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_rowswitch1;
-    ui_focus_temp[1] = ui_rowitem1;
-    ui_focus_temp[2] = ui_rowitem2;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 3; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {ui_rowswitch1, ui_rowitem1, ui_rowitem2};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page3_item1(void)
@@ -205,33 +139,19 @@ void hidden_menu_page3_item1(void)
     lv_obj_add_flag(ui_page3item1, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_rowstandby, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_rowstandby;
-    ui_focus_temp[1] = ui_rowcompasscalibration;
-    ui_focus_temp[2] = ui_rowdeadpixel;
-    ui_focus_temp[3] = ui_rowstatusbar;
-    ui_focus_temp[4] = ui_rowdeletefile;
-    ui_focus_temp[5] = ui_rowsetting;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_rowstandby, ui_rowcompasscalibration, ui_rowdeadpixel,
+        ui_rowstatusbar, ui_rowdeletefile, ui_rowsetting,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void show_menu_page3_item2(void)
 {
     lv_obj_remove_flag(ui_page3item2, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_rowitem3;
-    ui_focus_temp[1] = ui_rowitem4;
-    ui_focus_temp[2] = ui_rowitem5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 3; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {ui_rowitem3, ui_rowitem4, ui_rowitem5};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page3_item2(void)
@@ -239,33 +159,20 @@ void hidden_menu_page3_item2(void)
     lv_obj_add_flag(ui_page3item2, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_rowcompasscalibration, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_rowstandby;
-    ui_focus_temp[1] = ui_rowcompasscalibration;
-    ui_focus_temp[2] = ui_rowdeadpixel;
-    ui_focus_temp[3] = ui_rowstatusbar;
-    ui_focus_temp[4] = ui_rowdeletefile;
-    ui_focus_temp[5] = ui_rowsetting;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[1]);
+    lv_obj_t * objects[] = {
+        ui_rowstandby, ui_rowcompasscalibration, ui_rowdeadpixel,
+        ui_rowstatusbar, ui_rowdeletefile, ui_rowsetting,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_rowcompasscalibration);
 }
 
 void show_menu_page3_item3(void)
 {
     lv_obj_remove_flag(ui_dead_pixels_cont, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_bad_pixel;
-    ui_focus_temp[1] = ui_pixel_return;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 2; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {ui_bad_pixel, ui_pixel_return};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page3_item3(void)
@@ -273,19 +180,12 @@ void hidden_menu_page3_item3(void)
     lv_obj_add_flag(ui_dead_pixels_cont, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_rowdeadpixel, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_rowstandby;
-    ui_focus_temp[1] = ui_rowcompasscalibration;
-    ui_focus_temp[2] = ui_rowdeadpixel;
-    ui_focus_temp[3] = ui_rowstatusbar;
-    ui_focus_temp[4] = ui_rowdeletefile;
-    ui_focus_temp[5] = ui_rowsetting;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[2]);
+    lv_obj_t * objects[] = {
+        ui_rowstandby, ui_rowcompasscalibration, ui_rowdeadpixel,
+        ui_rowstatusbar, ui_rowdeletefile, ui_rowsetting,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_rowdeadpixel);
 }
 
 void hidden_all_menu(void)

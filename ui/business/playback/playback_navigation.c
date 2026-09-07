@@ -184,9 +184,9 @@ void ui_event_play_or_del(lv_event_t * e)
             char tempBuff[256];
             lv_snprintf(tempBuff, sizeof(tempBuff), "%s", lv_label_get_text(name_label));
             if(playlist_state.current_item_mode == PLAY_MODE) {
-                UiIpcSendPlayMediaFileRequest(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
+                UiIpcSendPlayMediaFileRequest(global_parameters.sendMsgQueId, (const ROE_S8 *)tempBuff);
             } else {
-                UiIpcSendDeleteMediaFileRequest(global_parameters.sendMsgQueId, (ROE_S8 *)tempBuff);
+                UiIpcSendDeleteMediaFileRequest(global_parameters.sendMsgQueId, (const ROE_S8 *)tempBuff);
                 cur_focus_index = FOCUS_DEL;
             }
             break;

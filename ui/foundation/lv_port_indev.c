@@ -63,8 +63,20 @@ void lv_port_indev_init(void)
     keypad_init();
 
     keypad_group = lv_group_create();
+    if(keypad_group == NULL) {
+        LV_LOG_ERROR("[INDEV][INIT] failed to create keypad group");
+        return;
+    }
+
     /*Register a keypad input device*/
     indev_keypad = lv_indev_create();
+    if(indev_keypad == NULL) {
+        LV_LOG_ERROR("[INDEV][INIT] failed to create keypad input device");
+        lv_group_delete(keypad_group);
+        keypad_group = NULL;
+        return;
+    }
+
     lv_indev_set_type(indev_keypad, LV_INDEV_TYPE_KEYPAD);
     lv_indev_set_read_cb(indev_keypad, keypad_read);
     lv_indev_set_group(indev_keypad, keypad_group);

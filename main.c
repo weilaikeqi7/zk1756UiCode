@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
 #include <signal.h>
 #include <pthread.h>
 #include "lvgl/lvgl.h"
@@ -39,10 +41,17 @@ static void usage(void)
 
 static int parse_init(const char * optstr, int * out_val)
 {
+    if(optstr == NULL || out_val == NULL) {
+        LV_LOG_ERROR("[APP][ARGS] invalid parser argument");
+        return -1;
+    }
+
     char * endptr = NULL;
+    errno = 0;
     long val = strtol(optstr, &endptr, 10);
-    /* endptr==optstr: 完全不是数字; *endptrl!='\0':后面带多余字符 */
-    if(endptr == optstr || *endptr != '\0') {
+    /* endptr==optstr: 完全不是数字; *endptr!='\0':后面带多余字符 */
+    if(endptr == optstr || *endptr != '\0' || errno == ERANGE ||
+       val < INT_MIN || val > INT_MAX) {
         LV_LOG_ERROR("[APP][ARGS] expected integer, got %s", optstr);
         return -1;
     }
@@ -50,11 +59,17 @@ static int parse_init(const char * optstr, int * out_val)
     return 0;
 }
 
-static void lv_linux_disp_init(void)
+static int lv_linux_disp_init(void)
 {
     const char * device = "/dev/fb0";
     lv_display_t * disp = lv_linux_fbdev_create();
+    if(disp == NULL) {
+        LV_LOG_ERROR("[APP][DISPLAY] failed to create framebuffer display");
+        return -1;
+    }
+
     lv_linux_fbdev_set_file(disp, device);
+    return 0;
 }
 
 int main(int argc, char * argv[])
@@ -136,7 +151,10 @@ int main(int argc, char * argv[])
 
     lv_init();
     app_state_init_defaults();
-    lv_linux_disp_init();
+    if(lv_linux_disp_init() != 0) {
+        lv_deinit();
+        return 1;
+    }
     ui_init();
     if(ui_runtime_run_linux(&global_parameters) != ROE_SUCCESS) {
         LV_LOG_ERROR("[APP][EXIT] application runtime stopped with an error");

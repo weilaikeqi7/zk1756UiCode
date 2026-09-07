@@ -19,18 +19,22 @@ ROE_S32 UiIpcSendGetMediaFileListRequest(ROE_S32 msgQueId, UiRequestGetMediaFile
         ROE_NULL);
 }
 
-static ROE_S32 UiIpcSendDelOrPlayMediaFileRequest(ROE_S32 msgQueId, ROE_S32 concreteType, ROE_S8 * filename)
+static ROE_S32 UiIpcSendDelOrPlayMediaFileRequest(ROE_S32 msgQueId,
+                                                  ROE_S32 concreteType,
+                                                  const ROE_S8 * filename)
 {
+    if(filename == NULL) return ROE_FAILURE;
+
     UiIpcStringList strData = {.stringNum = 1, .pStringList = {filename}};
     return UiIpcSendRequest(msgQueId, concreteType, ROE_NULL, 0, &strData);
 }
 
-ROE_S32 UiIpcSendDeleteMediaFileRequest(ROE_S32 msgQueId, ROE_S8 * filename)
+ROE_S32 UiIpcSendDeleteMediaFileRequest(ROE_S32 msgQueId, const ROE_S8 * filename)
 {
     return UiIpcSendDelOrPlayMediaFileRequest(msgQueId, MSG_4_REQ_RES_DEL_MEDIA_FILE, filename);
 }
 
-ROE_S32 UiIpcSendPlayMediaFileRequest(ROE_S32 msgQueId, ROE_S8 * filename)
+ROE_S32 UiIpcSendPlayMediaFileRequest(ROE_S32 msgQueId, const ROE_S8 * filename)
 {
     return UiIpcSendDelOrPlayMediaFileRequest(msgQueId, MSG_4_REQ_RES_PLAY_MEDIA_FILE, filename);
 }

@@ -39,10 +39,6 @@ static const UiIpcNotificationHandler f_videoCaptureInput[MSG_4_NOTIFY_VIDEO_INP
     UiIpcHandleNotificationInfraredPseudoColorMode,
 };
 
-static const UiIpcNotificationHandler f_audioInputAndOutput[MSG_4_NOTIFY_AUDIO_BUTT - MSG_4_NOTIFY_AUDIO_OFFSET] = {
-
-};
-
 static const UiIpcNotificationHandler f_mediaFile[MSG_4_NOTIFY_MEDIA_FILE_BUTT - MSG_4_NOTIFY_MEDIA_FILE_OFFSET] = {
     UiIpcHandleNotificationCaptureStatus,
     UiIpcHandleNotificationRecordStatus,
@@ -56,10 +52,6 @@ static const UiIpcNotificationHandler f_externalDeviceGenerally[
     UiIpcHandleNotificationPeripheralSelfTestInfo,
     UiIpcHandleNotificationPeripheralRealTimeInfo,
     UiIpcHandleNotificationPeripheralBatteryInfo,
-};
-
-static const UiIpcNotificationHandler f_network[MSG_4_NOTIFY_PERIPHERAL_NETWORK_BUTT - MSG_4_NOTIFY_PERIPHERAL_NETWORK_OFFSET] = {
-
 };
 
 static const UiIpcNotificationHandler f_visibleLightModule[MSG_4_NOTIFY_PERIPHERAL_CAMERA_MODULE_BUTT -
@@ -106,10 +98,8 @@ static const UiIpcHandlerRange g_notifyHandlerRanges[] = {
     {MSG_4_NOTIFY_RETICLE_OFFSET, MSG_4_NOTIFY_RETICLE_BUTT, f_shootingDifferentiation},
     {MSG_4_NOTIFY_VIDEO_OUTPUT_OFFSET, MSG_4_NOTIFY_VIDEO_OUTPUT_BUTT, f_videoOutputDisplay},
     {MSG_4_NOTIFY_VIDEO_INPUT_OFFSET, MSG_4_NOTIFY_VIDEO_INPUT_BUTT, f_videoCaptureInput},
-    {MSG_4_NOTIFY_AUDIO_OFFSET, MSG_4_NOTIFY_AUDIO_BUTT, f_audioInputAndOutput},
     {MSG_4_NOTIFY_MEDIA_FILE_OFFSET, MSG_4_NOTIFY_MEDIA_FILE_BUTT, f_mediaFile},
     {MSG_4_NOTIFY_PERIPHERAL_GENERAL_OFFSET, MSG_4_NOTIFY_PERIPHERAL_GENERAL_BUTT, f_externalDeviceGenerally},
-    {MSG_4_NOTIFY_PERIPHERAL_NETWORK_OFFSET, MSG_4_NOTIFY_PERIPHERAL_NETWORK_BUTT, f_network},
     {MSG_4_NOTIFY_PERIPHERAL_CAMERA_MODULE_OFFSET, MSG_4_NOTIFY_PERIPHERAL_CAMERA_MODULE_BUTT,
      f_visibleLightModule},
     {MSG_4_NOTIFY_PERIPHERAL_INFRARED_MODULE_OFFSET, MSG_4_NOTIFY_PERIPHERAL_INFRARED_MODULE_BUTT, f_infraredModule},

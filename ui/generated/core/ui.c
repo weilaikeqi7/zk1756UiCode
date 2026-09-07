@@ -36,7 +36,9 @@ void ui_init(void)
     lv_disp_set_theme(dispp, theme);
     ui_font_init();
     lv_port_indev_init();
-    lv_group_set_editing(keypad_group, false);
+    if(keypad_group != NULL) {
+        lv_group_set_editing(keypad_group, false);
+    }
     popup_stack_init(&g_popup_stack, indev_keypad);
     /* The self-check page is also used as a notification-driven popup after
      * normal startup, so it must exist regardless of the boot argument. */

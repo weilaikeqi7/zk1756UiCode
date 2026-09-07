@@ -13,6 +13,11 @@ bool ui_focus_group_add(lv_obj_t * object)
 {
     if(keypad_group == NULL || object == NULL || !lv_obj_is_valid(object)) return false;
 
+    uint32_t object_count = lv_group_get_obj_count(keypad_group);
+    for(uint32_t i = 0; i < object_count; i++) {
+        if(lv_group_get_obj_by_index(keypad_group, i) == object) return true;
+    }
+
     lv_group_add_obj(keypad_group, object);
     return true;
 }

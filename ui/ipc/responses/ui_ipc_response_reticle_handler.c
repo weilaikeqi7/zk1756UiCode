@@ -132,6 +132,8 @@ ROE_S32 UiIpcHandleResponseSetReticleCommonConfig(ROE_U8 * msgData)
                 (unsigned)result->currentBallisticSolve);
     if(result->result != 0) return ROE_FAILURE;
     reticle_cfg_t * cfg = reticle_model_cfg();
+    if(cfg == NULL) return ROE_FAILURE;
+
     cfg->visible = !!result->currentShowReticle;
     cfg->rotate = !!result->currentRotateReticle;
     cfg->ballistic = !!result->currentBallisticSolve;
@@ -209,6 +211,8 @@ ROE_S32 UiIpcHandleResponseWeaponSetReticleStyle(ROE_U8 * msgData)
     if(result->result != 0 || result->videoChannel != 0) return ROE_FAILURE;
 
     reticle_cfg_t * cfg = reticle_model_cfg();
+    if(cfg == NULL) return ROE_FAILURE;
+
     uint8_t gun = proto_idx_to_ui(result->weaponIndex);
     if(gun >= RETICLE_GUN_COUNT) return ROE_FAILURE;
     cfg->guns[gun].style = result->reticleTypeIndex;
@@ -229,6 +233,8 @@ ROE_S32 UiIpcHandleResponseWeaponSetReticleColor(ROE_U8 * msgData)
     if(result->result != 0 || result->videoChannel != 0) return ROE_FAILURE;
 
     reticle_cfg_t * cfg = reticle_model_cfg();
+    if(cfg == NULL) return ROE_FAILURE;
+
     uint8_t gun = proto_idx_to_ui(result->weaponIndex);
     if(gun >= RETICLE_GUN_COUNT) return ROE_FAILURE;
     cfg->guns[gun].color = result->reticleColorIndex;
@@ -262,6 +268,8 @@ ROE_S32 UiIpcHandleResponseWeaponSetDefaultShootDistance(ROE_U8 * msgData)
     if(result->result != 0 || result->videoChannel != 0) return ROE_FAILURE;
 
     reticle_cfg_t * cfg = reticle_model_cfg();
+    if(cfg == NULL) return ROE_FAILURE;
+
     uint8_t gun = proto_idx_to_ui(result->weaponIndex);
     if(gun >= RETICLE_GUN_COUNT) return ROE_FAILURE;
 
@@ -311,6 +319,8 @@ ROE_S32 UiIpcHandleResponseWeaponOperateShootDistance(ROE_U8 * msgData)
     if(result->result != 0 || result->videoChannel != 0) return ROE_FAILURE;
 
     reticle_cfg_t * cfg = reticle_model_cfg();
+    if(cfg == NULL) return ROE_FAILURE;
+
     uint8_t gun = proto_idx_to_ui(result->weaponIndex);
     if(gun >= RETICLE_GUN_COUNT) return ROE_FAILURE;
 
@@ -410,6 +420,8 @@ ROE_S32 UiIpcHandleResponseWeaponSetShootPosition(ROE_U8 * msgData)
     if(result->result != 0 || result->videoChannel != 0) return ROE_FAILURE;
 
     reticle_cfg_t * cfg = reticle_model_cfg();
+    if(cfg == NULL) return ROE_FAILURE;
+
     uint8_t gun = proto_idx_to_ui(result->weaponIndex);
     if(gun >= RETICLE_GUN_COUNT) return ROE_FAILURE;
 
@@ -444,6 +456,8 @@ ROE_S32 UiIpcHandleResponseWeaponSetShootZero(ROE_U8 * msgData)
     if(result->result != 0 || result->videoChannel != 0) return ROE_FAILURE;
 
     reticle_cfg_t * cfg = reticle_model_cfg();
+    if(cfg == NULL) return ROE_FAILURE;
+
     uint8_t gun = proto_idx_to_ui(result->weaponIndex);
     if(gun >= RETICLE_GUN_COUNT) return ROE_FAILURE;
 

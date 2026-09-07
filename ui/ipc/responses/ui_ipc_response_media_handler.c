@@ -24,6 +24,11 @@ ROE_S32 UiIpcHandleResponseGetMediaFileList(ROE_U8 * msgData)
         LV_LOG_WARN("[MEDIA][RSP] get file list failed result:%u", (unsigned)result->result);
         return ROE_FAILURE;
     }
+    if(result->fileCount > UI_MAX_MEDIA_FILE_NUM_ONE_PAGE) {
+        LV_LOG_WARN("[MEDIA][RSP] invalid file count:%u", (unsigned)result->fileCount);
+        return ROE_FAILURE;
+    }
+
     UiMediaFileInfo * fileInfo[UI_MAX_MEDIA_FILE_NUM_ONE_PAGE];
     /* 处理获取媒体文件列表结果 */
     /* 解析变长文件列表数据；完整长度和 fileCount 已在接收层校验。 */

@@ -13,9 +13,6 @@
 #include "menu_event_registry.h"
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/mman.h>
 
 static lv_timer_t * self_timer = NULL;
 
@@ -100,8 +97,8 @@ ROE_S32 UiIpcHandleNotificationPeripheralSelfTestInfo(ROE_U8 * msgData)
         if(ui_self_item_label[i] == NULL) continue;
 
         lv_label_set_text(ui_self_item_label[i], self_info[state]);
-        LV_LOG_USER("selfCheck->selfItem[%d] = %d", i, selfCheck->selfItem[i]);
-        if(selfCheck->selfItem[i] == 2) {
+        LV_LOG_USER("selfCheck->selfItem[%d] = %d", i, state);
+        if(state == 2) {
             lv_obj_set_style_text_color(ui_self_item_label[i], lv_color_hex(0xFF3B30), LV_PART_MAIN | LV_STATE_DEFAULT);
         } else {
             lv_obj_set_style_text_color(ui_self_item_label[i], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -109,7 +106,8 @@ ROE_S32 UiIpcHandleNotificationPeripheralSelfTestInfo(ROE_U8 * msgData)
     }
     if(selfCheck->selfCheckState == 1) {
         for(int i = 0; i < SELF_ITEM_NUM; i++) {
-            sum += selfCheck->selfItem[i];
+            ROE_U8 state = selfCheck->selfItem[i];
+            sum += (state < 3U) ? state : 0;
         }
 
         if(sum == 7) {
@@ -434,7 +432,9 @@ ROE_S32 UiIpcHandleNotificationReticleInfoUpdate(ROE_U8 * msgData)
 
     ROE_S8 reticleCount = reticleUpdate->reticleCount;
     ROE_U8 * dataPtr = reticleUpdate->reticleData;
-    const char * imageName[3] = {"/run/reticleUi0.bmp", "/run/reticleUi1.bmp", "/run/reticleUi2.bmp"};
+    const char * imageName[UI_MAX_DIVIDING_PLATES_NUM] = {
+        "/run/reticleUi0.bmp", "/run/reticleUi1.bmp", "/run/reticleUi2.bmp"
+    };
     char name[256];
     char logName[256];
 

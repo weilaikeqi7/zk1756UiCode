@@ -252,6 +252,5 @@ void reticle_distance_mgr_save_to_cfg(reticle_gun_cfg_t * cfg)
 
     for(uint8_t i = 0; i < s_cnt; i++) {
         cfg->items[i] = s_entry[i];
-        cfg->items[i].tag_idx = i;
     }
 }

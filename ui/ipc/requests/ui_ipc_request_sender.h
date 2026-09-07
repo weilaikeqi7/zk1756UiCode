@@ -59,9 +59,9 @@ ROE_S32 UiIpcSendInfraredPseudoColorRequest(ROE_S32 msgQueId, UiRequestAdjustInf
 
 ROE_S32 UiIpcSendGetMediaFileListRequest(ROE_S32 msgQueId, UiRequestGetMediaFileList * getMediaFileList);
 
-ROE_S32 UiIpcSendDeleteMediaFileRequest(ROE_S32 msgQueId, ROE_S8 * filename);
+ROE_S32 UiIpcSendDeleteMediaFileRequest(ROE_S32 msgQueId, const ROE_S8 * filename);
 
-ROE_S32 UiIpcSendPlayMediaFileRequest(ROE_S32 msgQueId, ROE_S8 * filename);
+ROE_S32 UiIpcSendPlayMediaFileRequest(ROE_S32 msgQueId, const ROE_S8 * filename);
 
 ROE_S32 UiIpcSendPlayAdjacentMediaFileRequest(ROE_S32 msgQueId, ROE_U8 direction);
 

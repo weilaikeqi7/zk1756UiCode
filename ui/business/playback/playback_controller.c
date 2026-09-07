@@ -13,8 +13,6 @@ FindDateTime findDateTime;
 PlayListState playlist_state;
 int cur_focus_index = 0;
 
-lv_obj_t * ui_focus_temp[30];
-
 static void clear_media_list_items(uint32_t media_count)
 {
     ui_focus_group_clear();
@@ -33,9 +31,31 @@ static void clear_media_list_items(uint32_t media_count)
     playlist_state.current_play_list = 0;
 }
 
+static bool playback_controls_ready(void)
+{
+    if(keypad_group == NULL || ui_List_Container == NULL || ui_BTN4 == NULL || ui_BTN5 == NULL ||
+       ui_BTN6 == NULL || ui_PlayBar == NULL) {
+        return false;
+    }
+
+    for(uint32_t i = 0; i < 9U; i++) {
+        if(ui_PlayList[i] == NULL || !lv_obj_is_valid(ui_PlayList[i])) return false;
+    }
+    return true;
+}
+
+static void add_playback_event(lv_obj_t * object, lv_event_cb_t callback, void * user_data)
+{
+    if(object == NULL || !lv_obj_is_valid(object) || callback == NULL) return;
+    lv_obj_add_event_cb(object, callback, LV_EVENT_ALL, user_data);
+}
+
 void play_list_focus_index(uint32_t index)
 {
-    if(keypad_group == NULL || index >= playlist_state.current_items || ui_PlayList[index] == NULL) return;
+    if(keypad_group == NULL || index >= playlist_state.current_items || ui_PlayList[index] == NULL ||
+       !lv_obj_is_valid(ui_PlayList[index])) {
+        return;
+    }
 
     playlist_state.current_index = index;
     ui_focus_group_focus(ui_PlayList[index]);
@@ -97,9 +117,7 @@ void show_play_page(void)
     time_t rawtime;
     struct tm * timeinfo;
 
-    if(ui_PlayList[1] == NULL || ui_PlayList[2] == NULL || ui_PlayList[3] == NULL ||
-       ui_PlayList[4] == NULL || ui_PlayList[5] == NULL || ui_PlayList[7] == NULL ||
-       ui_PlayList[8] == NULL || keypad_group == NULL) {
+    if(!playback_controls_ready()) {
         LV_LOG_ERROR("[MEDIA][INIT] playlist controls are not initialized");
         return;
     }
@@ -140,10 +158,7 @@ void show_play_page(void)
 
     playlist_state.current_items = PLAYLIST_MEDIA_FIRST_INDEX + playlist_state.current_play_list +
                                    PLAYLIST_ACTION_ITEM_COUNT;
-    ui_focus_group_clear();
-    for(uint32_t i = 0; i < playlist_state.current_items; i++) {
-        ui_focus_group_add(ui_PlayList[i]);
-    }
+    ui_focus_group_set(ui_PlayList, playlist_state.current_items);
 
     cur_focus_index = FOCUS_ALL;
     playlist_state.current_index = 0;
@@ -159,19 +174,12 @@ void show_play_page(void)
 
 void hidden_play_page(void)
 {
-    ui_focus_temp[0] = ui_rowstandby;
-    ui_focus_temp[1] = ui_rowcompasscalibration;
-    ui_focus_temp[2] = ui_rowdeadpixel;
-    ui_focus_temp[3] = ui_rowstatusbar;
-    ui_focus_temp[4] = ui_rowdeletefile;
-    ui_focus_temp[5] = ui_rowsetting;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[4]);
+    lv_obj_t * objects[] = {
+        ui_rowstandby, ui_rowcompasscalibration, ui_rowdeadpixel,
+        ui_rowstatusbar, ui_rowdeletefile, ui_rowsetting,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_rowdeletefile);
     g_app.playPageFlag = 0;
     for(uint32_t i = 0; i < UI_MAX_DIVIDING_PLATES_NUM; i++) {
         if(g_app.reticle_state[i] == 1) {
@@ -315,16 +323,13 @@ void play_list_display(UiResponseGetMediaFileList * fileList, UiMediaFileInfo **
     playlist_state.current_play_list = fileList->fileCount;
     playlist_state.current_items = PLAYLIST_MEDIA_FIRST_INDEX + playlist_state.current_play_list + PLAYLIST_ACTION_ITEM_COUNT;
     playlist_state.current_index = 0;
-    ui_focus_group_clear();
-    for(uint32_t i = 0; i < playlist_state.current_items; i++) {
-        ui_focus_group_add(ui_PlayList[i]);
-    }
+    ui_focus_group_set(ui_PlayList, playlist_state.current_items);
     LV_LOG_USER("playlist_state.current_items:%d", playlist_state.current_items);
     for(uint32_t i = PLAYLIST_MEDIA_FIRST_INDEX;
         i < playlist_state.current_items - PLAYLIST_ACTION_ITEM_COUNT;
         i++) {
         if(ui_PlayList[i] != NULL) {
-            lv_obj_add_event_cb(ui_PlayList[i], ui_event_play_or_del, LV_EVENT_ALL, NULL);
+            add_playback_event(ui_PlayList[i], ui_event_play_or_del, NULL);
         }
     }
 
@@ -353,16 +358,16 @@ void play_event_init(void)
     ui_PlayList[7] = ui_BTN2;
     ui_PlayList[8] = ui_BTN3;
 
-    lv_obj_add_event_cb(ui_PlayList[0], ui_event_PlayList_1, LV_EVENT_ALL, ui_PlayList[0]);
+    add_playback_event(ui_PlayList[0], ui_event_PlayList_1, ui_PlayList[0]);
     for(int i = 1; i < 6; i++) {
-        lv_obj_add_event_cb(ui_PlayList[i], ui_event_PlayList_1_5, LV_EVENT_ALL, ui_PlayList[i]);
+        add_playback_event(ui_PlayList[i], ui_event_PlayList_1_5, ui_PlayList[i]);
     }
 
-    lv_obj_add_event_cb(ui_PlayList[6], ui_event_PlayList_6, LV_EVENT_ALL, ui_PlayList[6]);
-    lv_obj_add_event_cb(ui_PlayList[7], ui_event_PlayList_7, LV_EVENT_ALL, ui_PlayList[7]);
-    lv_obj_add_event_cb(ui_PlayList[8], ui_event_PlayList_8, LV_EVENT_ALL, ui_PlayList[8]);
-    lv_obj_add_event_cb(ui_BTN4, ui_event_PlayList_back, LV_EVENT_ALL, ui_BTN4);
-    lv_obj_add_event_cb(ui_BTN5, ui_event_PlayList_prev, LV_EVENT_ALL, ui_BTN5);
-    lv_obj_add_event_cb(ui_BTN6, ui_event_PlayList_next, LV_EVENT_ALL, ui_BTN6);
-    lv_obj_add_event_cb(ui_PlayBar, ui_event_video_play, LV_EVENT_ALL, ui_PlayBar);
+    add_playback_event(ui_PlayList[6], ui_event_PlayList_6, ui_PlayList[6]);
+    add_playback_event(ui_PlayList[7], ui_event_PlayList_7, ui_PlayList[7]);
+    add_playback_event(ui_PlayList[8], ui_event_PlayList_8, ui_PlayList[8]);
+    add_playback_event(ui_BTN4, ui_event_PlayList_back, ui_BTN4);
+    add_playback_event(ui_BTN5, ui_event_PlayList_prev, ui_BTN5);
+    add_playback_event(ui_BTN6, ui_event_PlayList_next, ui_BTN6);
+    add_playback_event(ui_PlayBar, ui_event_video_play, ui_PlayBar);
 }

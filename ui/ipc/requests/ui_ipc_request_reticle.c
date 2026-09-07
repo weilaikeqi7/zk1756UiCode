@@ -8,6 +8,8 @@
 
 static void log_dist_req_array(const char * tag, const UiRequestWeaponOperateShootDistance * req)
 {
+    if(req == NULL) return;
+
     LV_LOG_USER("[RETICLE][REQ][%s] video=%u weapon=%u distanceIndex=%u distanceValue=%u opType=%u syncMove=%u",
                 tag,
                 (unsigned) req->videoChannel,
@@ -20,6 +22,8 @@ static void log_dist_req_array(const char * tag, const UiRequestWeaponOperateSho
 
 ROE_S32 UiIpcSendSetReticleCommonConfigRequest(ROE_S32 msgQueId, UiRequestSetReticleCommonConfig * setReticleCommonConfig)
 {
+    if(setReticleCommonConfig == NULL) return ROE_FAILURE;
+
     LV_LOG_USER("[RETICLE][REQ][3.61 common] save=%d show=%d rotate=%d ballistic=%d",
                 (int) setReticleCommonConfig->saveFlag,
                 (int) setReticleCommonConfig->showReticle,
@@ -34,6 +38,8 @@ ROE_S32 UiIpcSendSetReticleCommonConfigRequest(ROE_S32 msgQueId, UiRequestSetRet
 
 ROE_S32 UiIpcSendWeaponMarkConfigOperateRequest(ROE_S32 msgQueId, UiRequestWeaponMarkConfigOperate * weaponMarkConfigOperate)
 {
+    if(weaponMarkConfigOperate == NULL) return ROE_FAILURE;
+
     LV_LOG_USER("[RETICLE][REQ][3.62 weaponCfg] video=%u weapon=%u opType=%u",
                 (unsigned) weaponMarkConfigOperate->videoChannel,
                 (unsigned) weaponMarkConfigOperate->weaponIndex,
@@ -47,6 +53,8 @@ ROE_S32 UiIpcSendWeaponMarkConfigOperateRequest(ROE_S32 msgQueId, UiRequestWeapo
 
 ROE_S32 UiIpcSendWeaponSetReticleStyleRequest(ROE_S32 msgQueId, UiRequestWeaponSetReticleStyle * weaponSetReticleStyle)
 {
+    if(weaponSetReticleStyle == NULL) return ROE_FAILURE;
+
     LV_LOG_USER("[RETICLE][REQ][3.63 style] video=%u weapon=%u style=%u",
                 (unsigned) weaponSetReticleStyle->videoChannel,
                 (unsigned) weaponSetReticleStyle->weaponIndex,
@@ -60,6 +68,8 @@ ROE_S32 UiIpcSendWeaponSetReticleStyleRequest(ROE_S32 msgQueId, UiRequestWeaponS
 
 ROE_S32 UiIpcSendWeaponSetReticleColorRequest(ROE_S32 msgQueId, UiRequestWeaponSetReticleColor * weaponSetReticleColor)
 {
+    if(weaponSetReticleColor == NULL) return ROE_FAILURE;
+
     LV_LOG_USER("[RETICLE][REQ][3.64 color] video=%u weapon=%u color=%u",
                 (unsigned) weaponSetReticleColor->videoChannel,
                 (unsigned) weaponSetReticleColor->weaponIndex,
@@ -74,6 +84,8 @@ ROE_S32 UiIpcSendWeaponSetReticleColorRequest(ROE_S32 msgQueId, UiRequestWeaponS
 ROE_S32 UiIpcSendWeaponSetReticleBrightnessRequest(ROE_S32 msgQueId,
                                                    UiRequestWeaponSetReticleBrightness * weaponSetBrightness)
 {
+    if(weaponSetBrightness == NULL) return ROE_FAILURE;
+
     return UiIpcSendRequest(msgQueId,
                          MSG_4_REQ_RES_WEAPON_SET_RETICLE_LUMA,
                          weaponSetBrightness,
@@ -84,6 +96,8 @@ ROE_S32 UiIpcSendWeaponSetReticleBrightnessRequest(ROE_S32 msgQueId,
 ROE_S32 UiIpcSendWeaponSetDefaultShootDistanceRequest(ROE_S32 msgQueId,
                                               UiRequestWeaponSetDefaultShootDistance * weaponSetDefaultShootDistance)
 {
+    if(weaponSetDefaultShootDistance == NULL) return ROE_FAILURE;
+
     LV_LOG_USER("[RETICLE][REQ][3.65 defaultDistance] video=%u weapon=%u distanceIndex=%u",
                 (unsigned) weaponSetDefaultShootDistance->videoChannel,
                 (unsigned) weaponSetDefaultShootDistance->weaponIndex,
@@ -97,6 +111,8 @@ ROE_S32 UiIpcSendWeaponSetDefaultShootDistanceRequest(ROE_S32 msgQueId,
 
 ROE_S32 UiIpcSendWeaponOperateShootDistanceRequest(ROE_S32 msgQueId, UiRequestWeaponOperateShootDistance * weaponSetShootDistance)
 {
+    if(weaponSetShootDistance == NULL) return ROE_FAILURE;
+
     log_dist_req_array("3.66 distOp", weaponSetShootDistance);
     return UiIpcSendRequest(msgQueId,
                          MSG_4_REQ_RES_WEAPON_OPERATE_SHOOT_DISTANCE,
@@ -107,6 +123,8 @@ ROE_S32 UiIpcSendWeaponOperateShootDistanceRequest(ROE_S32 msgQueId, UiRequestWe
 
 ROE_S32 UiIpcSendWeaponSetShootPositionRequest(ROE_S32 msgQueId, UiRequestWeaponSetShootPosition * weaponSetShootPosition)
 {
+    if(weaponSetShootPosition == NULL) return ROE_FAILURE;
+
     LV_LOG_USER("[RETICLE][REQ][3.67 shootPos] video=%u weapon=%u distanceIndex=%u moveDir=%u",
                 (unsigned) weaponSetShootPosition->videoChannel,
                 (unsigned) weaponSetShootPosition->weaponIndex,
@@ -121,6 +139,8 @@ ROE_S32 UiIpcSendWeaponSetShootPositionRequest(ROE_S32 msgQueId, UiRequestWeapon
 
 ROE_S32 UiIpcSendWeaponSetShootZeroRequest(ROE_S32 msgQueId, UiRequestWeaponSetShootZero * weaponSetShootZero)
 {
+    if(weaponSetShootZero == NULL) return ROE_FAILURE;
+
     LV_LOG_USER("[RETICLE][REQ][3.68 zero] video=%u weapon=%u distanceIndex=%u zeroType=%u",
                 (unsigned) weaponSetShootZero->videoChannel,
                 (unsigned) weaponSetShootZero->weaponIndex,

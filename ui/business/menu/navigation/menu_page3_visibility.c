@@ -5,8 +5,6 @@
 #include "menu_visibility.h"
 #include "ui_focus_manager.h"
 
-static lv_obj_t * ui_focus_temp[30];
-
 void show_menu_page3_item2_item2(void)
 {
     lv_label_set_text_fmt(ui_comp_get_child(ui_num1, UI_COMP_NUM_PANELNUM_LABEL), "%c", magnetic.symbol);
@@ -18,20 +16,17 @@ void show_menu_page3_item2_item2(void)
 
     lv_obj_remove_flag(ui_numInput, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_comp_get_child(ui_num1, UI_COMP_NUM_PANELNUM);
-    ui_focus_temp[1] = ui_comp_get_child(ui_num2, UI_COMP_NUM_PANELNUM);
-    ui_focus_temp[2] = ui_comp_get_child(ui_num3, UI_COMP_NUM_PANELNUM);
-    ui_focus_temp[3] = ui_comp_get_child(ui_num4, UI_COMP_NUM_PANELNUM);
-    ui_focus_temp[4] = ui_comp_get_child(ui_num5, UI_COMP_NUM_PANELNUM);
-    ui_focus_temp[5] = ui_comp_get_child(ui_num6, UI_COMP_NUM_PANELNUM);
-    ui_focus_temp[6] = ui_rowitemOK;
-    ui_focus_temp[7] = ui_rowitemCANCEL;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 8; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_comp_get_child(ui_num1, UI_COMP_NUM_PANELNUM),
+        ui_comp_get_child(ui_num2, UI_COMP_NUM_PANELNUM),
+        ui_comp_get_child(ui_num3, UI_COMP_NUM_PANELNUM),
+        ui_comp_get_child(ui_num4, UI_COMP_NUM_PANELNUM),
+        ui_comp_get_child(ui_num5, UI_COMP_NUM_PANELNUM),
+        ui_comp_get_child(ui_num6, UI_COMP_NUM_PANELNUM),
+        ui_rowitemOK,
+        ui_rowitemCANCEL,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page3_item2_item2(void)
@@ -39,15 +34,8 @@ void hidden_menu_page3_item2_item2(void)
     lv_obj_add_flag(ui_numInput, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_rowitem4, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_rowitem3;
-    ui_focus_temp[1] = ui_rowitem4;
-    ui_focus_temp[2] = ui_rowitem5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 3; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {ui_rowitem3, ui_rowitem4, ui_rowitem5};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
     ui_focus_group_focus(ui_rowitem4);
 }
 
@@ -55,18 +43,11 @@ void show_menu_page3_item6(void)
 {
     lv_obj_remove_flag(ui_contmenusetting, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_settingrow1;
-    ui_focus_temp[1] = ui_settingrow2;
-    ui_focus_temp[2] = ui_settingrow3;
-    ui_focus_temp[3] = ui_settingrow4;
-    ui_focus_temp[4] = ui_settingrow6;
-    ui_focus_temp[5] = ui_settingrow5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_settingrow1, ui_settingrow2, ui_settingrow3,
+        ui_settingrow4, ui_settingrow6, ui_settingrow5,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page3_item6(void)
@@ -74,35 +55,22 @@ void hidden_menu_page3_item6(void)
     lv_obj_add_flag(ui_contmenusetting, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_rowsetting, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_rowstandby;
-    ui_focus_temp[1] = ui_rowcompasscalibration;
-    ui_focus_temp[2] = ui_rowdeadpixel;
-    ui_focus_temp[3] = ui_rowstatusbar;
-    ui_focus_temp[4] = ui_rowdeletefile;
-    ui_focus_temp[5] = ui_rowsetting;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[5]);
+    lv_obj_t * objects[] = {
+        ui_rowstandby, ui_rowcompasscalibration, ui_rowdeadpixel,
+        ui_rowstatusbar, ui_rowdeletefile, ui_rowsetting,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_rowsetting);
 }
 
 void show_menu_page3_item6_item1(void)
 {
     lv_obj_remove_flag(ui_contdate, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_rowitemyear;
-    ui_focus_temp[1] = ui_rowitemmonth;
-    ui_focus_temp[2] = ui_rowitemday;
-    ui_focus_temp[3] = ui_rowitemdateback;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 4; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_rowitemyear, ui_rowitemmonth, ui_rowitemday, ui_rowitemdateback,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
     date.year = (ROE_S16)datatime.year;
     date.month = (ROE_S8)datatime.month;
     date.day = (ROE_S8)datatime.day;
@@ -119,33 +87,19 @@ void hidden_menu_page3_item6_item1(void)
     lv_obj_add_flag(ui_contdate, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_settingrow1, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_settingrow1;
-    ui_focus_temp[1] = ui_settingrow2;
-    ui_focus_temp[2] = ui_settingrow3;
-    ui_focus_temp[3] = ui_settingrow4;
-    ui_focus_temp[4] = ui_settingrow6;
-    ui_focus_temp[5] = ui_settingrow5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_settingrow1, ui_settingrow2, ui_settingrow3,
+        ui_settingrow4, ui_settingrow6, ui_settingrow5,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void show_menu_page3_item6_item2(void)
 {
     lv_obj_remove_flag(ui_conttime, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_rowitemhour;
-    ui_focus_temp[1] = ui_rowitemmin;
-    ui_focus_temp[2] = ui_rowitemtimeback;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 3; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {ui_rowitemhour, ui_rowitemmin, ui_rowitemtimeback};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
     date.year = (ROE_S16)datatime.year;
     date.month = (ROE_S8)datatime.month;
     date.day = (ROE_S8)datatime.day;
@@ -161,34 +115,21 @@ void hidden_menu_page3_item6_item2(void)
     lv_obj_add_flag(ui_conttime, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_settingrow2, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_settingrow1;
-    ui_focus_temp[1] = ui_settingrow2;
-    ui_focus_temp[2] = ui_settingrow3;
-    ui_focus_temp[3] = ui_settingrow4;
-    ui_focus_temp[4] = ui_settingrow6;
-    ui_focus_temp[5] = ui_settingrow5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[1]);
+    lv_obj_t * objects[] = {
+        ui_settingrow1, ui_settingrow2, ui_settingrow3,
+        ui_settingrow4, ui_settingrow6, ui_settingrow5,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_settingrow2);
 }
 
 void show_menu_page3_item6_item4(void)
 {
     lv_obj_remove_flag(ui_DialogReset, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_resetOK;
-    ui_focus_temp[1] = ui_resetCANCEL;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 2; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[1]);
+    lv_obj_t * objects[] = {ui_resetOK, ui_resetCANCEL};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_resetCANCEL);
 }
 
 void hidden_menu_page3_item6_item4(void)
@@ -196,32 +137,20 @@ void hidden_menu_page3_item6_item4(void)
     lv_obj_add_flag(ui_DialogReset, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_settingrow4, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_settingrow1;
-    ui_focus_temp[1] = ui_settingrow2;
-    ui_focus_temp[2] = ui_settingrow3;
-    ui_focus_temp[3] = ui_settingrow4;
-    ui_focus_temp[4] = ui_settingrow6;
-    ui_focus_temp[5] = ui_settingrow5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[3]);
+    lv_obj_t * objects[] = {
+        ui_settingrow1, ui_settingrow2, ui_settingrow3,
+        ui_settingrow4, ui_settingrow6, ui_settingrow5,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_settingrow4);
 }
 
 void show_menu_page3_item6_item5(void)
 {
     lv_obj_remove_flag(ui_DialogInfo, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_infoOK;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 1; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {ui_infoOK};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page3_item6_item5(void)
@@ -229,34 +158,24 @@ void hidden_menu_page3_item6_item5(void)
     lv_obj_add_flag(ui_DialogInfo, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_settingrow5, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_settingrow1;
-    ui_focus_temp[1] = ui_settingrow2;
-    ui_focus_temp[2] = ui_settingrow3;
-    ui_focus_temp[3] = ui_settingrow4;
-    ui_focus_temp[4] = ui_settingrow6;
-    ui_focus_temp[5] = ui_settingrow5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[5]);
+    lv_obj_t * objects[] = {
+        ui_settingrow1, ui_settingrow2, ui_settingrow3,
+        ui_settingrow4, ui_settingrow6, ui_settingrow5,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_settingrow5);
 }
 
 void show_menu_page3_item6_item6(void)
 {
     lv_obj_remove_flag(ui_DialogFormattingSd, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_comp_get_child(ui_DialogFormattingSd, UI_COMP_DIALOGEG_DIALOGOK);
-    ui_focus_temp[1] = ui_comp_get_child(ui_DialogFormattingSd, UI_COMP_DIALOGEG_DIALOGCANCEL);
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 2; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[1]);
+    lv_obj_t * objects[] = {
+        ui_comp_get_child(ui_DialogFormattingSd, UI_COMP_DIALOGEG_DIALOGOK),
+        ui_comp_get_child(ui_DialogFormattingSd, UI_COMP_DIALOGEG_DIALOGCANCEL),
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(objects[1]);
 }
 
 void hidden_menu_page3_item6_item6(void)
@@ -264,35 +183,23 @@ void hidden_menu_page3_item6_item6(void)
     lv_obj_add_flag(ui_DialogFormattingSd, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_settingrow6, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_settingrow1;
-    ui_focus_temp[1] = ui_settingrow2;
-    ui_focus_temp[2] = ui_settingrow3;
-    ui_focus_temp[3] = ui_settingrow4;
-    ui_focus_temp[4] = ui_settingrow6;
-    ui_focus_temp[5] = ui_settingrow5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[4]);
+    lv_obj_t * objects[] = {
+        ui_settingrow1, ui_settingrow2, ui_settingrow3,
+        ui_settingrow4, ui_settingrow6, ui_settingrow5,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_settingrow6);
 }
 
 void show_menu_page3_item3_item1(void)
 {
     lv_obj_remove_flag(ui_bad_pixel_cont, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_bad_pixel_item2;
-    ui_focus_temp[1] = ui_bad_pixel_item3;
-    ui_focus_temp[2] = ui_bad_pixel_item4;
-    ui_focus_temp[3] = ui_bad_pixel_item5;
-    ui_focus_temp[4] = ui_bad_pixel_item6;
-
-    ui_focus_group_clear();
-    for(int i = 0; i < 5; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_bad_pixel_item2, ui_bad_pixel_item3, ui_bad_pixel_item4,
+        ui_bad_pixel_item5, ui_bad_pixel_item6,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
     lv_label_set_text_fmt(ui_comp_get_child(ui_bad_pixel_item2, UI_COMP_MCITEM_MCP2P1L2),
                           "%u",
                           g_app.bad_point.threshold);
@@ -304,33 +211,23 @@ void hidden_menu_page3_item3_item1(void)
     lv_obj_add_flag(ui_bad_pixel_cont, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_rowdeadpixel, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_rowstandby;
-    ui_focus_temp[1] = ui_rowcompasscalibration;
-    ui_focus_temp[2] = ui_rowdeadpixel;
-    ui_focus_temp[3] = ui_rowstatusbar;
-    ui_focus_temp[4] = ui_rowdeletefile;
-    ui_focus_temp[5] = ui_rowsetting;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 6; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-    ui_focus_group_focus(ui_focus_temp[2]);
+    lv_obj_t * objects[] = {
+        ui_rowstandby, ui_rowcompasscalibration, ui_rowdeadpixel,
+        ui_rowstatusbar, ui_rowdeletefile, ui_rowsetting,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
+    ui_focus_group_focus(ui_rowdeadpixel);
 }
 
 void show_menu_page3_item2_item1(void)
 {
     lv_obj_remove_flag(ui_DialogCompass, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGOK);
-    ui_focus_temp[1] = ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGCANCEL);
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 2; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGOK),
+        ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGCANCEL),
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page3_item2_item1(void)
@@ -338,15 +235,8 @@ void hidden_menu_page3_item2_item1(void)
     lv_obj_add_flag(ui_DialogCompass, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_rowitem3, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_rowitem3;
-    ui_focus_temp[1] = ui_rowitem4;
-    ui_focus_temp[2] = ui_rowitem5;
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 3; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {ui_rowitem3, ui_rowitem4, ui_rowitem5};
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
     ui_focus_group_focus(ui_rowitem3);
 }
 
@@ -354,14 +244,11 @@ void show_menu_page3_item3_item1_item3(void)
 {
     lv_obj_remove_flag(ui_DialogPixelClear, LV_OBJ_FLAG_HIDDEN);
 
-    ui_focus_temp[0] = ui_comp_get_child(ui_DialogPixelClear, UI_COMP_DIALOGEG_DIALOGOK);
-    ui_focus_temp[1] = ui_comp_get_child(ui_DialogPixelClear, UI_COMP_DIALOGEG_DIALOGCANCEL);
-
-    ui_focus_group_clear();
-
-    for(int i = 0; i < 2; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
+    lv_obj_t * objects[] = {
+        ui_comp_get_child(ui_DialogPixelClear, UI_COMP_DIALOGEG_DIALOGOK),
+        ui_comp_get_child(ui_DialogPixelClear, UI_COMP_DIALOGEG_DIALOGCANCEL),
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
 }
 
 void hidden_menu_page3_item3_item1_item3(void)
@@ -369,16 +256,10 @@ void hidden_menu_page3_item3_item1_item3(void)
     lv_obj_add_flag(ui_DialogPixelClear, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_state(ui_bad_pixel_item3, LV_STATE_USER_1, false);
 
-    ui_focus_temp[0] = ui_bad_pixel_item2;
-    ui_focus_temp[1] = ui_bad_pixel_item3;
-    ui_focus_temp[2] = ui_bad_pixel_item4;
-    ui_focus_temp[3] = ui_bad_pixel_item5;
-    ui_focus_temp[4] = ui_bad_pixel_item6;
-
-    ui_focus_group_clear();
-    for(int i = 0; i < 5; i++) {
-        ui_focus_group_add(ui_focus_temp[i]);
-    }
-
+    lv_obj_t * objects[] = {
+        ui_bad_pixel_item2, ui_bad_pixel_item3, ui_bad_pixel_item4,
+        ui_bad_pixel_item5, ui_bad_pixel_item6,
+    };
+    ui_focus_group_set(objects, sizeof(objects) / sizeof(objects[0]));
     ui_focus_group_focus(ui_bad_pixel_item3);
 }
