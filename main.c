@@ -2,10 +2,10 @@
 #include <signal.h>
 #include <pthread.h>
 #include "lvgl/lvgl.h"
-#include "ui/ui.h"
-#include "ui/user/core/app_state.h"
+#include "ui/generated/core/ui.h"
+#include "ui/foundation/app_state.h"
 #include <getopt.h>
-#include "ui/user/runtime/ui_runtime.h"
+#include "ui/runtime/ui_runtime.h"
 
 GlobalParameters global_parameters = {.sendMsgQueId = -1, .recvMsgQueId = -1, .ipc_ready = 0, .g_quit = 0};
 AppArgs app_args;

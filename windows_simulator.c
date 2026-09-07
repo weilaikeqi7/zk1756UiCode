@@ -1,8 +1,8 @@
 #include "lvgl/lvgl.h"
 #include "lvgl/src/drivers/sdl/lv_sdl_mouse.h"
 #include "lvgl/src/drivers/sdl/lv_sdl_window.h"
-#include "ui/ui.h"
-#include "ui/user/core/app_state.h"
+#include "ui/generated/core/ui.h"
+#include "ui/foundation/app_state.h"
 
 #include <stdint.h>
 

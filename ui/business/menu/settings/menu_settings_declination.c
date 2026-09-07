@@ -1,0 +1,596 @@
+//
+// Created by jinxing on 2026/1/8.
+//
+
+#include "menu_event_registry.h"
+#include "menu_event_internal.h"
+#include "ui_ipc_request_sender.h"
+#include "reticle_model.h"
+
+static UiRequestInfraredBadPixelOperate infraredBadPixelOperate;
+
+void ui_event_rowitem2(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+    }
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_next(keypad_group);
+            }
+            break;
+        case LV_KEY_DOWN:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_prev(keypad_group);
+            }
+            break;
+        case LV_KEY_ENTER:
+            hidden_menu_page3_item1();
+            break;
+        case LV_KEY_ESC:
+            lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            hidden_menu_page3_item1();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_rowitem3(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+    }
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_next(keypad_group);
+            }
+            break;
+        case LV_KEY_DOWN:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_prev(keypad_group);
+            }
+            break;
+        case LV_KEY_ENTER:
+            if(lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            } else {
+                lv_obj_set_state(obj, LV_STATE_USER_1, true);
+            }
+            show_menu_page3_item2_item1();
+            break;
+        case LV_KEY_ESC:
+            lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            hidden_menu_page3_item2();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_rowitem4(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+    }
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_next(keypad_group);
+            }
+            break;
+        case LV_KEY_DOWN:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_prev(keypad_group);
+            }
+            break;
+        case LV_KEY_ENTER:
+            if(lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            } else {
+                lv_obj_set_state(obj, LV_STATE_USER_1, true);
+            }
+            show_menu_page3_item2_item2();
+            break;
+        case LV_KEY_ESC:
+            lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            hidden_menu_page3_item2();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_rowitem5(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+    }
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_next(keypad_group);
+            }
+            break;
+        case LV_KEY_DOWN:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_prev(keypad_group);
+            }
+            break;
+        case LV_KEY_ENTER:
+            hidden_menu_page3_item2();
+            break;
+        case LV_KEY_ESC:
+            lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            hidden_menu_page3_item2();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_bad_pixel(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+    }
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_next(keypad_group);
+            }
+            break;
+        case LV_KEY_DOWN:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_prev(keypad_group);
+            }
+            break;
+        case LV_KEY_ENTER:
+            if(lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            } else {
+                lv_obj_set_state(obj, LV_STATE_USER_1, true);
+            }
+            show_menu_page3_item3_item1();
+            break;
+        case LV_KEY_ESC:
+            lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            hidden_menu_page3_item3();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_pixel_return(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+    }
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_next(keypad_group);
+            }
+            break;
+        case LV_KEY_DOWN:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_prev(keypad_group);
+            }
+            break;
+        case LV_KEY_ENTER:
+            hidden_menu_page3_item3();
+            break;
+        case LV_KEY_ESC:
+            lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            hidden_menu_page3_item3();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_pixel_item2(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_next(keypad_group);
+            } else {
+                g_app.bad_point.threshold += 1;
+                if(g_app.bad_point.threshold > g_app.bad_point.threshold_max) {
+                    g_app.bad_point.threshold = g_app.bad_point.threshold_max;
+                }
+                lv_label_set_text_fmt(
+                    ui_comp_get_child(obj, UI_COMP_MCITEM_MCP2P1L2),
+                    "%u",
+                    g_app.bad_point.threshold);
+                UiRequestInfraredSetBadPixelThreshold thresholdRequest;
+                thresholdRequest.threshold = g_app.bad_point.threshold;
+                UiIpcSendInfraredSetBadPixelThresholdRequest(global_parameters.sendMsgQueId, &thresholdRequest);
+            }
+            break;
+        case LV_KEY_DOWN:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_prev(keypad_group);
+            } else {
+                if(g_app.bad_point.threshold != 0) {
+                    g_app.bad_point.threshold -= 1;
+                }
+                if(g_app.bad_point.threshold < g_app.bad_point.threshold_min) {
+                    g_app.bad_point.threshold = g_app.bad_point.threshold_min;
+                }
+                lv_label_set_text_fmt(
+                    ui_comp_get_child(obj, UI_COMP_MCITEM_MCP2P1L2),
+                    "%u",
+                    g_app.bad_point.threshold);
+                UiRequestInfraredSetBadPixelThreshold thresholdRequest;
+                thresholdRequest.threshold = g_app.bad_point.threshold;
+                UiIpcSendInfraredSetBadPixelThresholdRequest(global_parameters.sendMsgQueId, &thresholdRequest);
+            }
+            break;
+        case LV_KEY_ENTER:
+            if(lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            } else {
+                lv_obj_set_state(obj, LV_STATE_USER_1, true);
+            }
+            break;
+        case LV_KEY_ESC:
+            lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            hidden_menu_page3_item3_item1();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_pixel_item3(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_next(keypad_group);
+            }
+            break;
+        case LV_KEY_DOWN:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_prev(keypad_group);
+            }
+            break;
+        case LV_KEY_ENTER:
+            if(lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            } else {
+                lv_obj_set_state(obj, LV_STATE_USER_1, true);
+            }
+            show_menu_page3_item3_item1_item3();
+            break;
+        case LV_KEY_ESC:
+            lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            hidden_menu_page3_item3_item1();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_DialogPixelClearOk(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            lv_group_focus_next(keypad_group);
+            break;
+        case LV_KEY_DOWN:
+            lv_group_focus_prev(keypad_group);
+            break;
+        case LV_KEY_ENTER:
+            infraredBadPixelOperate.opType = 0;
+            UiIpcSendInfraredBadPixelOperateRequest(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
+            hidden_menu_page3_item3_item1_item3();
+            break;
+        case LV_KEY_ESC:
+            hidden_menu_page3_item3_item1_item3();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_DialogPixelClearCancel(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            lv_group_focus_next(keypad_group);
+            break;
+        case LV_KEY_DOWN:
+            lv_group_focus_prev(keypad_group);
+            break;
+        case LV_KEY_ENTER:
+            hidden_menu_page3_item3_item1_item3();
+            break;
+        case LV_KEY_ESC:
+            hidden_menu_page3_item3_item1_item3();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_pixel_item4(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            lv_group_focus_next(keypad_group);
+            break;
+        case LV_KEY_DOWN:
+            lv_group_focus_prev(keypad_group);
+            break;
+        case LV_KEY_ENTER:
+            infraredBadPixelOperate.opType = 1;
+            UiIpcSendInfraredBadPixelOperateRequest(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
+            break;
+        case LV_KEY_ESC:
+            hidden_menu_page3_item3_item1();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_pixel_item5(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            lv_group_focus_next(keypad_group);
+            break;
+        case LV_KEY_DOWN:
+            lv_group_focus_prev(keypad_group);
+            break;
+        case LV_KEY_ENTER:
+            infraredBadPixelOperate.opType = 2;
+            UiIpcSendInfraredBadPixelOperateRequest(global_parameters.sendMsgQueId, &infraredBadPixelOperate);
+            break;
+        case LV_KEY_ESC:
+            hidden_menu_page3_item3_item1();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_pixel_item6(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+    }
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_next(keypad_group);
+            }
+            break;
+        case LV_KEY_DOWN:
+            if(!lv_obj_has_state(obj, LV_STATE_USER_1)) {
+                lv_group_focus_prev(keypad_group);
+            }
+            break;
+        case LV_KEY_ENTER:
+            hidden_menu_page3_item3_item1();
+            break;
+        case LV_KEY_ESC:
+            lv_obj_set_state(obj, LV_STATE_USER_1, false);
+            hidden_menu_page3_item3_item1();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+static int state1 = 0;
+static int state2 = 0;
+
+void ui_event_CompassStart(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_user_data(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+    }
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            lv_group_focus_next(keypad_group);
+            break;
+        case LV_KEY_DOWN:
+            lv_group_focus_prev(keypad_group);
+            break;
+        case LV_KEY_ENTER:
+            if(state1 == 1 && state2 == 0) {
+                state1 = 0;
+                UiRequestStopCompassCalibration compassCalibration;
+                compassCalibration.saveFlag = 0;
+                UiIpcSendStopCompassCalibrationRequest(global_parameters.sendMsgQueId, &compassCalibration);
+                lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGTEXT_LABEL),
+                                  "Confirm saving the result?");
+                lv_label_set_text(ui_comp_get_child(obj, UI_COMP_ROWITEM_LABEL), "Ok");
+                state2 = 1;
+            } else if(state1 == 0 && state2 == 0) {
+                state1 = 1;
+                UiRequestStartCompassCalibration compassCalibration;
+                compassCalibration.method = 0;
+                compassCalibration.number = -1;
+                UiIpcSendStartCompassCalibrationRequest(global_parameters.sendMsgQueId, &compassCalibration);
+                lv_label_set_text(ui_comp_get_child(obj, UI_COMP_ROWITEM_LABEL), "Stop");
+            } else if(state1 == 0 && state2 == 1) {
+                state2 = 0;
+                UiRequestStopCompassCalibration compassCalibration;
+                compassCalibration.saveFlag = 1;
+                UiIpcSendStopCompassCalibrationRequest(global_parameters.sendMsgQueId, &compassCalibration);
+                lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGOK_LABEL),
+                                  "Start");
+                lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGTEXT_LABEL),
+                                  "Rotate 360° around the three \naxes(X, Y, Z) for three times each.");
+                hidden_menu_page3_item2_item1();
+            }
+            break;
+        case LV_KEY_ESC:
+            hidden_menu_page3_item2_item1();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void ui_event_CompassCancel(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_FOCUSED) {
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+    }
+
+    if(event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+
+        switch(key) {
+        case LV_KEY_UP:
+            lv_group_focus_next(keypad_group);
+            break;
+        case LV_KEY_DOWN:
+            lv_group_focus_prev(keypad_group);
+            break;
+        case LV_KEY_ENTER: {
+            if(state1 == 1) {
+                UiRequestStopCompassCalibration compassCalibration;
+                compassCalibration.saveFlag = 0;
+                UiIpcSendStopCompassCalibrationRequest(global_parameters.sendMsgQueId, &compassCalibration);
+            }
+            lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGOK_LABEL),
+                              "Start");
+            lv_label_set_text(ui_comp_get_child(ui_DialogCompass, UI_COMP_DIALOGEG_DIALOGTEXT_LABEL),
+                              "Rotate 360° around the three \naxes(X, Y, Z) for three times each.");
+            hidden_menu_page3_item2_item1();
+            state1 = 0;
+            state2 = 0;
+            break;
+        }
+        case LV_KEY_ESC:
+            hidden_menu_page3_item2_item1();
+            break;
+        default:
+            break;
+        }
+    }
+}
